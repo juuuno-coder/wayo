@@ -23,6 +23,7 @@ const MOCK_VISITS: Visit[] = [
       id: 1,
       title: "서울 펫 페어",
       category: "festival",
+      region: "서울",
       description: "",
       start_date: new Date(2025, 11, 10).toISOString(),
       end_date: new Date(2025, 11, 10).toISOString(),
@@ -45,6 +46,7 @@ const MOCK_VISITS: Visit[] = [
       id: 2,
       title: "남산 윈터 원더랜드",
       category: "festival",
+      region: "서울",
       description: "",
       start_date: new Date(2025, 11, 21).toISOString(),
       end_date: new Date(2025, 11, 21).toISOString(),
@@ -115,18 +117,18 @@ export default function PassportPage() {
           </h1>
           <div className="w-6"></div>
         </div>
-        
+
         {/* Action Buttons in Header */}
         <div className="flex gap-2 max-w-[480px] mx-auto w-full mt-4 pb-2 px-1">
-          <button 
-             onClick={() => router.push('/reports/new?type=future')}
-             className="flex-1 py-2 bg-blue-500/20 backdrop-blur-md border border-white/20 text-blue-100 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-blue-500/30 transition-colors"
+          <button
+            onClick={() => router.push('/reports/new?type=future')}
+            className="flex-1 py-2 bg-blue-500/20 backdrop-blur-md border border-white/20 text-blue-100 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-blue-500/30 transition-colors"
           >
             <Megaphone size={14} /> 제보하기
           </button>
-          <button 
-             onClick={() => router.push('/reports/new?type=past')}
-             className="flex-1 py-2 bg-purple-500/20 backdrop-blur-md border border-white/20 text-purple-100 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-purple-500/30 transition-colors"
+          <button
+            onClick={() => router.push('/reports/new?type=past')}
+            className="flex-1 py-2 bg-purple-500/20 backdrop-blur-md border border-white/20 text-purple-100 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-purple-500/30 transition-colors"
           >
             <Camera size={14} /> 추억하기
           </button>
@@ -138,21 +140,19 @@ export default function PassportPage() {
         <div className="flex bg-white rounded-full p-1 mb-6 shadow-sm border border-gray-200">
           <button
             onClick={() => setViewMode("calendar")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition-all ${
-              viewMode === "calendar"
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition-all ${viewMode === "calendar"
                 ? "bg-[#1a237e] text-white shadow-md"
                 : "text-gray-500"
-            }`}
+              }`}
           >
             <CalendarIcon size={16} /> 캘린더
           </button>
           <button
             onClick={() => setViewMode("book")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition-all ${
-              viewMode === "book"
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition-all ${viewMode === "book"
                 ? "bg-[#1a237e] text-white shadow-md"
                 : "text-gray-500"
-            }`}
+              }`}
           >
             <Book size={16} /> 투어북 보기
           </button>
@@ -319,13 +319,12 @@ function CalendarSection({
           {["일", "월", "화", "수", "목", "금", "토"].map((d, i) => (
             <div
               key={d}
-              className={`text-center text-xs font-bold ${
-                i === 0
+              className={`text-center text-xs font-bold ${i === 0
                   ? "text-red-400"
                   : i === 6
-                  ? "text-blue-400"
-                  : "text-gray-400"
-              }`}
+                    ? "text-blue-400"
+                    : "text-gray-400"
+                }`}
             >
               {d}
             </div>
@@ -343,11 +342,10 @@ function CalendarSection({
                 className="relative flex flex-col items-center justify-center h-12 cursor-pointer"
               >
                 <div
-                  className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm font-bold ${
-                    isSelected
+                  className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm font-bold ${isSelected
                       ? "bg-[#1a237e] text-white shadow-lg shadow-indigo-200"
                       : "text-gray-700 hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
                   {day}
                 </div>
@@ -371,7 +369,7 @@ function CalendarSection({
             <CalendarIcon size={14} /> {month + 1}월 {selectedDay}일 일정
           </h3>
           {activeEvents.visits.length === 0 &&
-          activeEvents.likes.length === 0 ? (
+            activeEvents.likes.length === 0 ? (
             <div className="bg-white p-10 rounded-3xl text-center border-2 border-dashed border-gray-100">
               <p className="text-gray-400 text-sm">기록된 일정이 없습니다.</p>
             </div>
