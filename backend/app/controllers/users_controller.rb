@@ -13,6 +13,21 @@ class UsersController < ApplicationController
     render json: current_user
   end
 
+  def search
+    if params[:query].blank?
+      render json: []
+      return
+    end
+
+    query = params[:query].downcase
+    # Search by nickname or email (partial match), excluding current user
+    @users = User.where("LOWER(nickname) LIKE ? OR LOWER(email) LIKE ?", "%#{query}%", "%#{query}%")
+                 .where.not(id: current_user.id)
+                 .limit(10)
+                 
+    render json: @users.as_json(only: [:id, :nickname, :email, :location])
+  end
+
   private
 
   def user_params

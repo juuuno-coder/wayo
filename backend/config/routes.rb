@@ -6,6 +6,10 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
   
   resources :invitations do
+    collection do
+      post :sync
+      get :received
+    end
     resources :guests, controller: 'invitation_guests', only: [:index, :create]
   end
   resources :ticket_types, only: [:index, :show]
@@ -13,7 +17,11 @@ Rails.application.routes.draw do
     post :verify, on: :collection
   end
   devise_for :users, defaults: { format: :json }
-  resource :user, only: [:show, :update] # Singular resource for current user
+  resources :users, only: [:show, :update] do
+    collection do
+      get :search
+    end
+  end
   
   # Events (축제/박람회/전시회/공모전)
   resources :events do

@@ -204,9 +204,16 @@ export default function Home() {
             className="w-full bg-gray-100/50 border-none rounded-2xl py-3 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-400"
           />
         </div>
-        <button className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-2xl text-gray-600 active:scale-95 transition-transform hover:bg-gray-200">
-          <Ticket size={24} />
-        </button>
+        <div className="flex gap-2">
+          {/* 로그인 상태에 따라 버튼 변경 로직 필요. 현재는 임시로 버튼 추가 */}
+          {/* 실제 구현 시엔 Wayo 처럼 isLoggedIn 상태 체크 필요 */}
+          <button
+            onClick={() => router.push('/login')}
+            className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-2xl text-gray-600 active:scale-95 transition-transform hover:bg-gray-200"
+          >
+            <Ticket size={24} />
+          </button>
+        </div>
       </div>
 
       {/* 3. 카테고리 퀵 메뉴 */}

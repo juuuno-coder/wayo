@@ -13,6 +13,15 @@ class InvitationsController < ApplicationController
     render json: invitation_as_json(@invitation)
   end
 
+  # GET /invitations/received
+  def received
+    @invitations = Invitation.joins(:invitation_guests)
+                             .where(invitation_guests: { user_id: current_user.id })
+                             .with_attached_images
+                             .distinct
+    render json: @invitations.map { |invitation| invitation_as_json(invitation) }
+  end
+
   skip_before_action :authenticate_user!, only: %i[ show create ]
 
   # POST /invitations
@@ -25,6 +34,53 @@ class InvitationsController < ApplicationController
     else
       render json: @invitation.errors, status: :unprocessable_content
     end
+  end
+
+  # POST /invitations/sync
+  def sync
+    created_invitations = []
+    
+    # params[:invitations] is expected to be an array of invitation objects
+    # Note: Images are difficult to sync via simple JSON array in one go if they require FormData.
+    # Ideally, sync should handle metadata, and images might need separate handling or 
+    # we assume pending invitations are mostly text-based or have explicit URLs.
+    # For now, we'll iterate and create using strong params logic, adapting for array input.
+    
+    ActiveRecord::Base.transaction do
+      if params[:invitations].present? && params[:invitations].is_a?(Array)
+        params[:invitations].each do |inv_attr|
+          # Permit attributes for each invitation
+          # Note: ActionController::Parameters require careful handling for arrays
+          # We'll construct a new object manually for simplicity and security
+          
+          # Map frontend PendingInvitation keys to Rails params
+          invitation = current_user.invitations.build(
+            title: inv_attr[:title],
+            description: inv_attr[:description],
+            event_date: inv_attr[:date], # Frontend uses 'date', Backend uses 'event_date'
+            location: inv_attr[:location],
+            cover_image_url: inv_attr[:coverImage], # Frontend uses 'coverImage'
+            theme_color: inv_attr.dig(:theme, :color), # Nested theme object access
+            theme_ribbon: inv_attr.dig(:theme, :ribbon),
+            font_style: inv_attr[:fontStyle],
+            bgm: inv_attr[:bgm],
+            text_effect: inv_attr[:textEffect],
+            # ticket_type_id logic might be needed if frontend stores it
+          )
+          
+          if invitation.save
+            created_invitations << invitation
+          end
+        end
+      end
+    end
+    
+    render json: { 
+      message: "#{created_invitations.count} invitations synced", 
+      invitations: created_invitations.map { |inv| invitation_as_json(inv) } 
+    }, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_content
   end
 
   # PATCH/PUT /invitations/1

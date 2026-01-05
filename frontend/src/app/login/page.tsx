@@ -51,6 +51,26 @@ export default function LoginPage() {
         localStorage.setItem("userEmail", data.user.email);
         localStorage.setItem("userId", String(data.user.id));
 
+        // [New] Sync Pending Invitations
+        const pendingInvitations = localStorage.getItem("pending_invitations");
+        if (pendingInvitations) {
+          try {
+            const parsedInvitations = JSON.parse(pendingInvitations);
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/sync`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": token || "",
+              },
+              body: JSON.stringify({ invitations: parsedInvitations }),
+            });
+            localStorage.removeItem("pending_invitations"); // Clear on success
+          } catch (syncError) {
+            console.error("Sync Error:", syncError);
+            // Optionally alert user or keep pending storage for retry
+          }
+        }
+
         alert("로그인되었습니다.");
         router.push("/");
       } else {

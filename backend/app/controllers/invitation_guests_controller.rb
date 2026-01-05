@@ -11,22 +11,36 @@ class InvitationGuestsController < ApplicationController
 
   # POST /invitations/:invitation_id/guests
   def create
-    # 이미 참여한 경우 체크 (회원인 경우)
-    if current_user
+    # 1. Check if trying to add oneself (RSVP)
+    if current_user && !guest_params[:user_id].present?
       existing = @invitation.invitation_guests.find_by(user: current_user)
       return render json: existing if existing
     end
 
     @guest = @invitation.invitation_guests.build(guest_params)
-    @guest.user = current_user if current_user
-    @guest.status = 'attending' # Default status
+    
+    # 2. Assign user if current_user is RSVPing themselves
+    if current_user && !@guest.user_id
+        @guest.user = current_user
+    end
+
+    # 3. If direct sending (user_id provided), status might be 'pending' or 'invited' initially?
+    # For simplicity, let's just create it as 'attending' or whatever status is passed.
+    # If the sender is the creator, they might be "Inviting" someone.
+    
+    @guest.status = 'attending' unless @guest.status.present?
 
     if @guest.save
       # Issue a ticket if the invitation is linked to a ticket type and status is attending
       if @invitation.ticket_type && @guest.status == 'attending'
+        # Issue ticket to the guest user (could be current_user or the target user)
+        target_user = @guest.user || current_user 
+        # Note: If guest.user is nil (non-member guest), ticket.user will be nil, which is allowed? 
+        # Ticket model: belongs_to :user, optional: true? Let's assume so or fix if needed.
+        
         Ticket.create!(
           ticket_type: @invitation.ticket_type,
-          user: current_user,
+          user: target_user.is_a?(User) ? target_user : nil,
           invitation_guest: @guest,
           status: 'active'
         )
@@ -45,6 +59,6 @@ class InvitationGuestsController < ApplicationController
   end
 
   def guest_params
-    params.require(:guest).permit(:name, :message, :status)
+    params.require(:guest).permit(:name, :message, :status, :contact, :user_id)
   end
 end

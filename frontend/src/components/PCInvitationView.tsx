@@ -9,6 +9,7 @@ import {
     CheckCircle2,
     Share2,
     ArrowDown,
+    ArrowRight,
     Volume2,
     VolumeX,
     X
@@ -22,23 +23,30 @@ interface PCInvitationViewProps {
 }
 
 export default function PCInvitationView({ invitation, onRSVP, hasResponded, myTicket }: PCInvitationViewProps) {
-    const [stage, setStage] = useState<'envelope' | 'opening' | 'content'>('envelope');
+    const [stage, setStage] = useState<'intro' | 'envelope' | 'opening' | 'content'>('intro');
     const [isMuted, setIsMuted] = useState(false);
     const [guestName, setGuestName] = useState("");
     const [rsvpMessage, setRsvpMessage] = useState("");
     const [showRsvpModal, setShowRsvpModal] = useState(false);
+    const [activeSection, setActiveSection] = useState<'message' | 'schedule' | 'map'>('message');
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const fontClass = invitation.font_style === 'serif' ? 'font-serif' : 'font-sans';
+    const hostName = invitation.user?.nickname || "가보자고 친구";
 
-    const handleOpen = () => {
-        setStage('opening');
+    const handleStart = () => {
+        setStage('envelope');
+        // Start background music subtly if possible
         if (invitation.bgm && invitation.bgm !== 'none' && audioRef.current) {
             audioRef.current.play().catch(e => console.log("Audio play blocked", e));
         }
+    };
+
+    const handleOpen = () => {
+        setStage('opening');
         setTimeout(() => {
             setStage('content');
-        }, 2000);
+        }, 2200);
     };
 
     const bgmSources: Record<string, string> = {
@@ -61,17 +69,48 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
             </div>
 
             <AnimatePresence mode="wait">
+                {stage === 'intro' && (
+                    <motion.div
+                        key="intro"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, scale: 1.1 }}
+                        className="z-[100] fixed inset-0 bg-black flex flex-col items-center justify-center text-center p-6"
+                    >
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            className="space-y-8"
+                        >
+                            <p className="text-white/40 text-sm tracking-[0.5em] uppercase font-light">New Message</p>
+                            <h2 className="text-white text-4xl md:text-5xl font-black leading-tight break-keep">
+                                {hostName}님으로부터<br />소중한 초대장이 도착했습니다
+                            </h2>
+                            <div className="w-12 h-px bg-white/20 mx-auto" />
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={handleStart}
+                                className="px-12 py-5 bg-white text-black rounded-full font-black text-xl hover:bg-white/90 transition-all shadow-2xl"
+                            >
+                                확인하기
+                            </motion.button>
+                        </motion.div>
+                    </motion.div>
+                )}
+
                 {stage === 'envelope' && (
                     <motion.div
                         key="envelope"
-                        initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
-                        transition={{ duration: 0.8, type: "spring" }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.2, y: 50 }}
                         className="z-10 relative group cursor-pointer"
                         onClick={handleOpen}
                     >
                         <div className="relative w-[500px] h-[350px]">
+                            {/* Envelope Back */}
                             <NextImage
                                 src="/images/wayo_envelope_3d.png"
                                 alt="Envelope"
@@ -79,7 +118,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                 className="object-contain drop-shadow-[0_50px_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-700 mix-blend-multiply"
                             />
 
-                            {/* Wax Seal / Button */}
+                            {/* Wax Seal */}
                             <motion.div
                                 whileHover={{ scale: 1.2, rotate: 5 }}
                                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-[#C0392B] rounded-full border-4 border-[#922B21] shadow-2xl flex items-center justify-center z-20"
@@ -87,9 +126,8 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                 <div className="text-white text-[10px] font-black tracking-widest uppercase">Open</div>
                             </motion.div>
 
-                            {/* Decorative Text */}
                             <div className="absolute bottom-10 left-0 right-0 text-center">
-                                <p className="text-white/40 text-[10px] uppercase tracking-[0.5em] animate-pulse">Click to Reveal</p>
+                                <p className="text-white/40 text-[10px] uppercase tracking-[0.5em] animate-pulse">봉투를 눌러 열어보세요</p>
                             </div>
                         </div>
                     </motion.div>
@@ -98,159 +136,218 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                 {stage === 'opening' && (
                     <motion.div
                         key="opening"
-                        className="z-50 text-white text-center"
+                        className="z-50 flex flex-col items-center justify-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                        <motion.div
-                            initial={{ scale: 0.5, rotateY: 90 }}
-                            animate={{ scale: 1, rotateY: 0 }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            className="text-4xl md:text-6xl font-black tracking-tighter"
-                        >
-                            {invitation.title}
-                        </motion.div>
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 }}
-                            className="mt-6 text-xl text-white/60 font-light"
-                        >
-                            당신을 초대합니다
-                        </motion.p>
+                        {/* Physical Envelope Opening Simulation */}
+                        <div className="relative w-[500px] h-[350px]">
+                            <motion.div
+                                initial={{ y: 0 }}
+                                animate={{ y: -200, opacity: 0 }}
+                                transition={{ duration: 1.5, ease: "easeInOut" }}
+                                className="absolute inset-0 z-20"
+                            >
+                                <NextImage src="/images/wayo_envelope_3d.png" alt="Opening" fill className="object-contain mix-blend-multiply" />
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ y: 50, opacity: 0, scale: 0.5 }}
+                                animate={{ y: 0, opacity: 1, scale: 1 }}
+                                transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
+                                className="bg-white p-12 rounded-3xl shadow-2xl text-center w-full"
+                            >
+                                <p className="text-gray-400 text-xs tracking-widest mb-4">INVITATION</p>
+                                <h2 className="text-4xl font-black text-gray-900 leading-tight">
+                                    {invitation.title}
+                                </h2>
+                            </motion.div>
+                        </div>
                     </motion.div>
                 )}
 
                 {stage === 'content' && (
                     <motion.div
                         key="content"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="z-10 w-full h-full overflow-y-auto no-scrollbar"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden"
                     >
-                        <div className="max-w-6xl mx-auto min-h-screen py-20 px-8 flex flex-col items-center">
+                        {/* THE SPREAD - Book Style */}
+                        <div className="w-full max-w-[1200px] h-[750px] flex items-stretch bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden relative">
 
-                            {/* Invitation Poster Card */}
-                            <motion.div
-                                initial={{ y: 100, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 1, delay: 0.2 }}
-                                className="relative w-full aspect-[4/5] md:aspect-[16/9] bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col md:flex-row"
-                            >
-                                {/* Image Side */}
-                                <div className="flex-1 relative h-1/2 md:h-full min-h-[300px]">
-                                    <NextImage
-                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
-                                        alt="Cover"
-                                        fill
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute inset-0 bg-black/10" />
+                            {/* Left Page: Poster */}
+                            <div className="flex-1 relative overflow-hidden border-r border-gray-100">
+                                <NextImage
+                                    src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
+                                    alt="Cover"
+                                    fill
+                                    className="object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/5" />
+
+                                {/* Poster Title Overlay (Subtle) */}
+                                <div className="absolute bottom-12 left-12 right-12 z-10 text-white drop-shadow-lg">
+                                    <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2">OFFICIAL INVITATION</p>
+                                    <h3 className="text-3xl font-black">{invitation.title}</h3>
                                 </div>
+                            </div>
 
-                                {/* Content Side */}
-                                <div className="flex-1 bg-white p-12 md:p-20 flex flex-col justify-center text-[#2c3e50]">
-                                    <div className="mb-12">
-                                        <p className="text-[#E74C3C] font-black text-xs uppercase tracking-[0.4em] mb-4">You are Invited</p>
-                                        <h1 className="text-4xl md:text-6xl font-bold leading-[1.1] mb-8 tracking-tight break-keep">
-                                            {invitation.title}
-                                        </h1>
-                                        <div className="w-16 h-1 bg-[#E74C3C] mb-8" />
-                                        <p className="text-xl md:text-2xl font-light opacity-80 leading-relaxed italic whitespace-pre-wrap">
-                                            {invitation.description}
-                                        </p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-100 pt-12">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-[#E74C3C]">
-                                                <Calendar size={28} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] uppercase font-black text-gray-400">Date & Time</p>
-                                                <p className="font-bold text-xl">{new Date(invitation.event_date).toLocaleString('ko-KR')}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500">
-                                                <MapPin size={28} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] uppercase font-black text-gray-400">Location</p>
-                                                <p className="font-bold text-xl break-keep">{invitation.location}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* RSVP Call to Action */}
-                                    <div className="mt-16 flex gap-4">
-                                        {!hasResponded ? (
-                                            <button
-                                                onClick={() => setShowRsvpModal(true)}
-                                                className="flex-1 py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-bold shadow-2xl shadow-red-200 hover:scale-[1.02] active:scale-95 transition-all"
-                                            >
-                                                참석 확인하기
-                                            </button>
-                                        ) : (
-                                            <div className="flex-1 py-6 bg-green-500 text-white rounded-2xl text-2xl font-bold flex items-center justify-center gap-3">
-                                                <CheckCircle2 size={28} /> 참석이 확인되었습니다
-                                            </div>
-                                        )}
-                                        <button className="p-6 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors">
-                                            <Share2 size={28} />
+                            {/* Right Page: Content Pages */}
+                            <div className="flex-1 bg-white flex flex-col relative">
+                                {/* Tab Navigation (Vertical or Top) */}
+                                <div className="px-12 pt-8 flex gap-6 border-b border-gray-50 bg-white/80 backdrop-blur-md sticky top-0 z-20">
+                                    {(['message', 'schedule', 'map'] as const).map((id) => (
+                                        <button
+                                            key={id}
+                                            onClick={() => setActiveSection(id)}
+                                            className={`pb-4 text-[10px] font-black uppercase tracking-widest transition-all relative ${activeSection === id ? 'text-[#E74C3C]' : 'text-gray-300 hover:text-gray-600'}`}
+                                        >
+                                            {id === 'message' ? 'Invitation' : id === 'schedule' ? 'Schedule' : 'Directions'}
+                                            {activeSection === id && (
+                                                <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 right-0 h-1 bg-[#E74C3C] rounded-full" />
+                                            )}
                                         </button>
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* Gallery Section - More Images */}
-                            {invitation.image_urls && invitation.image_urls.length > 1 && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 50 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    className="mt-20 w-full max-w-6xl grid grid-cols-2 md:grid-cols-3 gap-6"
-                                >
-                                    {invitation.image_urls.slice(1).map((url: string, idx: number) => (
-                                        <div key={idx} className="aspect-square relative rounded-[2rem] overflow-hidden shadow-2xl group">
-                                            <NextImage src={url} alt={`Gallery ${idx}`} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                                        </div>
                                     ))}
-                                </motion.div>
-                            )}
+                                </div>
 
-                            {/* Ticket Section (If exists) */}
-                            {hasResponded && myTicket && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 50 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="mt-20 w-full max-w-2xl bg-white border-2 border-dashed border-gray-200 rounded-[3rem] p-12 flex flex-col md:flex-row items-center gap-12 shadow-2xl"
-                                >
-                                    <div className="bg-gray-50 p-6 rounded-3xl shrink-0">
-                                        <img
-                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${myTicket.qr_code}`}
-                                            alt="QR Code"
-                                            className="w-40 h-40"
-                                        />
-                                    </div>
-                                    <div className="flex-1 text-center md:text-left">
-                                        <h3 className="text-3xl font-black mb-2 text-[#2c3e50]">GABOJAGO TICKET</h3>
-                                        <p className="text-gray-400 mb-6 font-mono text-sm break-all">{myTicket.qr_code}</p>
-                                        <div className="py-2 px-6 bg-blue-600 text-white inline-block rounded-full font-bold text-sm">
-                                            ENTRY TICKET CONFIRMED
+                                <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                                    <AnimatePresence mode="wait">
+                                        {activeSection === 'message' && (
+                                            <motion.div
+                                                key="msg"
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -20 }}
+                                                className="space-y-12"
+                                            >
+                                                <div className="space-y-6">
+                                                    <h2 className="text-5xl font-bold leading-tight text-gray-900 break-keep">
+                                                        {invitation.title}
+                                                    </h2>
+                                                    <div className="w-12 h-1 bg-[#E74C3C]" />
+                                                    <p className="text-2xl font-light text-gray-500 leading-relaxed whitespace-pre-wrap">
+                                                        {invitation.description}
+                                                    </p>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 gap-6">
+                                                    <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
+                                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#E74C3C] shadow-sm">
+                                                            <Calendar size={32} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">When</p>
+                                                            <p className="text-2xl font-bold text-gray-900">
+                                                                {new Date(invitation.event_date).toLocaleDateString('ko-KR', {
+                                                                    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+                                                                })}
+                                                            </p>
+                                                            <p className="text-gray-500 font-medium">
+                                                                {new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
+                                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm">
+                                                            <MapPin size={32} />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
+                                                            <p className="text-2xl font-bold text-gray-900 break-keep">
+                                                                {invitation.location}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+
+                                        {activeSection === 'schedule' && (
+                                            <motion.div
+                                                key="sch"
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -20 }}
+                                                className="space-y-8"
+                                            >
+                                                <h3 className="text-3xl font-bold text-gray-900">Time Table</h3>
+                                                <div className="space-y-6 relative border-l-2 border-gray-100 pl-8 ml-4">
+                                                    {[
+                                                        { time: '14:00', title: '웰컴 리셉션 & 축하공연' },
+                                                        { time: '15:00', title: '메인 이벤트 - 공식행사' },
+                                                        { time: '16:30', title: '네트워킹 파티 & 자유 대화' },
+                                                        { time: '18:00', title: '클로징 & 기념품 증정' }
+                                                    ].map((item, idx) => (
+                                                        <div key={idx} className="relative">
+                                                            <div className="absolute -left-[45px] top-2 w-6 h-6 bg-white border-2 border-indigo-500 rounded-full z-10" />
+                                                            <p className="text-indigo-600 font-black text-sm mb-1">{item.time}</p>
+                                                            <p className="text-xl font-bold text-gray-800">{item.title}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </motion.div>
+                                        )}
+
+                                        {activeSection === 'map' && (
+                                            <motion.div
+                                                key="map"
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -20 }}
+                                                className="space-y-8 h-full flex flex-col"
+                                            >
+                                                <h3 className="text-3xl font-bold text-gray-900">찾아오시는 길</h3>
+                                                <div className="bg-gray-100 rounded-[2rem] flex-1 flex flex-col items-center justify-center p-12 text-center text-gray-400 space-y-4">
+                                                    <MapPin size={48} className="opacity-20" />
+                                                    <p className="font-bold">지도를 준비 중입니다</p>
+                                                    <p className="text-sm opacity-60 break-keep">{invitation.location}</p>
+                                                    <button className="mt-4 px-6 py-3 bg-white text-blue-600 rounded-full font-bold shadow-sm hover:shadow-md transition-all">
+                                                        카카오맵으로 보기
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* Floating RSVP Button in Spread */}
+                                <div className="p-12 border-t border-gray-50 flex gap-4">
+                                    {!hasResponded ? (
+                                        <button
+                                            onClick={() => setShowRsvpModal(true)}
+                                            className="flex-1 py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-black shadow-2xl shadow-red-100 hover:scale-[1.02] active:scale-95 transition-all"
+                                        >
+                                            참석 가능합니다!
+                                        </button>
+                                    ) : (
+                                        <div className="flex-1 flex gap-4">
+                                            <div className="flex-1 py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3">
+                                                <CheckCircle2 size={32} /> 참석 예약 완료
+                                            </div>
+                                            <button
+                                                onClick={() => (window as any).triggerSignupModal?.()}
+                                                className="flex-1 py-6 bg-black text-white rounded-2xl text-xl font-black shadow-2xl hover:bg-gray-900 transition-all flex items-center justify-center gap-3"
+                                            >
+                                                보관함에 저장하기 <ArrowRight size={24} />
+                                            </button>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Scroll Footer */}
-                            <div className="mt-40 text-white/20 text-[10px] font-black uppercase tracking-[1em] flex flex-col items-center gap-4 py-20">
-                                Wayo Premium Experience
-                                <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
-                                    <ArrowDown size={20} />
-                                </motion.div>
+                                    )}
+                                    <button className="p-6 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors">
+                                        <Share2 size={32} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
+                        {/* Back Button (Retract to Envelope - Optional) */}
+                        <button
+                            onClick={() => setStage('intro')}
+                            className="mt-12 text-white/20 hover:text-white/40 font-black text-[10px] uppercase tracking-[1em] transition-colors"
+                        >
+                            Back to Intro
+                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>
