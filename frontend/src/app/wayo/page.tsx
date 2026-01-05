@@ -170,7 +170,7 @@ export default function WayoHome() {
           <a href="#" className="hover:text-[#E74C3C]">Contact</a>
           <a href="#" className="hover:text-[#E74C3C]">Blog</a>
         </div>
-        <p className="text-xs opacity-30">© 2026 WAYO Invitation Service. GABOJAGO Corp. All rights reserved.</p>
+        <p className="text-xs opacity-30">© 2026 WAYO Invitation Service. All rights reserved.</p>
       </footer>
 
       <style jsx global>{`
