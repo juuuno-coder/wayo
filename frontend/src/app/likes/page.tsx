@@ -16,7 +16,7 @@ export default function LikesPage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) {
       setIsLoggedIn(false);
       setLoading(false);

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NextImage from "next/image";
 import { Sparkles, Heart, Zap, MousePointer2 } from "lucide-react";
@@ -15,6 +16,19 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function WayoHome() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("authToken"));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
+    setIsLoggedIn(false);
+    router.push("/wayo");
+  };
 
   return (
     <div className={`min-h-screen bg-[#FDFBF7] text-[#5D4037] ${inter.className} overflow-x-hidden`}>
@@ -23,15 +37,26 @@ export default function WayoHome() {
         <div className={`text-2xl text-[#E74C3C] tracking-tighter ${blackHanSans.className}`}>WAYO</div>
         <div className="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest opacity-60">
           <a href="#features" className="hover:text-[#E74C3C] transition-colors">Features</a>
-          <a href="#samples" className="hover:text-[#E74C3C] transition-colors">Samples</a>
+          <a href="/invitations/manage" className="hover:text-[#E74C3C] transition-colors">My Invitations</a>
           <a href="#faq" className="hover:text-[#E74C3C] transition-colors">FAQ</a>
         </div>
-        <button
-          onClick={() => router.push('/login')}
-          className="px-6 py-2 rounded-full border border-[#E74C3C]/20 text-sm font-bold hover:bg-[#E74C3C] hover:text-white transition-all active:scale-95"
-        >
-          Login
-        </button>
+        <div className="flex gap-4">
+          {!isLoggedIn ? (
+            <button
+              onClick={() => router.push('/login')}
+              className="px-6 py-2 rounded-full border border-[#E74C3C]/20 text-sm font-bold hover:bg-[#E74C3C] hover:text-white transition-all active:scale-95"
+            >
+              Login
+            </button>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="px-6 py-2 rounded-full border border-[#5D4037]/20 text-sm font-bold hover:bg-[#5D4037] hover:text-white transition-all active:scale-95"
+            >
+              Logout
+            </button>
+          )}
+        </div>
       </nav>
 
       {/* Hero Section */}

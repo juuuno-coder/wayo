@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NextImage from "next/image";
 import {
     ArrowLeft,
     Users,
@@ -115,6 +116,16 @@ export default function ManageInvitationsPage() {
                                 onClick={() => router.push(`/invitations/${invite.id}`)}
                             >
                                 <div className="p-5">
+                                    {invite.image_urls && invite.image_urls.length > 0 && (
+                                        <div className="relative w-full h-40 mb-4 rounded-2xl overflow-hidden">
+                                            <NextImage
+                                                src={invite.image_urls[0]}
+                                                alt={invite.title}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    )}
                                     <div className="flex justify-between items-start mb-4">
                                         <h3 className="font-bold text-xl text-gray-900 leading-tight flex-1 mr-4">
                                             {invite.title}

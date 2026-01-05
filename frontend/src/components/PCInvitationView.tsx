@@ -141,7 +141,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                 {/* Image Side */}
                                 <div className="flex-1 relative h-1/2 md:h-full min-h-[300px]">
                                     <NextImage
-                                        src={invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
+                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
                                         alt="Cover"
                                         fill
                                         className="object-cover"
@@ -203,6 +203,21 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                     </div>
                                 </div>
                             </motion.div>
+
+                            {/* Gallery Section - More Images */}
+                            {invitation.image_urls && invitation.image_urls.length > 1 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 50 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    className="mt-20 w-full max-w-6xl grid grid-cols-2 md:grid-cols-3 gap-6"
+                                >
+                                    {invitation.image_urls.slice(1).map((url: string, idx: number) => (
+                                        <div key={idx} className="aspect-square relative rounded-[2rem] overflow-hidden shadow-2xl group">
+                                            <NextImage src={url} alt={`Gallery ${idx}`} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                                        </div>
+                                    ))}
+                                </motion.div>
+                            )}
 
                             {/* Ticket Section (If exists) */}
                             {hasResponded && myTicket && (

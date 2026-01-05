@@ -68,7 +68,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) {
       alert("로그인이 필요합니다.");
       router.push("/login");

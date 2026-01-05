@@ -60,7 +60,7 @@ export default function CreateInvitationPage() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:3401/ticket_types')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/ticket_types`)
       .then(res => res.json())
       .then(data => setTicketTypes(data))
       .catch(err => console.error("Failed to load tickets", err));
@@ -111,19 +111,32 @@ export default function CreateInvitationPage() {
 
   const handleSubmit = async () => {
     try {
+      const formDataToSend = new FormData();
+
+      // Append invitation attributes
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null) {
+          formDataToSend.append(`invitation[${key}]`, value.toString());
+        }
+      });
+
+      // Append image files
+      imageFiles.forEach((file) => {
+        formDataToSend.append("invitation[images][]", file);
+      });
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": localStorage.getItem("authToken") || ""
         },
-        body: JSON.stringify({ invitation: formData })
+        body: formDataToSend
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         if (!token) {
           const pending = JSON.parse(localStorage.getItem("pending_invitations") || "[]");
           if (!pending.includes(data.id)) {
@@ -141,6 +154,7 @@ export default function CreateInvitationPage() {
       }
     } catch (error) {
       console.error("Error creating invitation:", error);
+      alert("서버 오류가 발생했습니다.");
     }
   };
 

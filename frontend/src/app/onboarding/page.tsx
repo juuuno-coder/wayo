@@ -29,7 +29,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     // Check if user is logged in, if not redirect
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) {
       router.replace("/login");
     }

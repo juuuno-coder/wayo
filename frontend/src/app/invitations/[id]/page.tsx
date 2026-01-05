@@ -70,7 +70,7 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`, {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
         }
       });
       if (res.ok) {
@@ -166,7 +166,7 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
         },
         body: JSON.stringify({
           guest: {
@@ -227,7 +227,7 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
         },
         body: JSON.stringify({
           guest: {
@@ -349,8 +349,13 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
         {/* Poster / Cover Area */}
         <div className="relative h-[600px] bg-gray-50 flex items-center justify-center overflow-hidden">
           {/* Mock Poster if no image */}
-          {invitation.cover_image_url ? (
-            <NextImage src={invitation.cover_image_url} alt="Cover" fill className="object-cover" />
+          {(invitation.image_urls && invitation.image_urls.length > 0) || invitation.cover_image_url ? (
+            <NextImage
+              src={invitation.image_urls?.[0] || invitation.cover_image_url}
+              alt="Cover"
+              fill
+              className="object-cover"
+            />
           ) : (
             <div className="absolute inset-0 bg-[#F5F5F0] p-10 flex flex-col items-center justify-center text-center border-12 border-white inner-border">
               <p className="font-serif text-[#8D6E63] text-sm tracking-[0.5em] mb-6">INVITATION</p>
@@ -374,9 +379,20 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
         <div className="p-8 pb-32 bg-white relative -mt-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-10">
           <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-10"></div>
 
-          <div className={`prose prose-stone mx-auto text-center leading-loose text-gray-600 mb-14 whitespace-pre-wrap ${fontClass}`}>
+          <div className="prose prose-stone mx-auto text-center leading-loose text-gray-600 mb-10 whitespace-pre-wrap ${fontClass}">
             {invitation.description}
           </div>
+
+          {/* Gallery Section */}
+          {invitation.image_urls && invitation.image_urls.length > 1 && (
+            <div className="grid grid-cols-2 gap-2 mb-14">
+              {invitation.image_urls.slice(1).map((url: string, idx: number) => (
+                <div key={idx} className="aspect-square relative rounded-2xl overflow-hidden shadow-sm">
+                  <NextImage src={url} alt={`Gallery ${idx}`} fill className="object-cover" />
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="space-y-8">
             {/* Info Section */}
