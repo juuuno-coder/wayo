@@ -52,7 +52,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
             {/* Background Ambience */}
             <div className="absolute inset-0 z-0">
                 <NextImage
-                    src={invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
+                    src={invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
                     alt="Ambience"
                     fill
                     className="object-cover opacity-10 blur-xl scale-110"
@@ -73,7 +73,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                     >
                         <div className="relative w-[500px] h-[350px]">
                             <NextImage
-                                src="/images/wayo_envelope_3d.jpg"
+                                src="/images/wayo_envelope_3d.png"
                                 alt="Envelope"
                                 fill
                                 className="object-contain drop-shadow-[0_50px_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-700"
@@ -141,7 +141,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                 {/* Image Side */}
                                 <div className="flex-1 relative h-1/2 md:h-full min-h-[300px]">
                                     <NextImage
-                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
+                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
                                         alt="Cover"
                                         fill
                                         className="object-cover"

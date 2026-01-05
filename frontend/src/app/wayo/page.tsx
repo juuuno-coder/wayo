@@ -126,10 +126,10 @@ export default function WayoHome() {
             className="relative w-full h-full"
           >
             <NextImage
-              src="/images/wayo_envelope_3d.jpg"
+              src="/images/wayo_envelope_3d.png"
               alt="WAYO Envelope"
               fill
-              className="object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.15)] mix-blend-multiply"
+              className="object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.15)]"
             />
           </motion.div>
 
