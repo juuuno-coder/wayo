@@ -1,0 +1,3 @@
+Starting debug 2...
+Path to require: C:/Users/주노/Desktop/gabojago/backend/config/boot
+Success!

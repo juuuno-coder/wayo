@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# Frozen_string_literal: true
+
+# Workaround for Korean path issues on Windows where __dir__ is corrupted
+APP_ROOT = Dir.pwd
+APP_PATH = File.expand_path("config/application", APP_ROOT)
+require File.expand_path("config/boot", APP_ROOT)
+require "rails/commands"

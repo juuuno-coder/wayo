@@ -1,0 +1,10 @@
+# Recurring tasks for Solid Queue
+production:
+  fetch_events:
+    class: FetchEventsJob
+    schedule: "0 3 * * *" # Every day at 3 AM KST (UTC 18:00 prev day)
+
+development:
+  fetch_events:
+    class: FetchEventsJob
+    schedule: "Every 1 hour"

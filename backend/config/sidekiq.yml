@@ -1,0 +1,27 @@
+# Sidekiq 설정
+:concurrency: 5
+
+# 큐 우선순위 설정
+:queues:
+  - critical
+  - default
+  - low
+
+# Redis 연결 설정
+:redis:
+  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
+
+# 크론 작업 스케줄
+:schedule:
+  # 매일 새벽 3시에 이벤트 크롤링
+  event_crawler:
+    cron: "0 3 * * *" # 매일 03:00 AM
+    class: "EventCrawlerWorker"
+    description: "전국 이벤트 정보 크롤링 (축제, 전시회, 공모전)"
+
+  # 매주 월요일 오전 9시에 크롤링 (추가 옵션)
+  weekly_event_crawler:
+    cron: "0 9 * * 1" # 매주 월요일 09:00 AM
+    class: "EventCrawlerWorker"
+    description: "주간 이벤트 정보 업데이트"
+    active: false # 필요시 활성화

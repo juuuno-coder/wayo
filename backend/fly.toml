@@ -1,0 +1,21 @@
+# fly.toml 파일 내용 (backend 폴더에 생성)
+app = "wayo"
+primary_region = "nrt" # 도쿄 지역 (한국에서 가장 빠름)
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  RAILS_ENV = "production"
+  DATABASE_URL = "sqlite3:///rails/storage/production.sqlite3"
+
+[[mounts]]
+  source = "rails_storage"
+  destination = "/rails/storage"
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
