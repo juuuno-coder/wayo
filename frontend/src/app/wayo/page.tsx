@@ -129,7 +129,7 @@ export default function WayoHome() {
               src="/images/wayo_envelope_3d.png"
               alt="WAYO Envelope"
               fill
-              className="object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.15)]"
+              className="object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.15)] mix-blend-multiply"
             />
           </motion.div>
 

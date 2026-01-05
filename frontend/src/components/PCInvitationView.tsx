@@ -76,7 +76,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                 src="/images/wayo_envelope_3d.png"
                                 alt="Envelope"
                                 fill
-                                className="object-contain drop-shadow-[0_50px_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-700"
+                                className="object-contain drop-shadow-[0_50px_100px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-700 mix-blend-multiply"
                             />
 
                             {/* Wax Seal / Button */}
