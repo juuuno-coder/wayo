@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useEditorStore, ContentBlock } from '@/store/useEditorStore';
+import { useEditorStore } from '@/store/useEditorStore';
+import { ContentBlock } from '@/types/block';
 import { GripVertical, Trash2 } from 'lucide-react';
 
 // Block Renderers
