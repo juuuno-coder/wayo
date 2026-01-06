@@ -107,6 +107,13 @@ export default function WayoLogin() {
                     <button type="submit" className="w-full py-3.5 text-sm font-bold text-gray-400 hover:text-[#E02424] transition-colors">
                         로그인하기 →
                     </button>
+
+                    <div className="text-center mt-6">
+                        <Link href="/signup" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-[#E02424] font-bold text-sm transition-all active:scale-95">
+                            <span>아직 계정이 없으신가요?</span>
+                            <span className="text-[#E02424]">회원가입</span>
+                        </Link>
+                    </div>
                 </form>
 
                 {/* Footer Card */}
