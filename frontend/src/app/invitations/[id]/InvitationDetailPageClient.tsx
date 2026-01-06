@@ -18,6 +18,8 @@ import PCInvitationView from "@/components/PCInvitationView";
 import InvitationRSVPForm from "@/components/InvitationRSVPForm";
 import SignupPromptModal from "@/components/SignupPromptModal";
 import SendInvitationModal from "@/components/SendInvitationModal";
+import BlockRenderer from "@/components/blocks/BlockRenderer";
+import InvitationFooter from "@/components/InvitationFooter";
 
 const themes: Record<string, { bg: string, text: string, button: string, accent: string }> = {
   classic: { bg: 'bg-[#2C3E50]', text: 'text-white', button: 'bg-[#E0F7FA] text-[#2C3E50]', accent: 'bg-white/10' },
@@ -68,7 +70,23 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     fetchInvitation();
     checkOwnership();
     fetchGuests(); // To check if I already RSVP'd
+    trackView();
   }, [id]);
+
+  const trackView = async () => {
+    const viewKey = `wayo_view_${id}`;
+    // Simple session-based debounce (reset on browser close or manual clear)
+    if (sessionStorage.getItem(viewKey)) return;
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/track_view`, {
+        method: "POST"
+      });
+      sessionStorage.setItem(viewKey, "true");
+    } catch (e) {
+      console.error("Tracking failed", e);
+    }
+  };
 
   const checkOwnership = () => {
     // In a real app, compare current user ID with invitation.user_id
@@ -378,148 +396,82 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           </div>
         </div>
 
+        import BlockRenderer from "@/components/blocks/BlockRenderer";
+        // ... inside the component
+        // ...
+
         {/* Content Body */}
-        <div className="p-8 pb-32 bg-white relative -mt-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-10">
-          <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-10"></div>
+        <div className="bg-white relative -mt-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-10 min-h-[500px] overflow-hidden">
 
-          <div className="prose prose-stone mx-auto text-center leading-loose text-gray-600 mb-10 whitespace-pre-wrap ${fontClass}">
-            {invitation.description}
-          </div>
-
-          {/* Gallery Section */}
-          {invitation.image_urls && invitation.image_urls.length > 1 && (
-            <div className="grid grid-cols-2 gap-2 mb-14">
-              {invitation.image_urls.slice(1).map((url: string, idx: number) => (
-                <div key={idx} className="aspect-square relative rounded-2xl overflow-hidden shadow-sm">
-                  <NextImage src={url} alt={`Gallery ${idx}`} fill className="object-cover" />
-                </div>
+          {/* Case 1: Block Editor Content */}
+          {invitation.content_blocks && invitation.content_blocks.length > 0 ? (
+            <div className="pb-10">
+              {invitation.content_blocks.map((block: any) => (
+                <BlockRenderer key={block.id} block={block} />
               ))}
+            </div>
+          ) : (
+            /* Case 2: Legacy Content (Original View) */
+            <div className="p-8 pb-10">
+              <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-10"></div>
+              <div className={`prose prose-stone mx-auto text-center leading-loose text-gray-600 mb-10 whitespace-pre-wrap ${fontClass}`}>
+                {invitation.description}
+              </div>
+
+              {/* Gallery Section */}
+              {invitation.image_urls && invitation.image_urls.length > 1 && (
+                <div className="grid grid-cols-2 gap-2 mb-14">
+                  {invitation.image_urls.slice(1).map((url: string, idx: number) => (
+                    <div key={idx} className="aspect-square relative rounded-2xl overflow-hidden shadow-sm">
+                      <NextImage src={url} alt={`Gallery ${idx}`} fill className="object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="border-y border-gray-100 py-10 space-y-8 mb-8">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 mb-1">
+                    <Calendar size={20} />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date</p>
+                    <p className="font-bold text-gray-900 text-xl">
+                      {new Date(invitation.event_date).toLocaleString('ko-KR')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 mb-1">
+                    <MapPin size={20} />
+                  </div>
+                  <div className="text-center w-full">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Location</p>
+                    <p className="font-bold text-gray-900 text-xl break-keep px-4">
+                      {invitation.location}
+                    </p>
+                    {/* Map Link Button (Optional) */}
+                    <button className="mt-2 text-xs text-blue-500 underline underline-offset-4">지도 보기</button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
-          <div className="space-y-8">
-            {/* Info Section */}
-            <div className="border-y border-gray-100 py-10 space-y-8">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 mb-1">
-                  <Calendar size={20} />
-                </div>
-                <div className="text-center">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date</p>
-                  <p className="font-bold text-gray-900 text-xl">
-                    {new Date(invitation.event_date).toLocaleString('ko-KR')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 mb-1">
-                  <MapPin size={20} />
-                </div>
-                <div className="text-center w-full">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Location</p>
-                  <p className="font-bold text-gray-900 text-xl break-keep px-4">
-                    {invitation.location}
-                  </p>
-                  {/* Map Link Button (Optional) */}
-                  <button className="mt-2 text-xs text-blue-500 underline underline-offset-4">지도 보기</button>
-                </div>
-              </div>
-            </div>
+          {/* Common Footer (RSVP & Actions) */}
+          <InvitationFooter
+            id={id as string}
+            isCreator={isCreator}
+            hasResponded={hasResponded}
+            myTicket={myTicket}
+            onShare={handleShare}
+            onAddToCalendar={addToCalendar}
+            onShowSendModal={() => setShowSendModal(true)}
+            setHasResponded={setHasResponded}
+            setMyTicket={setMyTicket}
+            setShowSignupModal={setShowSignupModal}
+          />
 
-            {/* ... Buttons ... */}
-
-            {/* Share Button (All Users) */}
-            <div className="flex gap-3">
-              <button
-                onClick={handleShare}
-                className="flex-1 py-4 bg-gray-100 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
-              >
-                <Share2 size={20} /> 링크 공유하기
-              </button>
-            </div>
-
-            {/* Action Buttons based on Role */}
-            {isCreator ? (
-              <div className="space-y-3">
-                <button
-                  onClick={() => router.push('/')}
-                  className="w-full py-4 bg-green-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-200"
-                >
-                  <Megaphone size={20} /> 내 행사 가보자고에 홍보하기
-                </button>
-                <button
-                  onClick={() => setShowSendModal(true)}
-                  className="w-full py-4 bg-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
-                >
-                  <Send size={20} /> 회원에게 보내기
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={addToCalendar}
-                className="w-full py-4 bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
-              >
-                <CalendarPlus size={20} /> 가보자고 캘린더에 일정 등록
-              </button>
-            )}
-
-            {/* RSVP Section */}
-            <div className="bg-[#FAFAFA] rounded-2xl p-6">
-              {!hasResponded ? (
-                <div className="space-y-4">
-                  <h3 className="text-center font-bold text-gray-900 mb-6">참석 여부를 알려주세요</h3>
-                  <InvitationRSVPForm
-                    invitationId={id as string}
-                    onSuccess={(data) => {
-                      setHasResponded(true);
-                      if (data.ticket) setMyTicket(data.ticket);
-                      // Trigger Signup Prompt for Guests
-                      if (!localStorage.getItem("authToken")) {
-                        setShowSignupModal(true);
-                      }
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="text-center py-6 animate-in zoom-in">
-                  <CheckCircle2 size={48} className="text-green-500 mx-auto mb-4" />
-                  <p className="font-bold text-gray-900 text-lg">참석이 확인되었습니다!</p>
-                  <p className="text-gray-500 mt-2 text-sm mb-6">소중한 발걸음 기다리겠습니다.</p>
-
-                  {/* Ticket / QR Code Section */}
-                  {myTicket && (
-                    <div className="bg-white border-2 border-gray-900 rounded-2xl p-6 shadow-xl max-w-xs mx-auto transform hover:scale-105 transition-transform">
-                      <div className="text-xl font-black text-gray-900 mb-2 border-b-2 border-dashed border-gray-200 pb-2">
-                        GABOJAGO TICKET
-                      </div>
-                      <div className="bg-gray-100 p-2 rounded-lg mb-4">
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${myTicket.qr_code}`}
-                          alt="QR Code"
-                          className="w-full aspect-square"
-                        />
-                      </div>
-                      <p className="text-xs font-mono text-gray-400 break-all">{myTicket.qr_code}</p>
-                      <p className="text-sm font-bold text-blue-600 mt-2">입장 시 이 코드를 보여주세요!</p>
-                    </div>
-                  )}
-
-                  {!myTicket && (
-                    <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                      <p className="text-blue-800 font-bold mb-2">✨ 더 편리하게 이용하세요</p>
-                      <button
-                        onClick={() => router.push('/signup')}
-                        className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors"
-                      >
-                        가입하고 내 티켓 저장하기
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-          </div>
         </div>
       </div>
     </div>
