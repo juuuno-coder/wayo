@@ -4,6 +4,7 @@ import VideoBlockEditor from './VideoBlockEditor';
 import GalleryBlockEditor from './GalleryBlockEditor';
 import ScheduleBlockEditor from './ScheduleBlockEditor';
 import RSVPBlockEditor from './RSVPBlockEditor';
+import MapBlockEditor from './MapBlockEditor';
 
 export default function PropertyPanel() {
     const { blocks, activeBlockId, updateBlock } = useEditorStore();
@@ -90,20 +91,10 @@ export default function PropertyPanel() {
 
                 {/* Map Properties */}
                 {activeBlock.type === 'map' && (
-                    <>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500">Location Name</label>
-                            <input
-                                type="text"
-                                value={activeBlock.data.location || ''}
-                                onChange={(e) => handleChange('location', e.target.value)}
-                                className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            />
-                        </div>
-                        <p className="text-xs text-gray-400 bg-blue-50 text-blue-600 p-3 rounded-lg">
-                            To update the exact coordinates, please use the main form or a map picker (Coming Soon).
-                        </p>
-                    </>
+                    <MapBlockEditor
+                        data={activeBlock.data as any}
+                        onChange={handleDataChange}
+                    />
                 )}
 
                 {/* Image Properties */}
