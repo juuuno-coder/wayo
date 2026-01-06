@@ -20,6 +20,7 @@ import SignupPromptModal from "@/components/SignupPromptModal";
 import SendInvitationModal from "@/components/SendInvitationModal";
 import BlockRenderer from "@/components/blocks/BlockRenderer";
 import InvitationFooter from "@/components/InvitationFooter";
+import { ThemeContext } from "@/contexts/ThemeContext";
 
 const themes: Record<string, { bg: string, text: string, button: string, accent: string }> = {
   classic: { bg: 'bg-[#2C3E50]', text: 'text-white', button: 'bg-[#E0F7FA] text-[#2C3E50]', accent: 'bg-white/10' },
@@ -404,11 +405,18 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
         <div className="bg-white relative -mt-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-10 min-h-[500px] overflow-hidden">
 
           {/* Case 1: Block Editor Content */}
+          {/* Case 1: Block Editor Content */}
           {invitation.content_blocks && invitation.content_blocks.length > 0 ? (
             <div className="pb-10">
-              {invitation.content_blocks.map((block: any) => (
-                <BlockRenderer key={block.id} block={block} invitationId={id as string} />
-              ))}
+              <ThemeContext.Provider value={{
+                themeColor: invitation.theme_color,
+                fontStyle: invitation.font_style as any,
+                textEffect: invitation.text_effect as any,
+              }}>
+                {invitation.content_blocks.map((block: any) => (
+                  <BlockRenderer key={block.id} block={block} invitationId={id as string} />
+                ))}
+              </ThemeContext.Provider>
             </div>
           ) : (
             /* Case 2: Legacy Content (Original View) */
