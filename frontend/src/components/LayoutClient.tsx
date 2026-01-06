@@ -9,32 +9,42 @@ import { useState } from "react";
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isWayoDomain, setIsWayoDomain] = useState(false);
+
+  useEffect(() => {
+    // Check if current domain is Wayo (excluding gabojago subdomain)
+    const hostname = window.location.hostname;
+    setIsWayoDomain(
+      (hostname.includes('wayo.co.kr') || hostname === 'localhost') &&
+      !hostname.includes('gabojago')
+    );
+  }, []);
 
   const isAdminPage = pathname?.startsWith("/admin");
-  const isSideApp = pathname?.startsWith("/wayo") || pathname?.startsWith("/invitations");
+  const isSideApp = pathname?.startsWith("/invitations");
 
-  // 1. 관리자 페이지는 전체 화면
-  if (isAdminPage) {
+  // 1. 관리자 페이지나 Wayo 메인 도메인은 전체 화면 (PC 버전 그대로 노출)
+  if (isAdminPage || isWayoDomain) {
     return <>{children}</>;
   }
 
   // 2. 사이드 앱 (WAYO/초대장) 내부 진입 시 - 심플 레이아웃 (iframe 내부에서 보여질 화면)
   if (isSideApp) {
-     return (
-        <div className="min-h-screen bg-white">
-           {children}
-        </div>
-     );
+    return (
+      <div className="min-h-screen bg-white">
+        {children}
+      </div>
+    );
   }
 
   // 3. 메인 앱 개발 환경 (듀얼 스크린 + PC 설명)
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex justify-center overflow-x-hidden p-4 lg:p-8">
       <div className="w-full max-w-[1600px] flex gap-8 items-center relative">
-        
+
         {/* Left: PC Branding Area */}
         <div className="flex-1 hidden xl:flex flex-col justify-center animate-in fade-in slide-in-from-left duration-1000">
-           <div className="max-w-xl">
+          <div className="max-w-xl">
             <div className="mb-10">
               <h1 className="text-6xl font-black tracking-tighter text-gray-900 mb-4 drop-shadow-sm">
                 가보자고<span className="text-green-500">!</span>
@@ -94,49 +104,49 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
         {/* Right: Dual Mobile Screens */}
         <div className="flex gap-6 lg:gap-10 shrink-0 animate-in zoom-in-95 duration-500">
-          
+
           {/* Gabojago App */}
           <div className="relative group">
-             <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gray-400 text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                <Smartphone size={14} /> Gabojago
-             </div>
-             <div className="w-[360px] h-[780px] bg-white rounded-[40px] overflow-hidden border-[6px] border-gray-800 shadow-2xl relative">
-                <main className="h-full overflow-y-auto overflow-x-hidden scrollbar-hide bg-[#F3F4F6]">
-                  {children}
-                  <div className="h-24"></div> 
-                </main>
-                <BottomNav />
-                <FloatingActionButton />
-             </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-gray-400 text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+              <Smartphone size={14} /> Gabojago
+            </div>
+            <div className="w-[360px] h-[780px] bg-white rounded-[40px] overflow-hidden border-[6px] border-gray-800 shadow-2xl relative">
+              <main className="h-full overflow-y-auto overflow-x-hidden scrollbar-hide bg-[#F3F4F6]">
+                {children}
+                <div className="h-24"></div>
+              </main>
+              <BottomNav />
+              <FloatingActionButton />
+            </div>
           </div>
 
           {/* WAYO Project */}
           <div className="relative group hidden 2xl:block">
-             <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-pink-400 text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                <Smartphone size={14} /> WAYO Project
-             </div>
-             
-             <button 
-               onClick={() => setRefreshKey(prev => prev + 1)}
-               className="absolute -right-10 top-1/2 -translate-y-1/2 p-2 text-gray-300 hover:text-gray-600 transition-colors"
-               title="Reload"
-             >
-               <RefreshCw size={20} />
-             </button>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-pink-400 text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+              <Smartphone size={14} /> WAYO Project
+            </div>
 
-             <div className="w-[360px] h-[780px] bg-white rounded-[40px] overflow-hidden border-[6px] border-gray-800 shadow-2xl relative">
-                <iframe 
-                  key={refreshKey}
-                  src="/wayo" 
-                  className="w-full h-full border-none bg-white"
-                  title="WAYO App"
-                />
-             </div>
+            <button
+              onClick={() => setRefreshKey(prev => prev + 1)}
+              className="absolute -right-10 top-1/2 -translate-y-1/2 p-2 text-gray-300 hover:text-gray-600 transition-colors"
+              title="Reload"
+            >
+              <RefreshCw size={20} />
+            </button>
+
+            <div className="w-[360px] h-[780px] bg-white rounded-[40px] overflow-hidden border-[6px] border-gray-800 shadow-2xl relative">
+              <iframe
+                key={refreshKey}
+                src="/wayo"
+                className="w-full h-full border-none bg-white"
+                title="WAYO App"
+              />
+            </div>
           </div>
 
         </div>
       </div>
-      
+
       {/* Background Decoration */}
       <div className="hidden lg:block fixed left-0 bottom-0 w-1/2 h-1/3 bg-linear-to-t from-green-50/50 to-transparent -z-10"></div>
     </div>
