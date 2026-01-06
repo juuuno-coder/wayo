@@ -27,12 +27,20 @@ export default function WayoLogin() {
             if (response.ok) {
                 const token = response.headers.get("Authorization");
                 if (token) localStorage.setItem("authToken", token);
+
                 const data = await response.json();
-                localStorage.setItem("userEmail", data.user.email);
-                localStorage.setItem("userId", String(data.user.id));
+                // Handle both { user: { email, id } } and { email, id } formats
+                const userData = data.user || data;
+
+                if (userData && userData.email) {
+                    localStorage.setItem("userEmail", userData.email);
+                    localStorage.setItem("userId", String(userData.id));
+                }
 
                 router.push("/");
             } else {
+                const errorText = await response.text();
+                console.error("Login failed:", response.status, errorText);
                 alert("이메일 또는 비밀번호를 다시 확인해주세요.");
             }
         } catch (error) {

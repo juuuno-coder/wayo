@@ -47,8 +47,13 @@ export default function GabojagoLogin() {
 
                 // 사용자 정보 저장
                 const data = await response.json();
-                localStorage.setItem("userEmail", data.user.email);
-                localStorage.setItem("userId", String(data.user.id));
+                // Handle both { user: { email, id } } and { email, id } formats
+                const userData = data.user || data;
+
+                if (userData && userData.email) {
+                    localStorage.setItem("userEmail", userData.email);
+                    localStorage.setItem("userId", String(userData.id));
+                }
 
                 // [New] Sync Pending Invitations
                 const pendingInvitations = localStorage.getItem("pending_invitations");
@@ -73,6 +78,8 @@ export default function GabojagoLogin() {
                 alert("로그인되었습니다.");
                 router.push("/");
             } else {
+                const errorText = await response.text();
+                console.error("Login failed:", response.status, errorText);
                 alert("이메일 또는 비밀번호를 확인해주세요.");
             }
         } catch (error) {
