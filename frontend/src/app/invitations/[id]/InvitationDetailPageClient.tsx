@@ -407,7 +407,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           {invitation.content_blocks && invitation.content_blocks.length > 0 ? (
             <div className="pb-10">
               {invitation.content_blocks.map((block: any) => (
-                <BlockRenderer key={block.id} block={block} />
+                <BlockRenderer key={block.id} block={block} invitationId={id as string} />
               ))}
             </div>
           ) : (

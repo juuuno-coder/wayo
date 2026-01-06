@@ -3,6 +3,13 @@ import { ContentBlock } from '@/types/block';
 import { MapPin, Calendar, Image as ImageIcon } from 'lucide-react';
 import NextImage from "next/image";
 
+// Import new block components
+import SpacerBlock from './SpacerBlock';
+import VideoBlock from './VideoBlock';
+import GalleryBlock from './GalleryBlock';
+import ScheduleBlock from './ScheduleBlock';
+import RSVPBlock from './RSVPBlock';
+
 // 1. Hero Block (View Only)
 const HeroBlock = ({ data }: { data: any }) => (
     <div className="relative h-[500px] flex items-center justify-center overflow-hidden bg-gray-50">
@@ -81,15 +88,29 @@ const DividerBlock = ({ data }: { data: any }) => (
 );
 
 // MAIN RENDERER
-export default function BlockRenderer({ block }: { block: ContentBlock }) {
+export default function BlockRenderer({ block, invitationId }: { block: ContentBlock; invitationId?: string }) {
     switch (block.type) {
-        case 'hero': return <HeroBlock data={block.data} />;
-        case 'text': return <TextBlock data={block.data} />;
-        case 'image': return <ImageBlock data={block.data} />;
-        case 'map': return <MapBlock data={block.data} />;
-        case 'divider': return <DividerBlock data={block.data} />;
-        // RSVP is handled specially in the main page usually, or we can render a placeholder if embedded mid-content
-        case 'rsvp': return null;
-        default: return null;
+        case 'hero':
+            return <HeroBlock data={block.data} />;
+        case 'text':
+            return <TextBlock data={block.data} />;
+        case 'image':
+            return <ImageBlock data={block.data} />;
+        case 'map':
+            return <MapBlock data={block.data} />;
+        case 'divider':
+            return <DividerBlock data={block.data} />;
+        case 'spacer':
+            return <SpacerBlock block={block as any} />;
+        case 'video':
+            return <VideoBlock block={block as any} />;
+        case 'gallery':
+            return <GalleryBlock block={block as any} />;
+        case 'schedule':
+            return <ScheduleBlock block={block as any} />;
+        case 'rsvp':
+            return <RSVPBlock block={block as any} invitationId={invitationId} />;
+        default:
+            return null;
     }
 }

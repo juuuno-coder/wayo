@@ -1,4 +1,9 @@
 import { useEditorStore } from '@/store/useEditorStore';
+import SpacerBlockEditor from './SpacerBlockEditor';
+import VideoBlockEditor from './VideoBlockEditor';
+import GalleryBlockEditor from './GalleryBlockEditor';
+import ScheduleBlockEditor from './ScheduleBlockEditor';
+import RSVPBlockEditor from './RSVPBlockEditor';
 
 export default function PropertyPanel() {
     const { blocks, activeBlockId, updateBlock } = useEditorStore();
@@ -8,6 +13,16 @@ export default function PropertyPanel() {
 
     const handleChange = (key: string, value: any) => {
         updateBlock(activeBlock.id, { [key]: value });
+    };
+
+    const handleDataChange = (newData: any) => {
+        blocks.forEach(block => {
+            if (block.id === activeBlock.id) {
+                Object.keys(newData).forEach(key => {
+                    updateBlock(activeBlock.id, { [key]: newData[key] });
+                });
+            }
+        });
     };
 
     return (
@@ -91,10 +106,76 @@ export default function PropertyPanel() {
                     </>
                 )}
 
-                {/* Default Fallback */}
-                {['divider', 'spacer', 'image', 'video', 'schedule', 'gallery', 'rsvp'].includes(activeBlock.type) && (
+                {/* Image Properties */}
+                {activeBlock.type === 'image' && (
+                    <>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500">Image URL</label>
+                            <input
+                                type="text"
+                                value={activeBlock.data.url || ''}
+                                onChange={(e) => handleChange('url', e.target.value)}
+                                placeholder="https://example.com/image.jpg"
+                                className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500">Caption</label>
+                            <input
+                                type="text"
+                                value={activeBlock.data.caption || ''}
+                                onChange={(e) => handleChange('caption', e.target.value)}
+                                placeholder="Image caption (optional)"
+                                className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            />
+                        </div>
+                    </>
+                )}
+
+                {/* Spacer Properties */}
+                {activeBlock.type === 'spacer' && (
+                    <SpacerBlockEditor
+                        data={activeBlock.data as { height: number }}
+                        onChange={handleDataChange}
+                    />
+                )}
+
+                {/* Video Properties */}
+                {activeBlock.type === 'video' && (
+                    <VideoBlockEditor
+                        data={activeBlock.data as any}
+                        onChange={handleDataChange}
+                    />
+                )}
+
+                {/* Gallery Properties */}
+                {activeBlock.type === 'gallery' && (
+                    <GalleryBlockEditor
+                        data={activeBlock.data as any}
+                        onChange={handleDataChange}
+                    />
+                )}
+
+                {/* Schedule Properties */}
+                {activeBlock.type === 'schedule' && (
+                    <ScheduleBlockEditor
+                        data={activeBlock.data as any}
+                        onChange={handleDataChange}
+                    />
+                )}
+
+                {/* RSVP Properties */}
+                {activeBlock.type === 'rsvp' && (
+                    <RSVPBlockEditor
+                        data={activeBlock.data}
+                        onChange={handleDataChange}
+                    />
+                )}
+
+                {/* Divider - No properties */}
+                {activeBlock.type === 'divider' && (
                     <div className="text-center py-10">
-                        <p className="text-gray-400 text-sm">No configurable properties yet for this block type.</p>
+                        <p className="text-gray-400 text-sm">Divider has no configurable properties.</p>
                     </div>
                 )}
             </div>
