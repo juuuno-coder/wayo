@@ -15,17 +15,24 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       
       # SPA 환경에서는 보통 리디렉션 URL에 토큰을 담는 방식이나
       # 혹은 특정 경로로 리디렉션 후 프론트에서 토큰을 가져가게 합니다.
-      redirect_uri = request.env['omniauth.origin'] || "http://localhost:3400/"
       
+      # origin 파라미터가 있으면 우선 사용, 없으면 omniauth.origin 혹은 기본값 사용
+      redirect_uri = params[:origin] || request.env['omniauth.origin'] || "http://wayo.co.kr/"
+      
+      # 보안 검증: 허용된 도메인인지 체크 (선택 사항이나 권장)
+      # if !ALLOWED_HOSTS.include?(URI.parse(redirect_uri).host)
+      #   redirect_uri = "http://wayo.co.kr/"
+      # end
+
       # 토큰을 쿼리 스트링으로 전달 (주의: 실제 상용에서는 보안상 포스트 메시지나 다른 방식 권장)
       redirect_to "#{redirect_uri}?token=#{token}&email=#{@user.email}&id=#{@user.id}"
     else
       session['devise.google_data'] = request.env['omniauth.auth'].except(:extra)
-      redirect_to "http://localhost:3400/login?error=auth_failed"
+      redirect_to "http://wayo.co.kr/login?error=auth_failed"
     end
   end
 
   def failure
-    redirect_to "http://localhost:3400/login?error=failure"
+    redirect_to "http://wayo.co.kr/login?error=failure"
   end
 end

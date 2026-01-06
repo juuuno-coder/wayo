@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MoveLeft, Heart, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -10,22 +10,20 @@ export default function WayoLogin() {
     const [password, setPassword] = useState("");
     const router = useRouter();
 
-    // Check for token in URL (after Google Login redirect)
-    useState(() => {
-        if (typeof window !== "undefined") {
-            const params = new URLSearchParams(window.location.search);
-            const token = params.get("token");
-            const email = params.get("email");
-            const id = params.get("id");
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const email = params.get("email");
+        const id = params.get("id");
 
-            if (token && email && id) {
-                localStorage.setItem("authToken", token);
-                localStorage.setItem("userEmail", email);
-                localStorage.setItem("userId", id);
-                window.location.href = "/"; // Clear query params
-            }
+        if (token && email && id) {
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("userId", id);
+            // Clean URL and redirect to home
+            router.replace("/");
         }
-    });
+    }, [router]);
 
     const handleGoogleLogin = () => {
         const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";

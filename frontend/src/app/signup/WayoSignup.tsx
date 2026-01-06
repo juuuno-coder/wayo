@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MoveLeft, Sparkles, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthModal from "@/components/AuthModal";
@@ -13,6 +13,26 @@ export default function WayoSignup() {
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [authModalData, setAuthModalData] = useState({ title: "", message: "" });
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const emailParam = params.get("email");
+        const id = params.get("id");
+
+        if (token && emailParam && id) {
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userEmail", emailParam);
+            localStorage.setItem("userId", id);
+            router.replace("/");
+        }
+    }, [router]);
+
+    const handleGoogleLogin = () => {
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";
+        const origin = window.location.origin;
+        window.location.href = `${backendUrl}/users/auth/google_oauth2?origin=${encodeURIComponent(origin)}`;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -118,6 +138,24 @@ export default function WayoSignup() {
                     className="w-full bg-[#E02424] hover:bg-[#C81E1E] active:scale-[0.98] text-white text-lg font-black py-4.5 rounded-2xl shadow-xl shadow-red-200 transition-all mt-4"
                 >
                     초대장 시작하기
+                </button>
+
+                <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-100"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-4 bg-white text-gray-400 font-bold uppercase tracking-wider text-[10px]">또는</span>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-4.5 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                    Google로 계속하기
                 </button>
             </form>
 
