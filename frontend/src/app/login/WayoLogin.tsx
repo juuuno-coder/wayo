@@ -64,7 +64,7 @@ export default function WayoLogin() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="이메일 입력"
-                        className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-base focus:bg-white focus:border-[#E02424] outline-none transition-colors font-medium"
+                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl text-base focus:border-[#E02424] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
                     />
                 </div>
                 <div>
@@ -73,7 +73,7 @@ export default function WayoLogin() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="비밀번호 입력"
-                        className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl text-base focus:bg-white focus:border-[#E02424] outline-none transition-colors font-medium"
+                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl text-base focus:border-[#E02424] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
                     />
                 </div>
 

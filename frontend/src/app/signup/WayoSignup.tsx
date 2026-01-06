@@ -74,7 +74,7 @@ export default function WayoSignup() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="이메일 주소"
-                        className="w-full px-5 py-4 bg-gray-50 border border-gray-100 focus:border-[#E02424] focus:bg-white rounded-2xl outline-none transition-all text-base font-medium"
+                        className="w-full px-5 py-4 bg-white border border-gray-200 focus:border-[#E02424] focus:ring-4 focus:ring-red-50 rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300"
                         required
                     />
                 </div>
@@ -85,7 +85,7 @@ export default function WayoSignup() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="비밀번호 (6자 이상)"
-                        className="w-full px-5 py-4 bg-gray-50 border border-gray-100 focus:border-[#E02424] focus:bg-white rounded-2xl outline-none transition-all text-base font-medium"
+                        className="w-full px-5 py-4 bg-white border border-gray-200 focus:border-[#E02424] focus:ring-4 focus:ring-red-50 rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300"
                         required
                         minLength={6}
                     />
@@ -97,7 +97,7 @@ export default function WayoSignup() {
                         value={passwordConfirm}
                         onChange={(e) => setPasswordConfirm(e.target.value)}
                         placeholder="비밀번호 다시 입력"
-                        className={`w-full px-5 py-4 bg-gray-50 border focus:bg-white rounded-2xl outline-none transition-all text-base font-medium ${passwordConfirm && password !== passwordConfirm ? 'border-red-400' : 'border-gray-100 focus:border-[#E02424]'}`}
+                        className={`w-full px-5 py-4 bg-white border focus:ring-4 rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300 ${passwordConfirm && password !== passwordConfirm ? 'border-red-400 focus:ring-red-50' : 'border-gray-200 focus:border-[#E02424] focus:ring-red-50'}`}
                         required
                     />
                 </div>

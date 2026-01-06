@@ -110,7 +110,7 @@ export default function GabojagoLogin() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="example@email.com"
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent focus:border-lime-500 focus:bg-white rounded-2xl outline-none transition-all text-lg font-medium"
+                        className="w-full px-6 py-4 bg-white border border-gray-200 focus:border-lime-500 focus:ring-4 focus:ring-lime-50 rounded-2xl outline-none transition-all text-lg font-medium placeholder:text-gray-300"
                         required
                     />
                 </div>
@@ -124,7 +124,7 @@ export default function GabojagoLogin() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent focus:border-lime-500 focus:bg-white rounded-2xl outline-none transition-all text-lg font-medium"
+                        className="w-full px-6 py-4 bg-white border border-gray-200 focus:border-lime-500 focus:ring-4 focus:ring-lime-50 rounded-2xl outline-none transition-all text-lg font-medium placeholder:text-gray-300"
                         required
                     />
                 </div>

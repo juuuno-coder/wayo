@@ -74,7 +74,7 @@ export default function GabojagoSignup() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="example@email.com"
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent focus:border-lime-500 focus:bg-white rounded-2xl outline-none transition-all text-lg font-medium"
+                        className="w-full px-6 py-4 bg-white border border-gray-200 focus:border-lime-500 focus:ring-4 focus:ring-lime-100 rounded-2xl outline-none transition-all text-lg font-medium placeholder:text-gray-300"
                         required
                     />
                 </div>
@@ -86,7 +86,7 @@ export default function GabojagoSignup() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="6자 이상 입력해주세요"
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent focus:border-lime-500 focus:bg-white rounded-2xl outline-none transition-all text-lg font-medium"
+                        className="w-full px-6 py-4 bg-white border border-gray-200 focus:border-lime-500 focus:ring-4 focus:ring-lime-100 rounded-2xl outline-none transition-all text-lg font-medium placeholder:text-gray-300"
                         required
                         minLength={6}
                     />
@@ -99,7 +99,7 @@ export default function GabojagoSignup() {
                         value={passwordConfirm}
                         onChange={(e) => setPasswordConfirm(e.target.value)}
                         placeholder="비밀번호 재입력"
-                        className={`w-full px-6 py-4 bg-gray-50 border-2 focus:bg-white rounded-2xl outline-none transition-all text-lg font-medium ${passwordConfirm && password !== passwordConfirm ? 'border-red-400' : 'border-transparent focus:border-lime-500'}`}
+                        className={`w-full px-6 py-4 bg-white border focus:ring-4 rounded-2xl outline-none transition-all text-lg font-medium placeholder:text-gray-300 ${passwordConfirm && password !== passwordConfirm ? 'border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-lime-500 focus:ring-lime-100'}`}
                         required
                     />
                 </div>
