@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DndContext, DragOverlay, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useEditorStore, BlockType } from '@/store/useEditorStore';
+import { useEditorStore } from '@/store/useEditorStore';
+import { BlockType } from '@/types/block';
 import { ArrowLeft, Plus, Save, Monitor, Smartphone, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
