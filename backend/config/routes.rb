@@ -10,13 +10,19 @@ Rails.application.routes.draw do
       post :sync
       get :received
     end
+    member do
+      post :track_view
+      get :stats
+    end
     resources :guests, controller: 'invitation_guests', only: [:index, :create]
   end
   resources :ticket_types, only: [:index, :show]
   resources :tickets, only: [:index, :show, :create] do
     post :verify, on: :collection
   end
-  devise_for :users, defaults: { format: :json }
+  devise_for :users, defaults: { format: :json }, controllers: {
+    registrations: 'users/registrations'
+  }
   resources :users, only: [:show, :update] do
     collection do
       get :search

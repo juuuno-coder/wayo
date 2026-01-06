@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   MapPin,
+  CheckCircle2,
   Sparkles
 } from "lucide-react";
 import NextImage from "next/image";
@@ -28,6 +29,7 @@ const steps = [
   { icon: "🎨", title: "어떤 분위기로\n초대장을 꾸밀까요?", subtitle: "마음에 드는 테마를 골라보세요." },
   { icon: "🎟️", title: "티켓을\n첨부하시겠어요?", subtitle: "참석자에게 발급할 티켓을 선택하세요." },
   { icon: "🎼", title: "어떤 감성을\n담아볼까요?", subtitle: "글씨체와 음악을 선택해보세요." },
+  { icon: "📰", title: "어떤 형태로\n보여줄까요?", subtitle: "PC 화면에서 보여질 기본 레이아웃을 골라주세요." },
   { icon: "💌", title: "소중한 분들에게\n전할 말이 있나요?", subtitle: "따뜻한 초대 문구를 적어주세요." },
   { icon: "✨", title: "거의 다 됐어요!\n마지막으로 확인해주세요", subtitle: "수정이 필요하면 이전을 눌러주세요." }
 ];
@@ -45,7 +47,8 @@ export default function CreateInvitationPage() {
     font_style: 'serif',
     bgm: 'none',
     text_effect: 'none',
-    ticket_type_id: null as number | null
+    ticket_type_id: null as number | null,
+    default_layout: 'spread'
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -145,10 +148,14 @@ export default function CreateInvitationPage() {
           }
           alert("초대장이 임시 저장되었습니다.\n로그인하면 영구 보관할 수 있습니다.");
         } else {
-          alert("초대장이 생성되었습니다!");
+          if (confirm("초대장이 생성되었습니다!\n고급 편집기로 이동하여 디자인을 꾸미시겠습니까?")) {
+            router.push(`/invitations/${data.id}/editor`);
+          } else {
+            router.push(`/invitations/${data.id}`);
+          }
         }
 
-        router.push(`/invitations/${data.id}`);
+
       } else {
         alert("초대장 생성에 실패했습니다.");
       }
@@ -165,7 +172,7 @@ export default function CreateInvitationPage() {
       case 0: return !formData.title;
       case 1: return !formData.event_date;
       case 2: return !formData.location;
-      case 7: return !formData.description;
+      case 8: return !formData.description; // Updated from 7
       default: return false;
     }
   };
@@ -501,8 +508,43 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 7: Description */}
+        {/* Step 7: Layout Selection (NEW) */}
         {currentStep === 7 && (
+          <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
+            <p className="text-gray-500 font-medium mb-4">PC에서 초대장이 열릴 때 보여질<br />기본 레이아웃을 선택해주세요.</p>
+
+            <div className="grid grid-cols-1 gap-4">
+              {[
+                { id: 'single', label: '단면 포스터 (Single)', desc: '심플하고 강렬한 한 장의 포스터', icon: '🖼️' },
+                { id: 'spread', label: '양면 펼침 (Spread)', desc: '책처럼 펼쳐지는 클래식한 스타일', icon: '📖' },
+                { id: 'leaflet', label: '4단 리플렛 (Leaflet)', desc: '정보를 풍성하게 담는 브로슈어', icon: '📰' },
+              ].map((layout) => (
+                <button
+                  key={layout.id}
+                  onClick={() => setFormData({ ...formData, default_layout: layout.id })}
+                  className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${formData.default_layout === layout.id
+                    ? "bg-gray-900 border-gray-900 text-white shadow-xl ring-2 ring-gray-200"
+                    : "bg-white border-gray-100 text-gray-400 hover:border-gray-200"
+                    }`}
+                >
+                  <div className="text-3xl">{layout.icon}</div>
+                  <div>
+                    <p className={`text-lg font-bold mb-1 ${formData.default_layout === layout.id ? 'text-white' : 'text-gray-900'}`}>{layout.label}</p>
+                    <p className={`text-sm ${formData.default_layout === layout.id ? 'text-gray-400' : 'text-gray-500'}`}>{layout.desc}</p>
+                  </div>
+                  {formData.default_layout === layout.id && (
+                    <div className="ml-auto mt-1 text-green-400">
+                      <CheckCircle2 size={24} />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Step 8: Description */}
+        {currentStep === 8 && (
           <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
             <textarea
               value={formData.description}
@@ -514,8 +556,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 8: Final Preview */}
-        {currentStep === 8 && (
+        {/* Step 9: Final Preview */}
+        {currentStep === 9 && (
           <div className="flex flex-col items-center animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
             <div className={`w-full max-w-xs aspect-3/4 bg-white rounded-[2rem] shadow-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-500 ${selectedTheme.bg} ring-1 ring-black/5`}>
 

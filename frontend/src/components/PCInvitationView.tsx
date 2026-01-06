@@ -29,6 +29,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
     const [rsvpMessage, setRsvpMessage] = useState("");
     const [showRsvpModal, setShowRsvpModal] = useState(false);
     const [activeSection, setActiveSection] = useState<'message' | 'schedule' | 'map'>('message');
+    const [layoutMode, setLayoutMode] = useState<'single' | 'spread' | 'leaflet'>(invitation.default_layout || 'spread');
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const fontClass = invitation.font_style === 'serif' ? 'font-serif' : 'font-sans';
@@ -172,176 +173,213 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                         key="content"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden"
+                        className="z-10 w-full h-full flex flex-col items-center justify-center p-12"
                     >
-                        {/* THE SPREAD - Book Style */}
-                        <div className="w-full max-w-[1200px] h-[750px] flex items-stretch bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden relative">
+                        {/* Layout Selector UI */}
+                        <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl z-50">
+                            {(['single', 'spread', 'leaflet'] as const).map((mode) => (
+                                <button
+                                    key={mode}
+                                    onClick={() => setLayoutMode(mode)}
+                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${layoutMode === mode ? 'bg-white text-black shadow-xl' : 'text-white/40 hover:text-white/70'}`}
+                                >
+                                    {mode === 'single' ? 'Single' : mode === 'spread' ? 'Double' : '4p Leaflet'}
+                                </button>
+                            ))}
+                        </div>
 
-                            {/* Left Page: Poster */}
-                            <div className="flex-1 relative overflow-hidden border-r border-gray-100">
-                                <NextImage
-                                    src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
-                                    alt="Cover"
-                                    fill
-                                    className="object-cover"
-                                />
-                                <div className="absolute inset-0 bg-black/5" />
-
-                                {/* Poster Title Overlay (Subtle) */}
-                                <div className="absolute bottom-12 left-12 right-12 z-10 text-white drop-shadow-lg">
-                                    <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2">OFFICIAL INVITATION</p>
-                                    <h3 className="text-3xl font-black">{invitation.title}</h3>
+                        {/* Layout: SINGLE (Poster Only Style) */}
+                        {layoutMode === 'single' && (
+                            <div className="w-full max-w-[600px] h-[850px] bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col">
+                                <div className="h-2/3 relative">
+                                    <NextImage
+                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
+                                        alt="Cover"
+                                        fill
+                                        className="object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <div className="absolute bottom-12 left-12 right-12 text-white">
+                                        <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2">OFFICIAL INVITATION</p>
+                                        <h3 className="text-4xl font-black leading-tight break-keep">{invitation.title}</h3>
+                                    </div>
                                 </div>
-                            </div>
-
-                            {/* Right Page: Content Pages */}
-                            <div className="flex-1 bg-white flex flex-col relative">
-                                {/* Tab Navigation (Vertical or Top) */}
-                                <div className="px-12 pt-8 flex gap-6 border-b border-gray-50 bg-white/80 backdrop-blur-md sticky top-0 z-20">
-                                    {(['message', 'schedule', 'map'] as const).map((id) => (
-                                        <button
-                                            key={id}
-                                            onClick={() => setActiveSection(id)}
-                                            className={`pb-4 text-[10px] font-black uppercase tracking-widest transition-all relative ${activeSection === id ? 'text-[#E74C3C]' : 'text-gray-300 hover:text-gray-600'}`}
-                                        >
-                                            {id === 'message' ? 'Invitation' : id === 'schedule' ? 'Schedule' : 'Directions'}
-                                            {activeSection === id && (
-                                                <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 right-0 h-1 bg-[#E74C3C] rounded-full" />
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
-                                    <AnimatePresence mode="wait">
-                                        {activeSection === 'message' && (
-                                            <motion.div
-                                                key="msg"
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="space-y-12"
-                                            >
-                                                <div className="space-y-6">
-                                                    <h2 className="text-5xl font-bold leading-tight text-gray-900 break-keep">
-                                                        {invitation.title}
-                                                    </h2>
-                                                    <div className="w-12 h-1 bg-[#E74C3C]" />
-                                                    <p className="text-2xl font-light text-gray-500 leading-relaxed whitespace-pre-wrap">
-                                                        {invitation.description}
-                                                    </p>
-                                                </div>
-
-                                                <div className="grid grid-cols-1 gap-6">
-                                                    <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
-                                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#E74C3C] shadow-sm">
-                                                            <Calendar size={32} />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">When</p>
-                                                            <p className="text-2xl font-bold text-gray-900">
-                                                                {new Date(invitation.event_date).toLocaleDateString('ko-KR', {
-                                                                    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
-                                                                })}
-                                                            </p>
-                                                            <p className="text-gray-500 font-medium">
-                                                                {new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
-                                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm">
-                                                            <MapPin size={32} />
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
-                                                            <p className="text-2xl font-bold text-gray-900 break-keep">
-                                                                {invitation.location}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        )}
-
-                                        {activeSection === 'schedule' && (
-                                            <motion.div
-                                                key="sch"
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="space-y-8"
-                                            >
-                                                <h3 className="text-3xl font-bold text-gray-900">Time Table</h3>
-                                                <div className="space-y-6 relative border-l-2 border-gray-100 pl-8 ml-4">
-                                                    {[
-                                                        { time: '14:00', title: '웰컴 리셉션 & 축하공연' },
-                                                        { time: '15:00', title: '메인 이벤트 - 공식행사' },
-                                                        { time: '16:30', title: '네트워킹 파티 & 자유 대화' },
-                                                        { time: '18:00', title: '클로징 & 기념품 증정' }
-                                                    ].map((item, idx) => (
-                                                        <div key={idx} className="relative">
-                                                            <div className="absolute -left-[45px] top-2 w-6 h-6 bg-white border-2 border-indigo-500 rounded-full z-10" />
-                                                            <p className="text-indigo-600 font-black text-sm mb-1">{item.time}</p>
-                                                            <p className="text-xl font-bold text-gray-800">{item.title}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-                                        )}
-
-                                        {activeSection === 'map' && (
-                                            <motion.div
-                                                key="map"
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="space-y-8 h-full flex flex-col"
-                                            >
-                                                <h3 className="text-3xl font-bold text-gray-900">찾아오시는 길</h3>
-                                                <div className="bg-gray-100 rounded-[2rem] flex-1 flex flex-col items-center justify-center p-12 text-center text-gray-400 space-y-4">
-                                                    <MapPin size={48} className="opacity-20" />
-                                                    <p className="font-bold">지도를 준비 중입니다</p>
-                                                    <p className="text-sm opacity-60 break-keep">{invitation.location}</p>
-                                                    <button className="mt-4 px-6 py-3 bg-white text-blue-600 rounded-full font-bold shadow-sm hover:shadow-md transition-all">
-                                                        카카오맵으로 보기
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-
-                                {/* Floating RSVP Button in Spread */}
-                                <div className="p-12 border-t border-gray-50 flex gap-4">
-                                    {!hasResponded ? (
+                                <div className="flex-1 p-12 overflow-y-auto custom-scrollbar flex flex-col gap-8">
+                                    <p className="text-2xl font-light text-gray-500 leading-relaxed whitespace-pre-wrap">
+                                        {invitation.description}
+                                    </p>
+                                    <div className="flex gap-4 border-t border-gray-50 pt-8 mt-auto">
                                         <button
                                             onClick={() => setShowRsvpModal(true)}
-                                            className="flex-1 py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-black shadow-2xl shadow-red-100 hover:scale-[1.02] active:scale-95 transition-all"
+                                            className="flex-1 py-5 bg-[#E74C3C] text-white rounded-2xl text-xl font-black shadow-2xl hover:scale-[1.02] transition-all"
                                         >
                                             참석 가능합니다!
                                         </button>
-                                    ) : (
-                                        <div className="flex-1 flex gap-4">
-                                            <div className="flex-1 py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3">
-                                                <CheckCircle2 size={32} /> 참석 예약 완료
-                                            </div>
-                                            <button
-                                                onClick={() => (window as any).triggerSignupModal?.()}
-                                                className="flex-1 py-6 bg-black text-white rounded-2xl text-xl font-black shadow-2xl hover:bg-gray-900 transition-all flex items-center justify-center gap-3"
-                                            >
-                                                보관함에 저장하기 <ArrowRight size={24} />
-                                            </button>
-                                        </div>
-                                    )}
-                                    <button className="p-6 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors">
-                                        <Share2 size={32} />
-                                    </button>
+                                        <button className="p-5 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors">
+                                            <Share2 size={24} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
-                        {/* Back Button (Retract to Envelope - Optional) */}
+                        {/* Layout: SPREAD (Current 2p Book Style) */}
+                        {layoutMode === 'spread' && (
+                            <div className="w-full max-w-[1200px] h-[750px] flex items-stretch bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden relative">
+                                {/* Left Page: Poster */}
+                                <div className="flex-1 relative overflow-hidden border-r border-gray-100">
+                                    <NextImage
+                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
+                                        alt="Cover"
+                                        fill
+                                        className="object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-black/5" />
+                                    <div className="absolute bottom-12 left-12 right-12 z-10 text-white drop-shadow-lg">
+                                        <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2">OFFICIAL INVITATION</p>
+                                        <h3 className="text-3xl font-black">{invitation.title}</h3>
+                                    </div>
+                                </div>
+
+                                {/* Right Page: Content */}
+                                <div className="flex-1 bg-white flex flex-col relative">
+                                    <div className="px-12 pt-8 flex gap-6 border-b border-gray-50 bg-white/80 backdrop-blur-md sticky top-0 z-20">
+                                        {(['message', 'schedule', 'map'] as const).map((id) => (
+                                            <button
+                                                key={id}
+                                                onClick={() => setActiveSection(id)}
+                                                className={`pb-4 text-[10px] font-black uppercase tracking-widest transition-all relative ${activeSection === id ? 'text-[#E74C3C]' : 'text-gray-300 hover:text-gray-600'}`}
+                                            >
+                                                {id === 'message' ? 'Invitation' : id === 'schedule' ? 'Schedule' : 'Directions'}
+                                                {activeSection === id && (
+                                                    <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 right-0 h-1 bg-[#E74C3C] rounded-full" />
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                                        <AnimatePresence mode="wait">
+                                            {activeSection === 'message' && (
+                                                <motion.div key="msg" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                                                    <div className="space-y-6">
+                                                        <h2 className="text-5xl font-bold leading-tight text-gray-900 break-keep">{invitation.title}</h2>
+                                                        <div className="w-12 h-1 bg-[#E74C3C]" />
+                                                        <p className="text-2xl font-light text-gray-500 leading-relaxed whitespace-pre-wrap">{invitation.description}</p>
+                                                    </div>
+                                                    <div className="grid grid-cols-1 gap-6">
+                                                        <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
+                                                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#E74C3C] shadow-sm"><Calendar size={32} /></div>
+                                                            <div>
+                                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">When</p>
+                                                                <p className="text-2xl font-bold text-gray-900">{new Date(invitation.event_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
+                                                                <p className="text-gray-500 font-medium">{new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
+                                                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm"><MapPin size={32} /></div>
+                                                            <div className="flex-1">
+                                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
+                                                                <p className="text-2xl font-bold text-gray-900 break-keep">{invitation.location}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                            {activeSection === 'schedule' && (
+                                                <motion.div key="sch" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                                                    <h3 className="text-3xl font-bold text-gray-900">Time Table</h3>
+                                                    <div className="space-y-6 relative border-l-2 border-gray-100 pl-8 ml-4">
+                                                        {[{ time: '14:00', title: '웰컴 리셉션' }, { time: '15:00', title: '메인 이벤트' }, { time: '18:00', title: '클로징' }].map((item, idx) => (
+                                                            <div key={idx} className="relative">
+                                                                <div className="absolute -left-[45px] top-2 w-6 h-6 bg-white border-2 border-[#E74C3C] rounded-full z-10" />
+                                                                <p className="text-[#E74C3C] font-black text-sm mb-1">{item.time}</p>
+                                                                <p className="text-xl font-bold text-gray-800">{item.title}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                    <div className="p-12 border-t border-gray-50 flex gap-4">
+                                        {!hasResponded ? (
+                                            <button onClick={() => setShowRsvpModal(true)} className="flex-1 py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-black shadow-2xl hover:scale-[1.02] transition-all">참석 가능합니다!</button>
+                                        ) : (
+                                            <div className="flex-1 flex gap-4">
+                                                <div className="flex-1 py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3"><CheckCircle2 size={32} /> 참석 예약 완료</div>
+                                                {/* Global Signup Trigger */}
+                                                <button onClick={() => (window as any).triggerSignupModal?.()} className="flex-1 py-6 bg-black text-white rounded-2xl text-xl font-black">보관함에 저장</button>
+                                            </div>
+                                        )}
+                                        <button className="p-6 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors"><Share2 size={32} /></button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Layout: LEAFLET (4p brochure style) */}
+                        {layoutMode === 'leaflet' && (
+                            <div className="w-full max-w-[1400px] h-[750px] flex items-stretch gap-2 perspective-3000">
+                                {[
+                                    { title: 'Front', content: 'poster', bg: 'bg-white' },
+                                    { title: 'Information', content: 'info', bg: 'bg-gray-50' },
+                                    { title: 'Message', content: 'message', bg: 'bg-white' },
+                                    { title: 'RSVP', content: 'rsvp', bg: 'bg-gray-100' }
+                                ].map((tab, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        initial={{ rotateY: -10 }}
+                                        whileHover={{ rotateY: 0 }}
+                                        className={`flex-1 ${tab.bg} rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border border-gray-100 relative`}
+                                    >
+                                        <div className="absolute top-0 left-0 w-12 h-full bg-gradient-to-r from-black/5 to-transparent pointer-events-none" />
+                                        {tab.content === 'poster' && (
+                                            <div className="h-full relative font-bold">
+                                                <NextImage src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"} alt="C" fill className="object-cover" />
+                                                <div className="absolute inset-0 bg-black/20" />
+                                                <div className="absolute bottom-8 left-8 right-8 text-white uppercase tracking-widest text-[10px]">Page 1 / Front</div>
+                                            </div>
+                                        )}
+                                        {tab.content === 'info' && (
+                                            <div className="p-8 flex flex-col gap-8 flex-1">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page 2 / Info</p>
+                                                <div className="space-y-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <Calendar className="text-[#E74C3C]" size={24} />
+                                                        <div className="text-sm font-bold text-gray-800">{new Date(invitation.event_date).toLocaleDateString()}</div>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <MapPin className="text-blue-500" size={24} />
+                                                        <div className="text-sm font-bold text-gray-800">{invitation.location}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {tab.content === 'message' && (
+                                            <div className="p-8 flex flex-col gap-6 flex-1 overflow-y-auto">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page 3 / Message</p>
+                                                <h4 className="text-xl font-black text-gray-900 leading-tight">{invitation.title}</h4>
+                                                <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-wrap">{invitation.description}</p>
+                                            </div>
+                                        )}
+                                        {tab.content === 'rsvp' && (
+                                            <div className="p-8 flex flex-col gap-6 flex-1 bg-[#2c3e50] text-white justify-center items-center text-center">
+                                                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest absolute top-8">Page 4 / Final</p>
+                                                <CheckCircle2 size={48} className="text-green-400 mb-2" />
+                                                <h4 className="text-2xl font-black">Would you join us?</h4>
+                                                {!hasResponded ? (
+                                                    <button onClick={() => setShowRsvpModal(true)} className="w-full py-4 bg-[#E74C3C] rounded-xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">RSVP Now</button>
+                                                ) : (
+                                                    <div className="p-4 bg-white/10 rounded-xl text-xs font-bold w-full">Attendance Confirmed</div>
+                                                )}
+                                                <button className="text-white/40 text-[10px] uppercase font-bold mt-4 flex items-center gap-2"><Share2 size={12} /> Share</button>
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )}
+
                         <button
                             onClick={() => setStage('intro')}
                             className="mt-12 text-white/20 hover:text-white/40 font-black text-[10px] uppercase tracking-[1em] transition-colors"

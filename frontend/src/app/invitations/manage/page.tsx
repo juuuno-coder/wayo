@@ -107,20 +107,30 @@ export default function ManageInvitationsPage() {
         }
     };
 
+    // Inside existing useEffect or fetchMyInvitations, fetch stats
+    // But since stats are per-invitation, we can fetch them when clicking details OR include summary in list
+    // For now, let's include view_count in the main list if the backend supported it, or fetch individually.
+    // To minimize requests, we might stick to basic info here and show full stats on a separate dashboard page, 
+    // OR we just assume the 'my invitations' list returns view_count (we added it to serialization earlier?).
+    // Check InvitationsController#invitation_as_json -> it merges methods, let's check if view_count is visible.
+    // It's a column, so `as_json` includes it by default.
+    //
+    // Let's enhance the card UI to show "Views" and "RSVP Breakdown".
+
     return (
         <div className="min-h-screen bg-[#FAFAFA] flex flex-col font-sans">
             <header className="px-4 py-3 sticky top-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 flex items-center justify-between">
                 <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                     <ArrowLeft size={24} className="text-gray-800" />
                 </button>
-                <h1 className="font-bold text-gray-900">참석 여부 확인</h1>
+                <h1 className="font-bold text-gray-900">대시보드</h1>
                 <div className="w-10" />
             </header>
 
             <main className="flex-1 p-6 max-w-md mx-auto w-full">
                 <div className="mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">나의 초대장 💌</h2>
-                    <p className="text-gray-500 text-sm">내가 만들었거나 나를 초대한 행사들을 한눈에 확인하세요.</p>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">호스트 대시보드 📊</h2>
+                    <p className="text-gray-500 text-sm">초대장 성과를 분석하고 게스트를 관리하세요.</p>
                 </div>
 
                 {/* Tab UI */}
@@ -145,7 +155,7 @@ export default function ManageInvitationsPage() {
                 </div>
 
                 {loading ? (
-                    <div className="py-20 text-center text-gray-400">불러오는 중...</div>
+                    <div className="py-20 text-center text-gray-400">데이터를 불러오고 있습니다...</div>
                 ) : (activeTab === 'sent' ? invitations : receivedInvitations).length === 0 ? (
                     <div className="py-20 flex flex-col items-center text-center opacity-60">
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -185,6 +195,13 @@ export default function ManageInvitationsPage() {
                                                 fill
                                                 className="object-cover"
                                             />
+                                            {/* View Count Overlay */}
+                                            {activeTab === 'sent' && (
+                                                <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                                    <Users size={12} />
+                                                    {invite.view_count || 0} Views
+                                                </div>
+                                            )}
                                         </div>
                                     ) : invite.cover_image_url && (
                                         <div className="relative w-full h-40 mb-4 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center">
@@ -201,12 +218,31 @@ export default function ManageInvitationsPage() {
                                         <h3 className="font-bold text-xl text-gray-900 leading-tight flex-1 mr-4">
                                             {invite.title}
                                         </h3>
-                                        {activeTab === 'sent' && invite.guests && (
-                                            <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
-                                                {invite.guests.length}명 응답
-                                            </span>
-                                        )}
                                     </div>
+
+                                    {/* Stats Bar (Sent Only) */}
+                                    {activeTab === 'sent' && (
+                                        <div className="mb-5 grid grid-cols-3 gap-2">
+                                            <div className="bg-green-50 p-3 rounded-2xl text-center">
+                                                <p className="text-[10px] text-green-600 font-bold uppercase">Accepted</p>
+                                                <p className="text-xl font-black text-green-700">
+                                                    {invite.guests?.filter((g: any) => g.status === 'accepted').length || 0}
+                                                </p>
+                                            </div>
+                                            <div className="bg-gray-50 p-3 rounded-2xl text-center">
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase">Pending</p>
+                                                <p className="text-xl font-black text-gray-600">
+                                                    {invite.guests?.filter((g: any) => g.status === 'pending').length || 0}
+                                                </p>
+                                            </div>
+                                            <div className="bg-red-50 p-3 rounded-2xl text-center">
+                                                <p className="text-[10px] text-red-400 font-bold uppercase">Declined</p>
+                                                <p className="text-xl font-black text-red-500">
+                                                    {invite.guests?.filter((g: any) => g.status === 'declined').length || 0}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="space-y-2 text-sm text-gray-500 mb-5">
                                         <div className="flex items-center gap-2">
@@ -215,47 +251,29 @@ export default function ManageInvitationsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Guest Mini List (Only for Sent Tab) */}
+                                    {/* Recent Guests (Sent Only) */}
                                     {activeTab === 'sent' && invite.guests && invite.guests.length > 0 && (
                                         <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
                                             {invite.guests.slice(0, 3).map((guest: any) => (
                                                 <div key={guest.id} className="flex items-center justify-between border-b border-gray-100 last:border-0 pb-2 last:pb-0">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-xs font-bold text-gray-600 border border-gray-100 shadow-sm">
+                                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border border-gray-100 shadow-sm ${guest.status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-white text-gray-600'}`}>
                                                             {guest.name[0]}
                                                         </div>
                                                         <span className="font-bold text-gray-800 text-sm">{guest.name}</span>
                                                     </div>
-                                                    {guest.message && (
-                                                        <div className="text-gray-400">
-                                                            <MessageSquare size={14} />
-                                                        </div>
-                                                    )}
+                                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${guest.status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-500'}`}>
+                                                        {guest.status === 'accepted' ? '참석' : '대기'}
+                                                    </span>
                                                 </div>
                                             ))}
                                             {invite.guests.length > 3 && (
                                                 <p className="text-[10px] text-gray-400 text-center pt-1">
-                                                    외 {invite.guests.length - 3}명이 더 있습니다
+                                                    외 {invite.guests.length - 3}명의 응답이 더 있습니다
                                                 </p>
                                             )}
                                         </div>
                                     )}
-
-                                    {/* Summary for Received Tab */}
-                                    {activeTab === 'received' && (
-                                        <div className="p-4 bg-indigo-50 rounded-2xl">
-                                            <p className="text-indigo-800 text-xs font-bold flex items-center gap-2">
-                                                <Sparkles size={12} /> 당신을 초대하는 아름다운 초대장이 도착했습니다.
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    <div className="mt-5 flex items-center justify-between group">
-                                        <span className="text-xs font-bold text-gray-400 group-hover:text-blue-500 transition-colors">
-                                            {activeTab === 'sent' ? '참석 현황 보기' : '초대장 확인하기'}
-                                        </span>
-                                        <ChevronRight size={16} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                                    </div>
                                 </div>
                             </div>
                         ))}
