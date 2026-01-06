@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import BottomNav from "./BottomNav";
 import FloatingActionButton from "./FloatingActionButton";
 import { Smartphone, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
