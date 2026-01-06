@@ -22,7 +22,32 @@ class InvitationsController < ApplicationController
     render json: @invitations.map { |invitation| invitation_as_json(invitation) }
   end
 
-  skip_before_action :authenticate_user!, only: %i[ show create ]
+  # POST /invitations/:id/track_view
+  def track_view
+    @invitation = Invitation.find(params[:id])
+    # Simple increment. In production, use Redis or log-based counting to avoid write contention.
+    @invitation.increment!(:view_count)
+    render json: { view_count: @invitation.view_count }, status: :ok
+  end
+
+  # GET /invitations/:id/stats
+  def stats
+    @invitation = Invitation.find(params[:id])
+    
+    # Guest breakdown
+    guests = @invitation.invitation_guests
+    stats = {
+      total_views: @invitation.view_count,
+      rsvp_total: guests.count,
+      rsvp_attending: guests.where(status: 'accepted').count,
+      rsvp_declined: guests.where(status: 'declined').count,
+      rsvp_pending: guests.where(status: 'pending').count,
+    }
+    
+    render json: stats
+  end
+
+  skip_before_action :authenticate_user!, only: %i[ show create track_view ]
 
   # POST /invitations
   def create
@@ -114,7 +139,8 @@ class InvitationsController < ApplicationController
       params.fetch(:invitation, {}).permit(
         :title, :description, :event_date, :location, :cover_image_url, 
         :theme_color, :theme_ribbon, :user_id, :event_id, :font_style, 
-        :bgm, :text_effect, :ticket_type_id, images: []
+        :bgm, :text_effect, :ticket_type_id, :default_layout, images: [],
+        content_blocks: [:id, :type, data: {}]
       )
     end
 end

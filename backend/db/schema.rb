@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_05_100331) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_05_222308) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -110,8 +110,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_100331) do
 
   create_table "invitations", force: :cascade do |t|
     t.string "bgm"
+    t.json "content_blocks", default: []
     t.string "cover_image_url"
     t.datetime "created_at", null: false
+    t.string "default_layout"
     t.text "description"
     t.datetime "event_date"
     t.integer "event_id"
@@ -124,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_100331) do
     t.string "title"
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.integer "view_count"
     t.index ["event_id"], name: "index_invitations_on_event_id"
     t.index ["ticket_type_id"], name: "index_invitations_on_ticket_type_id"
     t.index ["user_id"], name: "index_invitations_on_user_id"
@@ -251,6 +254,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_100331) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.string "signup_origin"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
