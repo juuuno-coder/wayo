@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { X, LogIn, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -20,10 +21,29 @@ export default function AuthModal({
     redirectUrl = "/login"
 }: AuthModalProps) {
     const router = useRouter();
+    const [isWayoDomain, setIsWayoDomain] = useState(false);
+
+    useEffect(() => {
+        setIsWayoDomain(window.location.hostname.includes("wayo") && !window.location.hostname.includes("gabojago"));
+    }, []);
 
     const handleLogin = () => {
         router.push(redirectUrl);
         onClose();
+    };
+
+    const theme = isWayoDomain ? {
+        primary: "bg-[#E02424]",
+        accent: "text-[#E02424]",
+        bg: "bg-[#FDF2F2]",
+        shadow: "shadow-red-50",
+        hover: "hover:bg-[#C81E1E]"
+    } : {
+        primary: "bg-[#84cc16]",
+        accent: "text-[#65a30d]",
+        bg: "bg-[#f7fee7]",
+        shadow: "shadow-lime-50",
+        hover: "hover:bg-[#65a30d]"
     };
 
     return (
@@ -49,8 +69,8 @@ export default function AuthModal({
                         </button>
 
                         <div className="p-8 text-center pt-10">
-                            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-[22px] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-50 relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
+                            <div className={`w-16 h-16 ${theme.bg} ${theme.accent} rounded-[22px] flex items-center justify-center mx-auto mb-6 shadow-xl ${theme.shadow} relative overflow-hidden group`}>
+                                <div className={`absolute inset-0 ${theme.primary} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
                                 <Lock size={30} className="relative z-10" />
                             </div>
 
@@ -65,7 +85,7 @@ export default function AuthModal({
                             <div className="space-y-3">
                                 <button
                                     onClick={handleLogin}
-                                    className="w-full py-4 bg-gray-900 hover:bg-black text-white font-bold rounded-2xl shadow-xl shadow-gray-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+                                    className={`w-full py-4 ${theme.primary} ${theme.hover} text-white font-bold rounded-2xl shadow-xl ${theme.shadow} active:scale-[0.98] transition-all flex items-center justify-center gap-2 group`}
                                 >
                                     <span>로그인하러 가기</span>
                                     <LogIn size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -81,7 +101,7 @@ export default function AuthModal({
 
                         <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                                Premium Invitation Service
+                                {isWayoDomain ? "Premium Invitation Service" : "Event Listing Platform"}
                             </p>
                         </div>
                     </motion.div>

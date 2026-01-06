@@ -70,7 +70,7 @@ const getStatus = (start: string, end: string) => {
     const s = new Date(start);
     const e = new Date(end);
 
-    if (now < s) return { text: "D-" + Math.ceil((+s - +now) / (1000 * 60 * 60 * 24)), color: "bg-blue-500" };
+    if (now < s) return { text: "D-" + Math.ceil((+s - +now) / (1000 * 60 * 60 * 24)), color: "bg-lime-500" };
     if (now > e) return { text: "종료", color: "bg-gray-400" };
     return { text: "진행중", color: "bg-red-500" };
 };
@@ -108,7 +108,7 @@ function EventSection({ title, subtitle, events, router }: { title: string, subt
                                 </div>
                                 {event.is_free && (
                                     <div className="absolute top-4 right-4 animate-bounce">
-                                        <span className="bg-white/90 backdrop-blur-md text-blue-600 px-3 py-1 rounded-full text-[10px] font-black shadow-lg">FREE</span>
+                                        <span className="bg-white/90 backdrop-blur-md text-lime-600 px-3 py-1 rounded-full text-[10px] font-black shadow-lg">FREE</span>
                                     </div>
                                 )}
                                 <div className="absolute inset-x-0 bottom-0 p-4 bg-linear-to-t from-black/80 via-black/20 to-transparent">
@@ -128,9 +128,9 @@ function EventCard({ event, router }: { event: Event, router: any }) {
     return (
         <div
             onClick={() => router.push(`/events/${event.id}`)}
-            className="bg-white rounded-[40px] p-6 border-2 border-gray-50 flex gap-6 hover:shadow-2xl hover:border-blue-50/50 transition-all duration-500 group cursor-pointer relative overflow-hidden active:scale-[0.98]"
+            className="bg-white rounded-[40px] p-6 border-2 border-gray-50 flex gap-6 hover:shadow-2xl hover:border-lime-50/50 transition-all duration-500 group cursor-pointer relative overflow-hidden active:scale-[0.98]"
         >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/30 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-blue-100/40 transition-colors"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-lime-50/30 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-lime-100/40 transition-colors"></div>
 
             <div className="relative w-32 h-44 flex-shrink-0 shadow-2xl shadow-gray-200/50 rounded-[28px] overflow-hidden">
                 <Image src={event.image_url} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -142,16 +142,16 @@ function EventCard({ event, router }: { event: Event, router: any }) {
             <div className="flex-1 flex flex-col justify-between py-1 relative">
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                        <span className="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider">
+                        <span className="bg-lime-50 text-lime-600 px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider">
                             {event.category}
                         </span>
                     </div>
-                    <h3 className="text-lg font-black text-gray-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                    <h3 className="text-lg font-black text-gray-900 leading-tight group-hover:text-lime-600 transition-colors line-clamp-2">
                         {event.title}
                     </h3>
                     <div className="flex items-center gap-4">
                         <p className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400">
-                            <MapPin size={14} className="text-blue-400" /> {event.region}
+                            <MapPin size={14} className="text-lime-400" /> {event.region}
                         </p>
                         <p className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400">
                             <Calendar size={14} className="text-purple-400" /> {formatDateCompact(event.start_date, event.end_date)}
@@ -161,13 +161,13 @@ function EventCard({ event, router }: { event: Event, router: any }) {
 
                 <div className="flex items-center justify-between mt-4">
                     <p className="text-lg font-black text-gray-900">
-                        {event.is_free ? <span className="text-blue-600">Free</span> : <span className="text-xs uppercase tracking-tighter text-gray-400 font-bold">Standard <span className="text-lg text-gray-900 ml-1">{event.price}</span></span>}
+                        {event.is_free ? <span className="text-lime-600">Free</span> : <span className="text-xs uppercase tracking-tighter text-gray-400 font-bold">Standard <span className="text-lg text-gray-900 ml-1">{event.price}</span></span>}
                     </p>
                     <div className="flex -space-x-2">
                         {[1, 2, 3].map(i => (
                             <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200"></div>
                         ))}
-                        <div className="w-8 h-8 rounded-full border-2 border-white bg-blue-600 flex items-center justify-center text-[10px] font-black text-white">
+                        <div className="w-8 h-8 rounded-full border-2 border-white bg-lime-600 flex items-center justify-center text-[10px] font-black text-white">
                             +12
                         </div>
                     </div>
@@ -287,11 +287,11 @@ export default function GabojagoHome() {
             {/* 2. 내비게이션 & 검색 바 */}
             <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
                 <div className="flex-1 relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-lime-500 transition-colors" size={18} />
                     <input
                         type="text"
                         placeholder="어떤 이벤트를 찾으시나요?"
-                        className="w-full bg-gray-100/50 border-none rounded-2xl py-3 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-400"
+                        className="w-full bg-gray-100/50 border-none rounded-2xl py-3 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-lime-500/20 transition-all placeholder:text-gray-400"
                     />
                 </div>
                 <div className="flex gap-2">
@@ -325,7 +325,7 @@ export default function GabojagoHome() {
                         onClick={() => toggleCategory(cat.id)}
                         className="flex flex-col items-center gap-2 group shrink-0"
                     >
-                        <div className={`w-16 h-16 rounded-3xl ${selectedCategories.includes(cat.id) ? 'bg-blue-600 text-white shadow-blue-200' : 'bg-white border border-gray-100 text-gray-900'} flex items-center justify-center text-3xl shadow-xs group-active:scale-90 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1`}>
+                        <div className={`w-16 h-16 rounded-3xl ${selectedCategories.includes(cat.id) ? 'bg-lime-500 text-white shadow-lime-200' : 'bg-white border border-gray-100 text-gray-900'} flex items-center justify-center text-3xl shadow-xs group-active:scale-90 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1`}>
                             {cat.emoji}
                         </div>
                         <span className={`text-[11px] font-black ${selectedCategories.includes(cat.id) ? "text-gray-900" : "text-gray-400"}`}>
@@ -347,7 +347,7 @@ export default function GabojagoHome() {
                             }`}
                     >
                         {region.short}
-                        {selectedRegions.includes(region.code) && <span className="ml-1 text-blue-300">•</span>}
+                        {selectedRegions.includes(region.code) && <span className="ml-1 text-lime-400">•</span>}
                     </button>
                 ))}
             </div>
@@ -356,7 +356,7 @@ export default function GabojagoHome() {
             <div className="px-6">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
-                        <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent shadow-xl"></div>
+                        <div className="animate-spin rounded-full h-10 w-10 border-4 border-lime-500 border-t-transparent shadow-xl"></div>
                         <p className="text-xs font-black text-gray-300 uppercase tracking-widest">Loading Wonders...</p>
                     </div>
                 ) : (
@@ -375,7 +375,7 @@ export default function GabojagoHome() {
                                         <span className="text-lg font-black text-gray-900">
                                             {selectedCategories.length > 0 ? selectedCategories.map(c => categories.find(cat => cat.id === c)?.name).join(", ") : "전체 이벤트"}
                                         </span>
-                                        <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black">
+                                        <span className="bg-lime-50 text-lime-600 px-3 py-1 rounded-full text-[10px] font-black">
                                             {events.length}
                                         </span>
                                     </div>
