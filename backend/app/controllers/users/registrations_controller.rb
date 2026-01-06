@@ -2,6 +2,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
   respond_to :json
 
   def create
+    existing_user = User.find_by(email: sign_up_params[:email])
+    
+    if existing_user
+      # 이미 사용자가 존재하는 경우, 통합 가입 여부를 확인 (단순 이메일 중복 이상의 처리)
+      render json: { 
+        status: 'integrated_account_exists', 
+        message: '이미 통합 회원이십니다. 기존 계정으로 바로 로그인하실 수 있습니다.',
+        email: existing_user.email
+      }, status: :unprocessable_entity
+      return
+    end
+
     build_resource(sign_up_params)
 
     resource.save

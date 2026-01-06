@@ -20,16 +20,16 @@ const nanumMyeongjo = Nanum_Myeongjo({
   variable: "--font-nanum-myeongjo",
 });
 
-export const metadata: Metadata = {
-  title: "Gabojago - 전국의 모든 이벤트를 한눈에",
-  description: "축제, 전시회, 박람회, 공모전까지! 당신의 일상을 즐거움으로 채워보세요.",
-};
+import { headers } from "next/headers";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const host = (await headers()).get("host") || "";
+  const isWayoHost = host.includes("wayo") && !host.includes("gabojago");
+
   return (
     <html lang="ko">
       <head>
@@ -37,7 +37,7 @@ export default function RootLayout({
         <Script src="https://cdn.iamport.kr/v1/iamport.js" strategy="beforeInteractive" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} antialiased`}>
-        <LayoutClient>{children}</LayoutClient>
+        <LayoutClient initialState={{ isWayoHost }}>{children}</LayoutClient>
       </body>
     </html>
   );

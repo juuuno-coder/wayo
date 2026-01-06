@@ -6,13 +6,21 @@ import FloatingActionButton from "./FloatingActionButton";
 import { Smartphone, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 
-export default function LayoutClient({ children }: { children: React.ReactNode }) {
+export default function LayoutClient({
+  children,
+  initialState
+}: {
+  children: React.ReactNode,
+  initialState?: { isWayoHost: boolean }
+}) {
   const pathname = usePathname();
   const [refreshKey, setRefreshKey] = useState(0);
-  const [isWayoDomain, setIsWayoDomain] = useState(false);
+  const [isWayoDomain, setIsWayoDomain] = useState(initialState?.isWayoHost ?? false);
 
   useEffect(() => {
     // Check if current domain is Wayo (excluding gabojago subdomain)
+    // This client-side check is kept for runtime updates if needed, 
+    // but the initial state comes from the server.
     const hostname = window.location.hostname;
     setIsWayoDomain(
       (hostname.includes('wayo.co.kr') || hostname === 'localhost') &&

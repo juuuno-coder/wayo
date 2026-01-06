@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AuthModal from "@/components/AuthModal";
 
 export default function GabojagoSignup() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [authModalData, setAuthModalData] = useState({ title: "", message: "" });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,8 +42,16 @@ export default function GabojagoSignup() {
                 alert("가보자고! 회원가입이 완료되었습니다.");
                 router.push("/login");
             } else {
-                const errorData = await response.json();
-                alert("회원가입 실패: " + (errorData.message || "오류가 발생했습니다."));
+                const data = await response.json();
+                if (data.status === 'integrated_account_exists') {
+                    setAuthModalData({
+                        title: "이미 통합 회원이십니다!",
+                        message: "와요에서 사용하시던 계정으로 가보자고를 바로 이용하실 수 있습니다.\n별도의 가입 없이 로그인을 진행해 주세요."
+                    });
+                    setIsAuthModalOpen(true);
+                } else {
+                    alert("회원가입 실패: " + (data.errors ? data.errors.join(", ") : data.message || "오류가 발생했습니다."));
+                }
             }
         } catch (error) {
             console.error(error);
@@ -120,6 +131,14 @@ export default function GabojagoSignup() {
                     </Link>
                 </p>
             </div>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                title={authModalData.title}
+                message={authModalData.message}
+                redirectUrl="/login"
+            />
         </div>
     );
 }
