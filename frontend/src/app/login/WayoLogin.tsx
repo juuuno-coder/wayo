@@ -10,6 +10,30 @@ export default function WayoLogin() {
     const [password, setPassword] = useState("");
     const router = useRouter();
 
+    // Check for token in URL (after Google Login redirect)
+    useState(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get("token");
+            const email = params.get("email");
+            const id = params.get("id");
+
+            if (token && email && id) {
+                localStorage.setItem("authToken", token);
+                localStorage.setItem("userEmail", email);
+                localStorage.setItem("userId", id);
+                window.location.href = "/"; // Clear query params
+            }
+        }
+    });
+
+    const handleGoogleLogin = () => {
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";
+        // Pass current origin to backend so it knows where to return
+        const origin = window.location.origin;
+        window.location.href = `${backendUrl}/users/auth/google_oauth2?origin=${encodeURIComponent(origin)}`;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -87,6 +111,24 @@ export default function WayoLogin() {
 
                 <button type="submit" className="w-full bg-[#E02424] hover:bg-[#C81E1E] text-white py-4.5 rounded-2xl font-black text-lg shadow-xl shadow-red-200 active:scale-[0.98] transition-all">
                     로그인하기
+                </button>
+
+                <div className="relative my-8">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-100"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-4 bg-white text-gray-400 font-bold uppercase tracking-wider text-[10px]">또는</span>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                    Google로 계속하기
                 </button>
 
                 <div className="text-center mt-8">

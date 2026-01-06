@@ -21,7 +21,8 @@ Rails.application.routes.draw do
     post :verify, on: :collection
   end
   devise_for :users, defaults: { format: :json }, controllers: {
-    registrations: 'users/registrations'
+    registrations: 'users/registrations',
+    omniauth_callbacks: 'users/omniauth_callbacks'
   }
   resources :users, only: [:show, :update] do
     collection do

@@ -51,15 +51,18 @@ end
 
 gem "devise", "~> 4.9"
 gem "devise-jwt", "~> 0.12.1"
+gem "omniauth"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
 
-# HTTP Å¬¶óÀÌ¾ðÆ®
+# HTTP í´ë¼ì´ì–¸íŠ¸
 gem 'httparty', '~> 0.22'
 
-# ¹é±×¶ó¿îµå ÀÛ¾÷ Ã³¸®
+# ë°±ê·¸ë¼ìš´ë“œ ìž‘ì—… ì²˜ë¦¬
 gem 'sidekiq', '~> 7.2'
 
-# Á¤±â ÀÛ¾÷ ½ºÄÉÁÙ¸µ
+# ì •ê¸° ìž‘ì—… ìŠ¤ì¼€ì¤„ë§
 gem 'sidekiq-cron', '~> 1.12'
 
-# HTML ÆÄ½Ì (Å©·Ñ¸µ¿ë)
+# HTML íŒŒì‹± (í¬ë¡¤ë§ìš©)
 gem 'nokogiri', '~> 1.16'

@@ -27,4 +27,15 @@ Devise.setup do |config|
   end
   
   config.navigational_formats = [] # API Mode: Don't redirect
+
+  # OmniAuth Google Config
+  config.omniauth :google_oauth2, 
+                  '602380721758-telqghsua6kfd8mlu16nv8k4u9ea449k.apps.googleusercontent.com', 
+                  ENV['GOOGLE_CLIENT_SECRET'], 
+                  {
+                    scope: 'email, profile',
+                    prompt: 'select_account',
+                    image_aspect_ratio: 'square',
+                    image_size: 50
+                  }
 end
