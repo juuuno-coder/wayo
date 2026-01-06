@@ -11,6 +11,7 @@ import {
     MessageSquare,
     Sparkles
 } from "lucide-react";
+import AuthModal from "@/components/AuthModal";
 
 export default function ManageInvitationsPage() {
     const router = useRouter();
@@ -18,6 +19,7 @@ export default function ManageInvitationsPage() {
     const [receivedInvitations, setReceivedInvitations] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
     const [loading, setLoading] = useState(true);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     useEffect(() => {
         fetchMyInvitations();
@@ -61,8 +63,7 @@ export default function ManageInvitationsPage() {
 
                 // If no token AND no pending invitations, user shouldn't be here
                 if (pendingIds.length === 0) {
-                    alert("로그인이 필요한 서비스입니다.");
-                    router.push("/login");
+                    setIsAuthModalOpen(true);
                     return;
                 }
 
@@ -280,6 +281,11 @@ export default function ManageInvitationsPage() {
                     </div>
                 )}
             </main>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+            />
         </div>
     );
 }

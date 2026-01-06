@@ -5,6 +5,7 @@ import { MoveLeft, Heart, Share2 } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import AuthModal from "@/components/AuthModal";
 
 interface Review {
   id: number;
@@ -32,6 +33,7 @@ export default function ItemDetailPage() {
   const [item, setItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false); // 좋아요 상태
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
     if (params?.id) {
@@ -57,9 +59,7 @@ export default function ItemDetailPage() {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-        router.push("/login");
-      }
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -85,9 +85,7 @@ export default function ItemDetailPage() {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-        router.push("/login");
-      }
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -116,9 +114,7 @@ export default function ItemDetailPage() {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-        router.push("/login");
-      }
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -326,6 +322,11 @@ export default function ItemDetailPage() {
           장바구니 담기
         </button>
       </div>
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </div>
   );
 }
