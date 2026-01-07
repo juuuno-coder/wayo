@@ -196,8 +196,9 @@ export default function GabojagoHome() {
     const toggleCategory = (id: string) => {
         setSelectedCategories(prev => {
             if (id === 'all') return [];
-            if (prev.includes(id)) return prev.filter(c => c !== id);
-            return [...prev, id];
+            // If already selected, deselect it (toggle off). If not, switch to it (single select).
+            if (prev.includes(id)) return [];
+            return [id];
         });
     };
 
