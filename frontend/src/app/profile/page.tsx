@@ -112,7 +112,7 @@ export default function ProfilePage() {
                       <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl font-bold text-blue-600">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-2xl font-bold text-[#E74C3C]">
                       {user?.email?.[0]?.toUpperCase() || 'U'}
                     </div>
                   )}
