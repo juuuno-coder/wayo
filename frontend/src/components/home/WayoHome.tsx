@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NextImage from "next/image";
 import { Sparkles, Heart, Zap, MousePointer2 } from "lucide-react";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 const blackHanSans = Black_Han_Sans({
     weight: "400",
@@ -16,18 +18,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function WayoHome() {
     const router = useRouter();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        setIsLoggedIn(!!localStorage.getItem("authToken"));
-    }, []);
+    const { isLoggedIn, user, logout } = useAuth();
 
     const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("userId");
-        setIsLoggedIn(false);
-        router.refresh();
+        logout();
     };
 
     return (
@@ -40,7 +34,7 @@ export default function WayoHome() {
                     <a href="/invitations/manage" className="hover:text-[#E74C3C] transition-colors">My Invitations</a>
                     <a href="#faq" className="hover:text-[#E74C3C] transition-colors">FAQ</a>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex items-center gap-4">
                     {!isLoggedIn ? (
                         <button
                             onClick={() => router.push('/login')}
@@ -49,12 +43,28 @@ export default function WayoHome() {
                             Login
                         </button>
                     ) : (
-                        <button
-                            onClick={handleLogout}
-                            className="px-6 py-2 rounded-full border border-[#5D4037]/20 text-sm font-bold hover:bg-[#5D4037] hover:text-white transition-all active:scale-95"
-                        >
-                            Logout
-                        </button>
+                        <div className="flex items-center gap-4">
+                            <Link href="/profile" className="flex items-center gap-2 group">
+                                {user?.avatarUrl ? (
+                                    <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#E74C3C]/20 group-hover:border-[#E74C3C] transition-all">
+                                        <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-[#E74C3C] border-2 border-[#E74C3C]/20 group-hover:border-[#E74C3C] transition-all">
+                                        <Heart size={14} className="fill-current" />
+                                    </div>
+                                )}
+                                <span className="text-sm font-bold opacity-60 group-hover:opacity-100 transition-opacity hidden sm:inline-block">
+                                    My Page
+                                </span>
+                            </Link>
+                            <button
+                                onClick={handleLogout}
+                                className="px-4 py-2 rounded-full border border-[#5D4037]/10 text-xs font-bold hover:bg-[#5D4037] hover:text-white transition-all active:scale-95"
+                            >
+                                Logout
+                            </button>
+                        </div>
                     )}
                 </div>
             </nav>

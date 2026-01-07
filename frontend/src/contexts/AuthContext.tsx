@@ -46,9 +46,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const urlToken = params.get("token");
         const urlEmail = params.get("email");
         const urlId = params.get("id");
+        const urlAvatar = params.get("avatar_url");
 
         if (urlToken && urlEmail && urlId) {
-            const newUser = { id: urlId, email: urlEmail };
+            const newUser = { id: urlId, email: urlEmail, avatarUrl: urlAvatar || undefined };
             login(urlToken, newUser);
 
             // Clean URL: remove auth params without full page reload

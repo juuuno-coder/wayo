@@ -12,35 +12,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { useAuth } from "@/contexts/AuthContext";
+
 export default function ProfilePage() {
   const router = useRouter();
-  const [email, setEmail] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("userEmail");
-  });
-
-  // No need to setEmail in useEffect on mount anymore (lazy initializer used)
+  const { isLoggedIn, user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userEmail");
-
-    // Clear all Wayo-related guest data
-    localStorage.removeItem("pending_invitations");
-
-    // Clear all guest role markers
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith("wayo_guest_")) {
-        localStorage.removeItem(key);
-      }
-    });
-
+    logout();
     alert("로그아웃 되었습니다.");
-    router.push("/");
-    setEmail(null);
   };
 
-  if (!email) {
+  if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
@@ -58,16 +41,6 @@ export default function ProfilePage() {
         >
           로그인하러 가기
         </button>
-        <button
-          onClick={() => {
-            localStorage.setItem("userEmail", "test@gabojago.com");
-            localStorage.setItem("authToken", "mock-token");
-            setEmail("test@gabojago.com");
-          }}
-          className="mt-4 w-full bg-gray-100 text-gray-500 font-bold py-3 rounded-2xl text-sm"
-        >
-          (개발용) 바로 로그인하기
-        </button>
       </div>
     );
   }
@@ -76,11 +49,17 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 pb-24">
       <header className="bg-white px-6 py-8 pb-10 rounded-b-[2rem] shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl font-bold text-blue-600">
-            {email[0].toUpperCase()}
-          </div>
+          {user?.avatarUrl ? (
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-100 shadow-sm">
+              <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl font-bold text-blue-600">
+              {user?.email[0].toUpperCase()}
+            </div>
+          )}
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{email}님</h1>
+            <h1 className="text-xl font-bold text-gray-900">{user?.email}님</h1>
             <p className="text-sm text-gray-500">Gabojago 멤버</p>
           </div>
         </div>

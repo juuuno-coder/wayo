@@ -16,7 +16,7 @@ Devise.setup do |config|
   
   # JWT Config
   config.jwt do |jwt|
-    jwt.secret = 'fc83693998748956983745237856237856489375892375892375892374589237589' # In prod, use ENV
+    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { 'fc83693998748956983745237856237856489375892375892375892374589237589' }
     jwt.dispatch_requests = [
       ['POST', %r{^/users/sign_in$}]
     ]

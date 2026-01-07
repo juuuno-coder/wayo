@@ -44,7 +44,9 @@ module Backend
     # Skip views, helpers and assets when generating a new resource.
     
     # Enable session middleware for OmniAuth (required even in API mode)
-    config.session_store :cookie_store, key: '_backend_session', domain: :all, tld_length: 2
+    # Enable session middleware for OmniAuth (required even in API mode)
+    # domain: :all prevents cookies on fly.dev (public suffix list). removing it defaults to current host.
+    config.session_store :cookie_store, key: '_backend_session', same_site: :lax, secure: Rails.env.production?
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options
     

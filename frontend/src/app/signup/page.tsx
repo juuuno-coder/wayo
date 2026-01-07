@@ -4,7 +4,8 @@ import WayoSignup from "./WayoSignup";
 
 export default async function SignupPage() {
   const host = (await headers()).get("host") || "";
-  const isWayo = host.includes("wayo") && !host.includes("gabojago");
+  // Default to Wayo for localhost, otherwise check for gabojago subdomain
+  const isWayo = host.includes("localhost") || (host.includes("wayo") && !host.includes("gabojago"));
 
   return isWayo ? <WayoSignup /> : <GabojagoSignup />;
 }

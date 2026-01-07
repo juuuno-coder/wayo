@@ -22,6 +22,8 @@ const nanumMyeongjo = Nanum_Myeongjo({
 
 import { headers } from "next/headers";
 
+import { AuthProvider } from "@/contexts/AuthContext";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -37,7 +39,9 @@ export default async function RootLayout({
         <Script src="https://cdn.iamport.kr/v1/iamport.js" strategy="beforeInteractive" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} antialiased`}>
-        <LayoutClient initialState={{ isWayoHost }}>{children}</LayoutClient>
+        <AuthProvider>
+          <LayoutClient initialState={{ isWayoHost }}>{children}</LayoutClient>
+        </AuthProvider>
       </body>
     </html>
   );

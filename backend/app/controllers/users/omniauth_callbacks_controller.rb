@@ -26,7 +26,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # end
 
       # 토큰을 쿼리 스트링으로 전달 (주의: 실제 상용에서는 보안상 포스트 메시지나 다른 방식 권장)
-      redirect_to "#{redirect_uri}?token=#{token}&email=#{@user.email}&id=#{@user.id}", allow_other_host: true
+      redirect_to "#{redirect_uri}?token=#{token}&email=#{@user.email}&id=#{@user.id}&avatar_url=#{@user.avatar_url}", allow_other_host: true
     else
       session['devise.google_data'] = request.env['omniauth.auth'].except(:extra)
       base_url = ENV['FRONTEND_URL'] || "http://wayo.co.kr"

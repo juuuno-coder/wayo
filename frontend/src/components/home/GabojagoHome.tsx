@@ -12,6 +12,7 @@ import {
     Sparkles
 } from "lucide-react";
 import { Event } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 
 // --- Constants ---
 
@@ -181,6 +182,7 @@ function EventCard({ event, router }: { event: Event, router: any }) {
 
 export default function GabojagoHome() {
     const router = useRouter();
+    const { isLoggedIn, user, logout } = useAuth();
     const [events, setEvents] = useState<Event[]>([]);
     const [festivalEvents, setFestivalEvents] = useState<Event[]>([]);
     const [exhibitionEvents, setExhibitionEvents] = useState<Event[]>([]);

@@ -4,7 +4,7 @@ import GabojagoHome from "@/components/home/GabojagoHome";
 
 export default async function Home() {
   const host = (await headers()).get("host") || "";
-  const isWayo = host.includes("wayo") && !host.includes("gabojago");
+  const isWayo = (host.includes("wayo") && !host.includes("gabojago")) || host.includes("localhost");
 
   return isWayo ? <WayoHome /> : <GabojagoHome />;
 }

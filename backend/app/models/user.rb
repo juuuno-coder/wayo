@@ -8,11 +8,15 @@ class User < ApplicationRecord
          omniauth_providers: [:google_oauth2]
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
-      user.password = Devise.friendly_token[0, 20]
-      user.nickname = auth.info.name
+    user = where(provider: auth.provider, uid: auth.uid).first_or_initialize do |u|
+      u.email = auth.info.email
+      u.password = Devise.friendly_token[0, 20]
     end
+    
+    user.nickname = auth.info.name
+    user.avatar_url = auth.info.image
+    user.save
+    user
   end
 
   has_many :likes, dependent: :destroy
