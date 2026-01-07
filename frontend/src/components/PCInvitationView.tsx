@@ -12,7 +12,8 @@ import {
     ArrowRight,
     Volume2,
     VolumeX,
-    X
+    X,
+    ArrowLeft
 } from "lucide-react";
 
 interface PCInvitationViewProps {
@@ -317,67 +318,9 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                             </div>
                         )}
 
-                        {/* Layout: LEAFLET (4p brochure style) */}
+                        {/* Layout: LEAFLET (Interactive Brochure Book Style) */}
                         {layoutMode === 'leaflet' && (
-                            <div className="w-full max-w-[1400px] h-[750px] flex items-stretch gap-2 perspective-3000">
-                                {[
-                                    { title: 'Front', content: 'poster', bg: 'bg-white' },
-                                    { title: 'Information', content: 'info', bg: 'bg-gray-50' },
-                                    { title: 'Message', content: 'message', bg: 'bg-white' },
-                                    { title: 'RSVP', content: 'rsvp', bg: 'bg-gray-100' }
-                                ].map((tab, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        initial={{ rotateY: -10 }}
-                                        whileHover={{ rotateY: 0 }}
-                                        className={`flex-1 ${tab.bg} rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border border-gray-100 relative`}
-                                    >
-                                        <div className="absolute top-0 left-0 w-12 h-full bg-gradient-to-r from-black/5 to-transparent pointer-events-none" />
-                                        {tab.content === 'poster' && (
-                                            <div className="h-full relative font-bold">
-                                                <NextImage src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"} alt="C" fill className="object-cover" />
-                                                <div className="absolute inset-0 bg-black/20" />
-                                                <div className="absolute bottom-8 left-8 right-8 text-white uppercase tracking-widest text-[10px]">Page 1 / Front</div>
-                                            </div>
-                                        )}
-                                        {tab.content === 'info' && (
-                                            <div className="p-8 flex flex-col gap-8 flex-1">
-                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page 2 / Info</p>
-                                                <div className="space-y-6">
-                                                    <div className="flex items-center gap-4">
-                                                        <Calendar className="text-[#E74C3C]" size={24} />
-                                                        <div className="text-sm font-bold text-gray-800">{new Date(invitation.event_date).toLocaleDateString()}</div>
-                                                    </div>
-                                                    <div className="flex items-center gap-4">
-                                                        <MapPin className="text-blue-500" size={24} />
-                                                        <div className="text-sm font-bold text-gray-800">{invitation.location}</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {tab.content === 'message' && (
-                                            <div className="p-8 flex flex-col gap-6 flex-1 overflow-y-auto">
-                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Page 3 / Message</p>
-                                                <h4 className="text-xl font-black text-gray-900 leading-tight">{invitation.title}</h4>
-                                                <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-wrap">{invitation.description}</p>
-                                            </div>
-                                        )}
-                                        {tab.content === 'rsvp' && (
-                                            <div className="p-8 flex flex-col gap-6 flex-1 bg-[#2c3e50] text-white justify-center items-center text-center">
-                                                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest absolute top-8">Page 4 / Final</p>
-                                                <CheckCircle2 size={48} className="text-green-400 mb-2" />
-                                                <h4 className="text-2xl font-black">Would you join us?</h4>
-                                                {!hasResponded ? (
-                                                    <button onClick={() => setShowRsvpModal(true)} className="w-full py-4 bg-[#E74C3C] rounded-xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all">RSVP Now</button>
-                                                ) : (
-                                                    <div className="p-4 bg-white/10 rounded-xl text-xs font-bold w-full">Attendance Confirmed</div>
-                                                )}
-                                                <button className="text-white/40 text-[10px] uppercase font-bold mt-4 flex items-center gap-2"><Share2 size={12} /> Share</button>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                ))}
-                            </div>
+                            <LeafletBookView invitation={invitation} hasResponded={hasResponded} onRSVP={() => setShowRsvpModal(true)} />
                         )}
 
                         <button
