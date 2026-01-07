@@ -16,6 +16,8 @@ interface AuthContextType {
     token: string | null;
     login: (token: string, user: User) => void;
     logout: () => void;
+    showWelcome: boolean;
+    clearWelcome: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,6 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [showWelcome, setShowWelcome] = useState(false);
     const router = useRouter();
 
     // Load state from localStorage on init
@@ -51,6 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (urlToken && urlEmail && urlId) {
             const newUser = { id: urlId, email: urlEmail, avatarUrl: urlAvatar || undefined };
             login(urlToken, newUser);
+            setShowWelcome(true);
 
             // Clean URL: remove auth params without full page reload
             const newUrl = window.location.pathname;
@@ -74,11 +78,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(null);
         setUser(null);
         setIsLoggedIn(false);
+        setShowWelcome(false);
         router.push("/");
     };
 
+    const clearWelcome = () => {
+        setShowWelcome(false);
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, user, token, login, logout }}>
+        <AuthContext.Provider value={{ isLoggedIn, user, token, login, logout, showWelcome, clearWelcome }}>
             {children}
         </AuthContext.Provider>
     );

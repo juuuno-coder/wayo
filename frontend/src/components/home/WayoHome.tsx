@@ -8,6 +8,7 @@ import { Sparkles, Heart, Zap, MousePointer2 } from "lucide-react";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import Toast from "@/components/Toast";
 
 const blackHanSans = Black_Han_Sans({
     weight: "400",
@@ -18,10 +19,24 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function WayoHome() {
     const router = useRouter();
-    const { isLoggedIn, user, logout } = useAuth();
+    const { isLoggedIn, user, logout, showWelcome, clearWelcome } = useAuth();
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (showDropdown && !target.closest('.dropdown-container')) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showDropdown]);
 
     const handleLogout = () => {
         logout();
+        setShowDropdown(false);
     };
 
     return (
@@ -43,8 +58,11 @@ export default function WayoHome() {
                             Login
                         </button>
                     ) : (
-                        <div className="flex items-center gap-4">
-                            <Link href="/profile" className="flex items-center gap-2 group">
+                        <div className="flex items-center gap-4 relative dropdown-container">
+                            <button
+                                onClick={() => setShowDropdown(!showDropdown)}
+                                className="flex items-center gap-2 group"
+                            >
                                 {user?.avatarUrl ? (
                                     <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#E74C3C]/20 group-hover:border-[#E74C3C] transition-all">
                                         <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
@@ -55,15 +73,36 @@ export default function WayoHome() {
                                     </div>
                                 )}
                                 <span className="text-sm font-bold opacity-60 group-hover:opacity-100 transition-opacity hidden sm:inline-block">
-                                    My Page
+                                    {user?.email?.split('@')[0]}
                                 </span>
-                            </Link>
-                            <button
-                                onClick={handleLogout}
-                                className="px-4 py-2 rounded-full border border-[#5D4037]/10 text-xs font-bold hover:bg-[#5D4037] hover:text-white transition-all active:scale-95"
-                            >
-                                Logout
                             </button>
+
+                            {/* Dropdown Menu */}
+                            {showDropdown && (
+                                <div className="absolute top-12 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 min-w-[200px] z-50">
+                                    <Link
+                                        href="/profile"
+                                        onClick={() => setShowDropdown(false)}
+                                        className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-[#E74C3C] transition-colors"
+                                    >
+                                        내 프로필
+                                    </Link>
+                                    <Link
+                                        href="/invitations/manage"
+                                        onClick={() => setShowDropdown(false)}
+                                        className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-[#E74C3C] transition-colors"
+                                    >
+                                        내 초대장 관리
+                                    </Link>
+                                    <div className="border-t border-gray-100 my-1"></div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                    >
+                                        로그아웃
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -212,6 +251,15 @@ export default function WayoHome() {
         html { scroll-behavior: smooth; }
         .inner-border { box-shadow: inset 0 0 0 12px white; }
       `}</style>
+
+            {/* Welcome Toast */}
+            <Toast
+                message={`환영합니다, ${user?.email?.split('@')[0]}님! 🎉`}
+                type="success"
+                isVisible={showWelcome}
+                onClose={clearWelcome}
+                duration={4000}
+            />
         </div>
     );
 }

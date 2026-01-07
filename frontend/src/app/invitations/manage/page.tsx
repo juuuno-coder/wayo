@@ -12,9 +12,11 @@ import {
     Sparkles
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ManageInvitationsPage() {
     const router = useRouter();
+    const { isLoggedIn, token } = useAuth();
     const [invitations, setInvitations] = useState<any[]>([]);
     const [receivedInvitations, setReceivedInvitations] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
@@ -28,8 +30,6 @@ export default function ManageInvitationsPage() {
 
     const fetchMyInvitations = async () => {
         try {
-            const token = localStorage.getItem("authToken");
-
             // 1. If Authenticated: Fetch ONLY from Backend
             if (token) {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations`, {
@@ -52,7 +52,6 @@ export default function ManageInvitationsPage() {
                     setInvitations(results);
                 } else if (res.status === 401) {
                     // Token expired or invalid
-                    localStorage.removeItem("authToken");
                     router.push("/login"); // Force login
                     return;
                 }
@@ -90,7 +89,6 @@ export default function ManageInvitationsPage() {
 
     const fetchReceivedInvitations = async () => {
         try {
-            const token = localStorage.getItem("authToken");
             if (!token) return;
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/received`, {
