@@ -38,4 +38,8 @@ Devise.setup do |config|
                     image_aspect_ratio: 'square',
                     image_size: 50
                   }
+
+  # Allow GET requests for OmniAuth (Required for window.location.href)
+  OmniAuth.config.allowed_request_methods = [:post, :get]
+  OmniAuth.config.silence_get_warning = true
 end

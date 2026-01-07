@@ -16,8 +16,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # SPA 환경에서는 보통 리디렉션 URL에 토큰을 담는 방식이나
       # 혹은 특정 경로로 리디렉션 후 프론트에서 토큰을 가져가게 합니다.
       
-      # origin 파라미터가 있으면 우선 사용, 없으면 omniauth.origin 혹은 기본값 사용
-      redirect_uri = params[:origin] || request.env['omniauth.origin'] || "http://wayo.co.kr/"
+      # origin 파라미터가 있으면 우선 사용, 없으면 ENV['FRONTEND_URL'] 혹은 기본값 사용
+      default_url = ENV['FRONTEND_URL'] || "http://wayo.co.kr/"
+      redirect_uri = params[:origin] || request.env['omniauth.origin'] || default_url
       
       # 보안 검증: 허용된 도메인인지 체크 (선택 사항이나 권장)
       # if !ALLOWED_HOSTS.include?(URI.parse(redirect_uri).host)
@@ -25,14 +26,18 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # end
 
       # 토큰을 쿼리 스트링으로 전달 (주의: 실제 상용에서는 보안상 포스트 메시지나 다른 방식 권장)
-      redirect_to "#{redirect_uri}?token=#{token}&email=#{@user.email}&id=#{@user.id}"
+      redirect_to "#{redirect_uri}?token=#{token}&email=#{@user.email}&id=#{@user.id}", allow_other_host: true
     else
       session['devise.google_data'] = request.env['omniauth.auth'].except(:extra)
-      redirect_to "http://wayo.co.kr/login?error=auth_failed"
+      base_url = ENV['FRONTEND_URL'] || "http://wayo.co.kr"
+      redirect_uri = base_url.end_with?('/') ? base_url : "#{base_url}/"
+      redirect_to "#{redirect_uri}login?error=auth_failed", allow_other_host: true
     end
   end
 
   def failure
-    redirect_to "http://wayo.co.kr/login?error=failure"
+    base_url = ENV['FRONTEND_URL'] || "http://wayo.co.kr"
+    redirect_uri = base_url.end_with?('/') ? base_url : "#{base_url}/"
+    redirect_to "#{redirect_uri}login?error=failure", allow_other_host: true
   end
 end
