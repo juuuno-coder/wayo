@@ -58,9 +58,10 @@ export default function ManageInvitationsPage() {
                         })
                     );
                     setInvitations(results);
-                } else if (res.status === 401) {
-                    router.push("/login");
-                    return;
+                } else {
+                    // Token issue or other error: fail silently or fallback
+                    console.warn("Failed to fetch authenticated invitations", res.status);
+                    // Do NOT redirect to login automatically to prevent loops
                 }
             } else {
                 const pendingIds = JSON.parse(localStorage.getItem("pending_invitations") || "[]");

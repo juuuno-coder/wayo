@@ -4,7 +4,12 @@ class InvitationsController < ApplicationController
 
   # GET /invitations
   def index
-    @invitations = current_user.invitations.with_attached_images
+    # If unauthenticated, return empty array to prevent 401 bounce
+    if current_user
+      @invitations = current_user.invitations.with_attached_images
+    else
+      @invitations = []
+    end
     render json: @invitations.map { |invitation| invitation_as_json(invitation) }
   end
 
@@ -15,10 +20,14 @@ class InvitationsController < ApplicationController
 
   # GET /invitations/received
   def received
-    @invitations = Invitation.joins(:invitation_guests)
-                             .where(invitation_guests: { user_id: current_user.id })
-                             .with_attached_images
-                             .distinct
+    if current_user
+      @invitations = Invitation.joins(:invitation_guests)
+                               .where(invitation_guests: { user_id: current_user.id })
+                               .with_attached_images
+                               .distinct
+    else
+      @invitations = []
+    end
     render json: @invitations.map { |invitation| invitation_as_json(invitation) }
   end
 
@@ -47,7 +56,7 @@ class InvitationsController < ApplicationController
     render json: stats
   end
 
-  skip_before_action :authenticate_user!, only: %i[ show create track_view ]
+  skip_before_action :authenticate_user!, only: %i[ index received show create track_view ]
 
   # POST /invitations
   def create
