@@ -630,6 +630,7 @@ export default function CreateInvitationPage() {
             {currentStep < steps.length - 1 ? "다음" : "초대장 완성하기"}
           </button>
         </div>
+        <p className="text-[10px] text-center text-gray-300 mt-2 font-mono">v1.1</p>
       </div>
 
       {/* PC Side Preview */}
