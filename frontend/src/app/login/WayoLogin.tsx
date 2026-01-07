@@ -153,5 +153,4 @@ export default function WayoLogin() {
             </div>
         </div>
     );
-    );
 }

@@ -6,7 +6,8 @@ import {
   ArrowLeft,
   MapPin,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Calendar
 } from "lucide-react";
 import NextImage from "next/image";
 import DaumPostcodeEmbed from 'react-daum-postcode';
