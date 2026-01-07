@@ -80,100 +80,103 @@ export default function WayoSignup() {
     };
 
     return (
-        <div className="p-8 pb-20">
-            <header className="mb-6 flex justify-between items-center">
-                <button onClick={() => router.back()} className="p-2 -ml-2 text-gray-800 hover:bg-gray-100 rounded-full transition-colors">
-                    <MoveLeft size={24} />
-                </button>
-                <div className="px-3 py-1 bg-red-50 text-red-500 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
-                    <Sparkles size={12} /> Wayo
-                </div>
-            </header>
-
-            <div className="text-center mb-10">
-                <h1 className="text-5xl font-black text-[#E02424] tracking-tighter mb-4">WAYO</h1>
-                <p className="text-gray-400 font-medium leading-relaxed text-sm">
-                    당신만의 특별한 초대장이<br />
-                    공간으로 <span className="text-gray-800 font-bold underline decoration-red-200 decoration-4">지금 바로 와요 💌</span>
-                </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div className="space-y-1">
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="이메일 주소"
-                        className="w-full px-5 py-4 bg-white border border-gray-200 focus:border-[#E02424] focus:ring-4 focus:ring-red-50 rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300"
-                        required
-                    />
-                </div>
-
-                <div className="space-y-1">
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="비밀번호 (6자 이상)"
-                        className="w-full px-5 py-4 bg-white border border-gray-200 focus:border-[#E02424] focus:ring-4 focus:ring-red-50 rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300"
-                        required
-                        minLength={6}
-                    />
-                </div>
-
-                <div className="space-y-1">
-                    <input
-                        type="password"
-                        value={passwordConfirm}
-                        onChange={(e) => setPasswordConfirm(e.target.value)}
-                        placeholder="비밀번호 다시 입력"
-                        className={`w-full px-5 py-4 bg-white border focus:ring-4 rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300 ${passwordConfirm && password !== passwordConfirm ? 'border-red-400 focus:ring-red-50' : 'border-gray-200 focus:border-[#E02424] focus:ring-red-50'}`}
-                        required
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-[#E02424] hover:bg-[#C81E1E] active:scale-[0.98] text-white text-lg font-black py-4.5 rounded-2xl shadow-xl shadow-red-200 transition-all mt-4"
-                >
-                    초대장 시작하기
-                </button>
-
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-100"></div>
+        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6">
+            <div className="w-full max-w-md">
+                {/* Brand */}
+                <div className="text-center mb-10">
+                    <div className="mb-4 inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 text-[#E74C3C] rounded-full text-xs font-bold uppercase tracking-widest">
+                        <Sparkles size={14} /> Start Your Wayo
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-white text-gray-400 font-bold uppercase tracking-wider text-[10px]">또는</span>
+                    <h1 className="text-7xl font-black text-[#E74C3C] tracking-tighter mb-4">WAYO</h1>
+                    <p className="text-gray-400 font-medium leading-relaxed text-sm">
+                        마음을 담은 정교한 초대장<br />
+                        당신만의 공간으로 <span className="text-gray-900 font-bold decoration-[#E74C3C]/30 decoration-4">지금 바로 와요 💌</span>
+                    </p>
+                </div>
+
+                {/* Signup Card */}
+                <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Email</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="이메일 주소를 입력해주세요"
+                                className="w-full px-6 py-4.5 bg-gray-50 border border-transparent rounded-2xl text-base focus:bg-white focus:border-[#E74C3C] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="비밀번호 (6자 이상)"
+                                className="w-full px-6 py-4.5 bg-gray-50 border border-transparent rounded-2xl text-base focus:bg-white focus:border-[#E74C3C] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
+                                required
+                                minLength={6}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Confirm Password</label>
+                            <input
+                                type="password"
+                                value={passwordConfirm}
+                                onChange={(e) => setPasswordConfirm(e.target.value)}
+                                placeholder="비밀번호를 다시 입력해주세요"
+                                className={`w-full px-6 py-4.5 bg-gray-50 border rounded-2xl outline-none transition-all text-base font-medium placeholder:text-gray-300 ${passwordConfirm && password !== passwordConfirm ? 'border-red-400 focus:ring-red-50 focus:bg-red-50/10' : 'border-transparent focus:bg-white focus:border-[#E74C3C] focus:ring-4 focus:ring-red-50'}`}
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full bg-[#E74C3C] hover:bg-[#c0392b] text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-red-200 active:scale-[0.98] transition-all mt-4"
+                        >
+                            회원가입 완료
+                        </button>
+
+                        <div className="relative my-8">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-100"></div>
+                            </div>
+                            <div className="relative flex justify-center text-xs">
+                                <span className="px-4 bg-white text-gray-300 font-bold uppercase tracking-widest text-[10px]">Social Signup</span>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleGoogleLogin}
+                            className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-4.5 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                        >
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                            Google 계정으로 시작하기
+                        </button>
+
+                        <div className="text-center mt-8">
+                            <Link href="/login" className="text-sm font-bold text-gray-400 hover:text-[#E74C3C] transition-colors">
+                                이미 계정이 있으신가요? <span className="text-[#E74C3C] border-b border-[#E74C3C]/30 ml-1">로그인</span>
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+
+                {/* Footer Badge */}
+                <div className="mt-12 p-5 bg-white/50 backdrop-blur-sm rounded-3xl flex items-center gap-4 border border-white shadow-sm">
+                    <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#E74C3C]">
+                        <Heart size={20} className="fill-current" />
                     </div>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter leading-tight">
+                        Perfect for Events <br />
+                        <span className="text-gray-900">JOIN 10,000+ CREATORS</span>
+                    </p>
                 </div>
-
-                <button
-                    type="button"
-                    onClick={handleGoogleLogin}
-                    className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-4.5 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
-                >
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
-                    Google로 계속하기
-                </button>
-            </form>
-
-            <div className="mt-8 text-center">
-                <Link href="/login" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-500 font-bold text-sm transition-all active:scale-95">
-                    이미 계정이 있으신가요? <span className="text-[#E02424]">로그인</span>
-                </Link>
-            </div>
-
-            {/* Trust Badge */}
-            <div className="mt-10 p-4 bg-gray-50 rounded-2xl flex items-center gap-3 border border-gray-100">
-                <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-red-500">
-                    <Heart size={18} className="fill-current" />
-                </div>
-                <p className="text-[10px] text-gray-400 leading-tight">
-                    이미 <span className="text-gray-700 font-bold">10,000+</span> 명의 호스트가<br />
-                    와요를 통해 초대장을 보냈습니다.
-                </p>
             </div>
 
             <AuthModal
@@ -184,5 +187,6 @@ export default function WayoSignup() {
                 redirectUrl="/login"
             />
         </div>
+    );
     );
 }
