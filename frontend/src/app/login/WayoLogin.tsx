@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { MoveLeft, Heart, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function WayoLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const { login } = useAuth();
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -48,18 +50,19 @@ export default function WayoLogin() {
 
             if (response.ok) {
                 const token = response.headers.get("Authorization");
-                if (token) localStorage.setItem("authToken", token);
 
                 const data = await response.json();
-                // Handle both { user: { email, id } } and { email, id } formats
                 const userData = data.user || data;
 
-                if (userData && userData.email) {
-                    const userObj = { id: String(userData.id), email: userData.email, nickname: userData.nickname, avatarUrl: userData.avatar_url };
-                    localStorage.setItem("userData", JSON.stringify(userObj));
-
-                    localStorage.setItem("userEmail", userData.email);
-                    localStorage.setItem("userId", String(userData.id));
+                if (token && userData && userData.email) {
+                    const userObj = {
+                        id: String(userData.id),
+                        email: userData.email,
+                        nickname: userData.nickname,
+                        avatarUrl: userData.avatar_url
+                    };
+                    // Use context login to update state immediately
+                    login(token, userObj);
                 }
 
                 router.push("/");

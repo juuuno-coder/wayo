@@ -63,15 +63,13 @@ export default function WayoHome() {
                                 onClick={() => setShowDropdown(!showDropdown)}
                                 className="flex items-center gap-2 group"
                             >
-                                {user?.avatarUrl ? (
-                                    <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#E74C3C]/20 group-hover:border-[#E74C3C] transition-all">
-                                        <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                                    </div>
-                                ) : (
-                                    <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-[#E74C3C] border-2 border-[#E74C3C]/20 group-hover:border-[#E74C3C] transition-all">
-                                        <Heart size={14} className="fill-current" />
-                                    </div>
-                                )}
+                                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#E74C3C]/20 group-hover:border-[#E74C3C] transition-all">
+                                    <img
+                                        src={user?.avatarUrl || `https://ui-avatars.com/api/?name=${user?.nickname || user?.email?.split('@')[0] || 'User'}&background=E74C3C&color=fff`}
+                                        alt="Avatar"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
                                 <span className="text-sm font-bold opacity-60 group-hover:opacity-100 transition-opacity hidden sm:inline-block">
                                     {user?.email?.split('@')[0]}
                                 </span>

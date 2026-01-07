@@ -21,11 +21,28 @@ export default function MyPageScreen() {
         try {
             const storedToken = await SecureStore.getItemAsync('auth_token');
             if (storedToken) {
+                // Optimistic set
                 setToken(storedToken);
-                // In production, fetch user profile here
-                // For MVP, just assume logged in or decode token if possible
-                // We will just show a "mock" profile or minimal info
-                setUser({ email: 'User', nickname: 'Guest' });
+
+                // Verify with backend
+                const response = await fetch('https://wayo.fly.dev/users/me', {
+                    headers: {
+                        'Authorization': storedToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    setUser({
+                        email: userData.email,
+                        nickname: userData.nickname || 'User',
+                        avatarUrl: userData.avatar_url
+                    });
+                } else if (response.status === 401) {
+                    // Invalid token
+                    await handleLogout();
+                }
             }
         } catch (error) {
             console.error(error);
@@ -98,7 +115,7 @@ export default function MyPageScreen() {
                     <View className="flex-row items-center mb-6">
                         <View className="w-16 h-16 bg-gray-200 rounded-full mr-4 overflow-hidden">
                             <Image
-                                source={{ uri: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' }}
+                                source={{ uri: user?.avatarUrl || `https://ui-avatars.com/api/?name=${user?.nickname || user?.email?.split('@')[0] || 'User'}&background=84CC16&color=fff` }}
                                 className="w-full h-full"
                             />
                         </View>

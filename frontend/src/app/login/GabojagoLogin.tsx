@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function GabojagoLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const router = useRouter();
+    const { login } = useAuth();
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -72,12 +74,16 @@ export default function GabojagoLogin() {
                 const userData = data.user || data;
 
                 if (userData && userData.email) {
-                    const userObj = { id: String(userData.id), email: userData.email, nickname: userData.nickname, avatarUrl: userData.avatar_url };
-                    localStorage.setItem("userData", JSON.stringify(userObj));
+                    const userObj = {
+                        id: String(userData.id),
+                        email: userData.email,
+                        nickname: userData.nickname,
+                        avatarUrl: userData.avatar_url
+                    };
 
-                    // Legacy support (optional, can keep for other components)
-                    localStorage.setItem("userEmail", userData.email);
-                    localStorage.setItem("userId", String(userData.id));
+                    if (token) {
+                        login(token, userObj);
+                    }
                 }
 
                 // [New] Sync Pending Invitations

@@ -31,28 +31,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Load state from localStorage on init
     useEffect(() => {
-        const savedToken = localStorage.getItem("authToken");
-        const savedUser = localStorage.getItem("userData");
+        const initializeAuth = async () => {
+            const savedToken = localStorage.getItem("authToken");
 
-        if (savedToken) {
+            if (!savedToken) return;
+
+            // Optimistic load
+            const savedUser = localStorage.getItem("userData");
             if (savedUser) {
-                setToken(savedToken);
-                setUser(JSON.parse(savedUser));
-                setIsLoggedIn(true);
-            } else {
-                // Fallback for legacy login (GabojagoLogin)
-                const savedEmail = localStorage.getItem("userEmail");
-                const savedId = localStorage.getItem("userId");
-                if (savedEmail && savedId) {
+                try {
                     setToken(savedToken);
-                    setUser({ id: savedId, email: savedEmail });
+                    setUser(JSON.parse(savedUser));
                     setIsLoggedIn(true);
-
-                    // Migrate to new format
-                    localStorage.setItem("userData", JSON.stringify({ id: savedId, email: savedEmail }));
+                } catch (e) {
+                    console.error("Failed to parse saved user", e);
                 }
             }
-        }
+
+            try {
+                // Verify with backend
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
+                const response = await fetch(`${apiUrl}/users/me`, {
+                    headers: {
+                        'Authorization': savedToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    const normalizedUser = {
+                        id: String(userData.id),
+                        email: userData.email,
+                        nickname: userData.nickname,
+                        avatarUrl: userData.avatar_url
+                    };
+
+                    setUser(normalizedUser);
+                    setIsLoggedIn(true);
+                    setToken(savedToken);
+                    localStorage.setItem("userData", JSON.stringify(normalizedUser));
+
+                    // Cleanup legacy
+                    localStorage.removeItem("userEmail");
+                    localStorage.removeItem("userId");
+                } else if (response.status === 401) {
+                    console.warn("Session expired, logging out");
+                    logout();
+                }
+            } catch (error) {
+                console.error("Auth verification failed", error);
+            }
+        };
+
+        initializeAuth();
     }, []);
 
     // Handle URL token capture

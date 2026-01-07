@@ -13,6 +13,10 @@ class UsersController < ApplicationController
     render json: current_user
   end
 
+  def me
+    render json: current_user
+  end
+
   def search
     if params[:query].blank?
       render json: []

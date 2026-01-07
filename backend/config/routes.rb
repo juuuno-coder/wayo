@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :update] do
     collection do
       get :search
+      get :me
     end
   end
   
