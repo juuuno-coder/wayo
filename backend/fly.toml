@@ -14,7 +14,7 @@ primary_region = "nrt" # 도쿄 지역 (한국에서 가장 빠름)
   destination = "/rails/storage"
 
 [http_service]
-  internal_port = 80
+  internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
