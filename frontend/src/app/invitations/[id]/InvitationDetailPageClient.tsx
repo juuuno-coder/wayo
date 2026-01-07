@@ -46,6 +46,9 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   // RSVP State
   const [hasResponded, setHasResponded] = useState(false);
   const [confirmedGuestName, setConfirmedGuestName] = useState("");
+  const [myGuestId, setMyGuestId] = useState<number | undefined>();
+  const [myGuestStatus, setMyGuestStatus] = useState<string>("pending");
+  const [myGuestMessage, setMyGuestMessage] = useState<string>("");
 
   // User Type (Simple check for now, can be improved)
   const [isCreator, setIsCreator] = useState(false);
@@ -140,6 +143,9 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
         if (me) {
           setHasResponded(true);
           setConfirmedGuestName(me.name);
+          setMyGuestId(me.id);
+          setMyGuestStatus(me.status || "pending");
+          setMyGuestMessage(me.message || "");
           if (me.ticket) {
             setMyTicket(me.ticket);
           }
@@ -472,12 +478,16 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
             isCreator={isCreator}
             hasResponded={hasResponded}
             myTicket={myTicket}
+            myGuestId={myGuestId}
+            myGuestStatus={myGuestStatus}
+            myGuestMessage={myGuestMessage}
             onShare={handleShare}
             onAddToCalendar={addToCalendar}
             onShowSendModal={() => setShowSendModal(true)}
             setHasResponded={setHasResponded}
             setMyTicket={setMyTicket}
             setShowSignupModal={setShowSignupModal}
+            refreshGuests={fetchGuests}
           />
 
         </div>

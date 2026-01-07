@@ -1,18 +1,24 @@
-import { Share2, Megaphone, Send, CalendarPlus, CheckCircle2 } from "lucide-react";
+import { Share2, Megaphone, Send, CalendarPlus, CheckCircle2, Edit2 } from "lucide-react";
 import InvitationRSVPForm from "@/components/InvitationRSVPForm";
+import RSVPForm from "@/components/RSVPForm";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface InvitationFooterProps {
     id: string;
     isCreator: boolean;
     hasResponded: boolean;
     myTicket: any;
+    myGuestId?: number;
+    myGuestStatus?: string;
+    myGuestMessage?: string;
     onShare: () => void;
     onAddToCalendar: () => void;
     onShowSendModal: () => void;
     setHasResponded: (val: boolean) => void;
     setMyTicket: (ticket: any) => void;
     setShowSignupModal: (val: boolean) => void;
+    refreshGuests: () => void;
 }
 
 export default function InvitationFooter({
@@ -20,14 +26,19 @@ export default function InvitationFooter({
     isCreator,
     hasResponded,
     myTicket,
+    myGuestId,
+    myGuestStatus = "pending",
+    myGuestMessage = "",
     onShare,
     onAddToCalendar,
     onShowSendModal,
     setHasResponded,
     setMyTicket,
-    setShowSignupModal
+    setShowSignupModal,
+    refreshGuests
 }: InvitationFooterProps) {
     const router = useRouter();
+    const [isEditingRSVP, setIsEditingRSVP] = useState(false);
 
     return (
         <div className="p-8 space-y-8 border-t border-gray-50 bg-white">
@@ -78,14 +89,55 @@ export default function InvitationFooter({
                                 if (!localStorage.getItem("authToken")) {
                                     setShowSignupModal(true);
                                 }
+                                refreshGuests();
+                            }}
+                        />
+                    </div>
+                ) : isEditingRSVP && myGuestId ? (
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-bold text-gray-900">참석 의사 변경하기</h3>
+                            <button
+                                onClick={() => setIsEditingRSVP(false)}
+                                className="text-sm text-gray-500 hover:text-gray-700"
+                            >
+                                취소
+                            </button>
+                        </div>
+                        <RSVPForm
+                            invitationId={Number(id)}
+                            guestId={myGuestId}
+                            currentStatus={myGuestStatus}
+                            currentMessage={myGuestMessage}
+                            onUpdate={() => {
+                                setIsEditingRSVP(false);
+                                refreshGuests();
                             }}
                         />
                     </div>
                 ) : (
                     <div className="text-center py-6 animate-in zoom-in">
                         <CheckCircle2 size={48} className="text-green-500 mx-auto mb-4" />
-                        <p className="font-bold text-gray-900 text-lg">참석이 확인되었습니다!</p>
-                        <p className="text-gray-500 mt-2 text-sm mb-6">소중한 발걸음 기다리겠습니다.</p>
+                        <p className="font-bold text-gray-900 text-lg">
+                            {myGuestStatus === "accepted" ? "참석이 확인되었습니다!" :
+                                myGuestStatus === "declined" ? "불참으로 확인되었습니다" :
+                                    "응답이 등록되었습니다"}
+                        </p>
+                        <p className="text-gray-500 mt-2 text-sm mb-6">
+                            {myGuestStatus === "accepted" ? "소중한 발걸음 기다리겠습니다." :
+                                myGuestStatus === "declined" ? "다음 기회에 뵙겠습니다." :
+                                    "참석 여부를 결정하시면 알려주세요."}
+                        </p>
+
+                        {/* Edit RSVP Button */}
+                        {myGuestId && (
+                            <button
+                                onClick={() => setIsEditingRSVP(true)}
+                                className="mb-6 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-2 hover:border-gray-300 transition-all mx-auto"
+                            >
+                                <Edit2 size={18} /> 참석 의사 변경하기
+                            </button>
+                        )}
 
                         {myTicket && (
                             <div className="bg-white border-2 border-gray-900 rounded-2xl p-6 shadow-xl max-w-xs mx-auto transform hover:scale-105 transition-transform">

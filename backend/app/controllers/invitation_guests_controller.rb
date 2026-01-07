@@ -1,7 +1,8 @@
 class InvitationGuestsController < ApplicationController
   before_action :authenticate_user!
-  skip_before_action :authenticate_user!, only: [:index, :create]
-  before_action :set_invitation, only: [:index, :create]
+  skip_before_action :authenticate_user!, only: [:index, :create, :show]
+  before_action :set_invitation, only: [:index, :create, :update_rsvp]
+  before_action :set_guest, only: [:show, :update_rsvp]
 
   # GET /invitations/:invitation_id/guests
   def index
@@ -52,6 +53,29 @@ class InvitationGuestsController < ApplicationController
     end
   end
 
+  # GET /invitations/:invitation_id/guests/:id
+  def show
+    render json: @guest.as_json(include: { ticket: { only: [:id, :qr_code, :status] }, invitation: { only: [:id, :title] } })
+  end
+
+  # PATCH /invitations/:invitation_id/guests/:id/rsvp
+  def update_rsvp
+    # Authorization: user must be the guest or invitation owner
+    unless authorized_to_update?
+      render json: { error: 'Unauthorized' }, status: :forbidden
+      return
+    end
+
+    if @guest.update(rsvp_params)
+      # Handle ticket creation/deletion based on status change
+      handle_ticket_on_rsvp_change
+      
+      render json: @guest.as_json(include: { ticket: { only: [:id, :qr_code, :status] } })
+    else
+      render json: { errors: @guest.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_invitation
@@ -60,5 +84,40 @@ class InvitationGuestsController < ApplicationController
 
   def guest_params
     params.require(:guest).permit(:name, :message, :status, :contact, :user_id)
+  end
+
+  def set_guest
+    @guest = InvitationGuest.find(params[:id])
+  end
+
+  def rsvp_params
+    params.permit(:status, :message)
+  end
+
+  def authorized_to_update?
+    # Guest can update their own RSVP
+    return true if @guest.user_id == current_user&.id
+    
+    # Invitation owner can update any guest's RSVP
+    return true if @invitation.user_id == current_user&.id
+    
+    false
+  end
+
+  def handle_ticket_on_rsvp_change
+    return unless @invitation.ticket_type
+
+    if @guest.status == 'accepted' && !@guest.ticket
+      # Create ticket when accepting
+      Ticket.create!(
+        ticket_type: @invitation.ticket_type,
+        user: @guest.user,
+        invitation_guest: @guest,
+        status: 'active'
+      )
+    elsif @guest.status != 'accepted' && @guest.ticket
+      # Optionally cancel ticket when declining/pending
+      @guest.ticket.update(status: 'cancelled')
+    end
   end
 end

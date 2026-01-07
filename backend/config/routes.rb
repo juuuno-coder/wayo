@@ -14,7 +14,11 @@ Rails.application.routes.draw do
       post :track_view
       get :stats
     end
-    resources :guests, controller: 'invitation_guests', only: [:index, :create]
+    resources :guests, controller: 'invitation_guests', only: [:index, :create, :show] do
+      member do
+        patch :rsvp, action: :update_rsvp
+      end
+    end
   end
   resources :ticket_types, only: [:index, :show]
   resources :tickets, only: [:index, :show, :create] do

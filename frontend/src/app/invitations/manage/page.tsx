@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
+import GuestListModal from "@/components/GuestListModal";
 
 export default function ManageInvitationsPage() {
     const router = useRouter();
@@ -22,6 +23,8 @@ export default function ManageInvitationsPage() {
     const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
     const [loading, setLoading] = useState(true);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [selectedInvitation, setSelectedInvitation] = useState<any | null>(null);
+    const [isGuestListOpen, setIsGuestListOpen] = useState(false);
 
     useEffect(() => {
         fetchMyInvitations();
@@ -178,7 +181,14 @@ export default function ManageInvitationsPage() {
                             <div
                                 key={invite.id}
                                 className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer relative"
-                                onClick={() => router.push(`/invitations/${invite.id}`)}
+                                onClick={() => {
+                                    if (activeTab === 'sent') {
+                                        setSelectedInvitation(invite);
+                                        setIsGuestListOpen(true);
+                                    } else {
+                                        router.push(`/invitations/${invite.id}`);
+                                    }
+                                }}
                             >
                                 {activeTab === 'received' && (
                                     <div className="absolute top-4 left-4 z-10">
@@ -279,6 +289,19 @@ export default function ManageInvitationsPage() {
                     </div>
                 )}
             </main>
+
+            {/* Guest List Modal */}
+            {selectedInvitation && (
+                <GuestListModal
+                    isOpen={isGuestListOpen}
+                    onClose={() => {
+                        setIsGuestListOpen(false);
+                        setSelectedInvitation(null);
+                    }}
+                    invitationId={selectedInvitation.id}
+                    invitationTitle={selectedInvitation.title}
+                />
+            )}
 
             <AuthModal
                 isOpen={isAuthModalOpen}
