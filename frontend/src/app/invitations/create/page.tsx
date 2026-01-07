@@ -30,6 +30,7 @@ const themes: Record<string, { name: string, bg: string, text: string, accent: s
 };
 
 const steps = [
+  { icon: "📐", title: "어떤 형태로\n만드시겠어요?", subtitle: "초대장의 기본 구조를 먼저 선택해주세요." },
   { icon: "🎉", title: "어떤 행사를\n계획 중이신가요?", subtitle: "초대장의 멋진 제목을 지어주세요." },
   { icon: "📅", title: "언제\n만나면 좋을까요?", subtitle: "정확한 일시를 알려주세요." },
   { icon: "📍", title: "어디서\n열리는 행사인가요?", subtitle: "알기 쉬운 장소나 주소를 입력해주세요." },
@@ -37,7 +38,6 @@ const steps = [
   { icon: "🎨", title: "어떤 분위기로\n초대장을 꾸밀까요?", subtitle: "마음에 드는 테마를 골라보세요." },
   { icon: "🎟️", title: "티켓을\n첨부하시겠어요?", subtitle: "참석자에게 발급할 티켓을 선택하세요." },
   { icon: "🎼", title: "어떤 감성을\n담아볼까요?", subtitle: "글씨체와 음악을 선택해보세요." },
-  { icon: "📰", title: "어떤 형태로\n보여줄까요?", subtitle: "PC 화면에서 보여질 기본 레이아웃을 골라주세요." },
   { icon: "💌", title: "소중한 분들에게\n전할 말이 있나요?", subtitle: "따뜻한 초대 문구를 적어주세요." },
   { icon: "✨", title: "거의 다 됐어요!\n마지막으로 확인해주세요", subtitle: "수정이 필요하면 이전을 눌러주세요." }
 ];
@@ -177,10 +177,11 @@ export default function CreateInvitationPage() {
 
   const isNextDisabled = () => {
     switch (currentStep) {
-      case 0: return !formData.title;
-      case 1: return !formData.event_date;
-      case 2: return !formData.location;
-      case 8: return !formData.description; // Updated from 7
+      case 0: return !formData.default_layout; // Layout (New Step 0)
+      case 1: return !formData.title;          // Title
+      case 2: return !formData.event_date;     // Date
+      case 3: return !formData.location;       // Location
+      case 8: return !formData.description;    // Description (was 7/8, now 8)
       default: return false;
     }
   };
@@ -216,8 +217,44 @@ export default function CreateInvitationPage() {
           </p>
         </div>
 
-        {/* Step 1: Title */}
+        {/* Step 0: Layout Selection (NEW POSITION) */}
         {currentStep === 0 && (
+          <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
+            <div className="grid grid-cols-1 gap-4">
+              {[
+                { id: 'single', label: '단면 포스터 (Single)', desc: '심플하고 강렬한 한 장의 포스터 (Standard)', icon: '🖼️', isPremium: false },
+                { id: 'spread', label: '양면 펼침 (Spread)', desc: '책처럼 펼쳐지는 클래식한 스타일 (Standard)', icon: '📖', isPremium: false },
+                { id: 'leaflet', label: '4단 리플렛 (Leaflet)', desc: '정보를 풍성하게 담는 브로슈어 (Premium)', icon: '📰', isPremium: true },
+              ].map((layout) => (
+                <button
+                  key={layout.id}
+                  onClick={() => setFormData({ ...formData, default_layout: layout.id })}
+                  className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${formData.default_layout === layout.id
+                    ? "bg-gray-900 border-gray-900 text-white shadow-xl ring-2 ring-gray-200"
+                    : "bg-white border-gray-100 text-gray-400 hover:border-gray-200"
+                    }`}
+                >
+                  <div className="text-3xl">{layout.icon}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className={`text-lg font-bold ${formData.default_layout === layout.id ? 'text-white' : 'text-gray-900'}`}>{layout.label}</p>
+                      {layout.isPremium && <span className="text-[10px] bg-[#E74C3C] text-white px-2 py-0.5 rounded-full font-bold">PREMIUM</span>}
+                    </div>
+                    <p className={`text-sm ${formData.default_layout === layout.id ? 'text-gray-400' : 'text-gray-500'}`}>{layout.desc}</p>
+                  </div>
+                  {formData.default_layout === layout.id && (
+                    <div className="ml-auto mt-1 text-green-400">
+                      <CheckCircle2 size={24} />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Step 1: Title (Was 0) */}
+        {currentStep === 1 && (
           <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
             <input
               type="text"
@@ -230,8 +267,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 2: Date & Time */}
-        {currentStep === 1 && (
+        {/* Step 2: Date & Time (Was 1) */}
+        {currentStep === 2 && (
           <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
             <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
               <label className="block text-sm font-bold text-gray-500 mb-2">날짜</label>
@@ -260,8 +297,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 3: Location */}
-        {currentStep === 2 && (
+        {/* Step 3: Location (Was 2) */}
+        {currentStep === 3 && (
           <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
             <div className="relative space-y-4">
               {/* Place Name Input */}
@@ -324,8 +361,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 4: Image Upload */}
-        {currentStep === 3 && (
+        {/* Step 4: Image Upload (Was 3) */}
+        {currentStep === 4 && (
           <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100">
             <div className="grid grid-cols-2 gap-4">
               <div
@@ -364,8 +401,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 5: Theme */}
-        {currentStep === 4 && (
+        {/* Step 5: Theme (Was 4) */}
+        {currentStep === 5 && (
           <div className="animate-in slide-in-from-right fade-in duration-500 delay-100 pb-4">
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(themes).map(([key, value]) => (
@@ -390,8 +427,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 5: Ticket Selection (NEW) */}
-        {currentStep === 5 && (
+        {/* Step 6: Ticket Selection (Was 5) */}
+        {currentStep === 6 && (
           <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
             <p className="text-gray-500 mb-4 font-medium">초대장을 받는 분들에게 나누어 줄 티켓을 선택해주세요.<br />(선택하지 않아도 됩니다)</p>
 
@@ -431,8 +468,8 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 6: Detail Decoration (Font, Effect, BGM) */}
-        {currentStep === 6 && (
+        {/* Step 7: Detail Decoration (Was 6) */}
+        {currentStep === 7 && (
           <div className="space-y-8 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
 
             {/* Font Selection */}
@@ -516,40 +553,36 @@ export default function CreateInvitationPage() {
           </div>
         )}
 
-        {/* Step 7: Layout Selection (NEW) */}
-        {currentStep === 7 && (
-          <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
-            <p className="text-gray-500 font-medium mb-4">PC에서 초대장이 열릴 때 보여질<br />기본 레이아웃을 선택해주세요.</p>
+        {/* OLD STEP 7 REMOVED HERE (Layout was here) */}
 
-            <div className="grid grid-cols-1 gap-4">
-              {[
-                { id: 'single', label: '단면 포스터 (Single)', desc: '심플하고 강렬한 한 장의 포스터', icon: '🖼️' },
-                { id: 'spread', label: '양면 펼침 (Spread)', desc: '책처럼 펼쳐지는 클래식한 스타일', icon: '📖' },
-                { id: 'leaflet', label: '4단 리플렛 (Leaflet)', desc: '정보를 풍성하게 담는 브로슈어', icon: '📰' },
-              ].map((layout) => (
-                <button
-                  key={layout.id}
-                  onClick={() => setFormData({ ...formData, default_layout: layout.id })}
-                  className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${formData.default_layout === layout.id
-                    ? "bg-gray-900 border-gray-900 text-white shadow-xl ring-2 ring-gray-200"
-                    : "bg-white border-gray-100 text-gray-400 hover:border-gray-200"
-                    }`}
-                >
-                  <div className="text-3xl">{layout.icon}</div>
-                  <div>
-                    <p className={`text-lg font-bold mb-1 ${formData.default_layout === layout.id ? 'text-white' : 'text-gray-900'}`}>{layout.label}</p>
-                    <p className={`text-sm ${formData.default_layout === layout.id ? 'text-gray-400' : 'text-gray-500'}`}>{layout.desc}</p>
-                  </div>
-                  {formData.default_layout === layout.id && (
-                    <div className="ml-auto mt-1 text-green-400">
-                      <CheckCircle2 size={24} />
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Step 8: Description (Was 8 -> Now 8? No, previously 7 was Layout, 8 was Desc. Since we inserted 0, 8 becomes 8. Wait.
+            Orig: 0,1,2,3,4,5,6,7(Layout),8(Desc),9(Preview)
+            New:  0(Layout), 1,2,3,4,5,6,7, 8(Desc), 9(Preview)
+            Wait. If we insert at 0, everything shifts by +1.
+            Old 0 -> New 1.
+            Old 7 (Layout) -> New 8.
+            Old 8 (Desc) -> New 9.
+            Old 9 (Prev) -> New 10.
+            But we removed Old 7.
+            So:
+            New 0: Layout
+            New 1: Title (Old 0)
+            ...
+            New 7: Decoration (Old 6)
+            New 8: Description (Old 8) - Because Old 7 is gone.
+            New 9: Preview (Old 9)
+            Indices align:
+            0 (Layout)
+            1 (Title)
+            2 (Date)
+            3 (Loc)
+            4 (Img)
+            5 (Theme)
+            6 (Ticket)
+            7 (Decor)
+            8 (Desc)
+            9 (Preview)
+        */}
 
         {/* Step 8: Description */}
         {currentStep === 8 && (
