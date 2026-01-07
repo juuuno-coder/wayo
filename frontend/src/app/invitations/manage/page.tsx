@@ -106,140 +106,183 @@ export default function ManageInvitationsPage() {
     };
 
     return (
-        <div className={`min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 ${inter.className}`}>
-            <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className={`min-h-screen bg-[#FDFBF7] ${inter.className} pb-20`}>
+            {/* Desktop-like Header */}
+            <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => router.push('/profile')} className="p-2 -ml-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors">
+                            <ChevronLeft size={24} />
+                        </button>
+                        <h1 className="text-xl font-bold text-gray-900">내 초대장 관리</h1>
+                    </div>
+                    <button
+                        onClick={() => router.push('/invitations/create')}
+                        className="bg-[#E74C3C] text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-200 flex items-center gap-2"
+                    >
+                        <Sparkles size={16} /> 새 초대장 만들기
+                    </button>
+                </div>
+            </div>
 
-                {/* Left Side: Brand Section (Hidden on Mobile) */}
-                <div className="hidden lg:block space-y-12">
-                    <div className="space-y-6">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 text-[#E74C3C] rounded-full text-xs font-black uppercase tracking-widest">
-                            <Sparkles size={14} /> Wayo App
-                        </div>
-                        <h1 className={`text-7xl text-[#333] tracking-tighter leading-none ${blackHanSans.className}`}>
-                            WAYO
-                        </h1>
-                        <p className="text-3xl leading-tight font-light text-gray-800">
-                            초대장 관리도<br />
-                            <span className="font-bold text-[#E74C3C] border-b-4 border-[#E74C3C]/20">스마트하고 간편하게</span>
-                        </p>
+            <div className="max-w-7xl mx-auto px-6 mt-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                    <div>
+                        <h2 className="text-3xl font-black text-gray-900 mb-2">Dashboard</h2>
+                        <p className="text-gray-500">내가 만든 초대장과 받은 초대를 한눈에 확인하세요.</p>
+                    </div>
+
+                    {/* Desktop Tabs */}
+                    <div className="bg-white p-1.5 rounded-2xl border border-gray-100 inline-flex shadow-sm">
+                        <button
+                            onClick={() => setActiveTab('sent')}
+                            className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all ${activeTab === 'sent' ? 'bg-[#E74C3C] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            보낸 초대
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('received')}
+                            className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center gap-2 ${activeTab === 'received' ? 'bg-[#E74C3C] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            받은 초대
+                            {receivedInvitations.length > 0 && (
+                                <span className={`px-1.5 py-0.5 text-[10px] rounded-full ${activeTab === 'received' ? 'bg-white text-[#E74C3C]' : 'bg-[#E74C3C] text-white'}`}>
+                                    {receivedInvitations.length}
+                                </span>
+                            )}
+                        </button>
                     </div>
                 </div>
 
-                {/* Right Side: Phone Frame */}
-                <div className="flex justify-center lg:justify-end">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="w-full max-w-[400px] bg-white rounded-[40px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border-[8px] border-gray-900 p-2 relative overflow-hidden"
-                    >
-                        <div className="bg-gray-50 rounded-[32px] h-full min-h-[700px] flex flex-col relative overflow-hidden">
-                            {/* App Header */}
-                            <header className="px-6 py-5 bg-white border-b border-gray-100 sticky top-0 z-10 flex items-center gap-4">
-                                <button onClick={() => router.push('/profile')} className="p-2 -ml-2 hover:bg-gray-50 rounded-full text-gray-800 transition-colors">
-                                    <ChevronLeft size={24} />
-                                </button>
-                                <h1 className="font-bold text-gray-900 text-lg">내 초대장함</h1>
-                            </header>
-
-                            <div className="flex-1 overflow-y-auto no-scrollbar p-6">
-                                {/* Tab UI */}
-                                <div className="flex bg-gray-100 p-1.5 rounded-2xl mb-6">
-                                    <button
-                                        onClick={() => setActiveTab('sent')}
-                                        className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all ${activeTab === 'sent' ? 'bg-white text-[#E74C3C] shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                                    >
-                                        보낸 초대
-                                    </button>
-                                    <button
-                                        onClick={() => setActiveTab('received')}
-                                        className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all ${activeTab === 'received' ? 'bg-white text-[#E74C3C] shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                                    >
-                                        받은 초대
-                                        {receivedInvitations.length > 0 && (
-                                            <span className="ml-1.5 px-1.5 py-0.5 bg-[#E74C3C] text-white text-[10px] rounded-full">
-                                                {receivedInvitations.length}
-                                            </span>
-                                        )}
-                                    </button>
-                                </div>
-
-                                {loading || isLoading ? (
-                                    <div className="py-20 text-center text-gray-400">
-                                        <div className="animate-spin w-8 h-8 border-4 border-gray-200 border-t-[#E74C3C] rounded-full mx-auto mb-4"></div>
-                                        로딩 중...
-                                    </div>
-                                ) : (activeTab === 'sent' ? invitations : receivedInvitations).length === 0 ? (
-                                    <div className="py-20 flex flex-col items-center text-center opacity-60">
-                                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                            <Sparkles size={32} className="text-gray-300" />
-                                        </div>
-                                        <p className="text-gray-500 font-medium">
-                                            {activeTab === 'sent' ? "아직 만든 초대장이 없어요." : "아직 도착한 초대가 없어요."}
-                                        </p>
-                                        {activeTab === 'sent' && (
-                                            <button
-                                                onClick={() => router.push('/invitations/create')}
-                                                className="mt-6 text-[#E74C3C] font-bold underline underline-offset-4"
-                                            >
-                                                첫 초대장 만들기
-                                            </button>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4">
-                                        {(activeTab === 'sent' ? invitations : receivedInvitations).map((invite) => (
-                                            <div
-                                                key={invite.id}
-                                                className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 hover:border-red-100 hover:shadow-md transition-all cursor-pointer group"
-                                                onClick={() => {
-                                                    if (activeTab === 'sent') {
-                                                        setSelectedInvitation(invite);
-                                                        setIsGuestListOpen(true);
-                                                    } else {
-                                                        router.push(`/invitations/${invite.id}`);
-                                                    }
-                                                }}
-                                            >
-                                                <div className="flex gap-4">
-                                                    {/* Thumbnail */}
-                                                    <div className="w-20 h-20 bg-gray-100 rounded-2xl overflow-hidden relative flex-shrink-0">
-                                                        {(invite.image_urls && invite.image_urls.length > 0) ? (
-                                                            <NextImage src={invite.image_urls[0]} alt={invite.title} fill className="object-cover" />
-                                                        ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                                                <Sparkles size={16} />
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Content */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <h3 className="font-bold text-gray-900 truncate mb-1 group-hover:text-[#E74C3C] transition-colors">{invite.title}</h3>
-                                                        <p className="text-xs text-gray-400 mb-3 flex items-center gap-1">
-                                                            <Calendar size={12} />
-                                                            {new Date(invite.event_date).toLocaleDateString()}
-                                                        </p>
-
-                                                        {activeTab === 'sent' && (
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-[10px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-lg">
-                                                                    참석 {invite.guests?.filter((g: any) => g.status === 'accepted').length || 0}
-                                                                </span>
-                                                                <span className="text-[10px] font-bold bg-gray-50 text-gray-500 px-2 py-0.5 rounded-lg">
-                                                                    전체 {invite.guests?.length || 0}
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+                {loading || isLoading ? (
+                    <div className="py-32 text-center text-gray-400 flex flex-col items-center">
+                        <div className="animate-spin w-10 h-10 border-4 border-gray-200 border-t-[#E74C3C] rounded-full mb-6"></div>
+                        <p>데이터를 불러오고 있습니다...</p>
+                    </div>
+                ) : (activeTab === 'sent' ? invitations : receivedInvitations).length === 0 ? (
+                    <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm flex flex-col items-center">
+                        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-gray-300">
+                            <Sparkles size={40} />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            {activeTab === 'sent' ? "아직 만든 초대장이 없어요" : "아직 받은 초대가 없어요"}
+                        </h3>
+                        <p className="text-gray-400 mb-8 max-w-sm mx-auto">
+                            {activeTab === 'sent'
+                                ? "특별한 날을 위한 나만의 초대장을 만들어보세요.\n몇 번의 클릭으로 멋진 초대장이 완성됩니다."
+                                : "친구들이 보낸 초대장이 이곳에 쌓입니다.\n새로운 소식을 기다려보세요!"}
+                        </p>
+                        {activeTab === 'sent' && (
+                            <button
+                                onClick={() => router.push('/invitations/create')}
+                                className="px-8 py-3 bg-[#E74C3C] text-white rounded-xl font-bold hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-200"
+                            >
+                                초대장 만들기 시작
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    /* Grid Layout for Cards */
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {(activeTab === 'sent' ? invitations : receivedInvitations).map((invite) => (
+                            <div
+                                key={invite.id}
+                                className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col h-full relative"
+                                onClick={() => {
+                                    if (activeTab === 'sent') {
+                                        setSelectedInvitation(invite);
+                                        setIsGuestListOpen(true);
+                                    } else {
+                                        router.push(`/invitations/${invite.id}`);
+                                    }
+                                }}
+                            >
+                                {activeTab === 'received' && (
+                                    <div className="absolute top-4 left-4 z-10">
+                                        <span className="bg-[#E74C3C] text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md">New!</span>
                                     </div>
                                 )}
+
+                                {/* Image Section */}
+                                <div className="aspect-[4/3] bg-gray-100 relative">
+                                    {(invite.image_urls && invite.image_urls.length > 0) ? (
+                                        <NextImage src={invite.image_urls[0]} alt={invite.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    ) : invite.cover_image_url ? (
+                                        <NextImage src={invite.cover_image_url} alt={invite.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                            <Sparkles size={32} />
+                                        </div>
+                                    )}
+                                    {/* Overlay Gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+
+                                    {/* View Count Badge */}
+                                    {activeTab === 'sent' && (
+                                        <div className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-white/20">
+                                            <Users size={12} />
+                                            {invite.view_count || 0}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Content Section */}
+                                <div className="p-6 flex flex-col flex-1">
+                                    <div className="flex-1">
+                                        <h3 className="font-bold text-lg text-gray-900 mb-2 leading-tight group-hover:text-[#E74C3C] transition-colors line-clamp-2">
+                                            {invite.title}
+                                        </h3>
+                                        <p className="text-sm text-gray-500 flex items-center gap-2 mb-4">
+                                            <Calendar size={14} />
+                                            {new Date(invite.event_date).toLocaleDateString()}
+                                        </p>
+                                    </div>
+
+                                    {/* Stats Bar (Sent Only) */}
+                                    {activeTab === 'sent' ? (
+                                        <div className="grid grid-cols-3 gap-2 mt-auto pt-4 border-t border-gray-50">
+                                            <div className="text-center">
+                                                <p className="text-[10px] text-green-600 font-bold uppercase mb-0.5">참석</p>
+                                                <p className="text-lg font-black text-gray-800">
+                                                    {invite.guests?.filter((g: any) => g.status === 'accepted').length || 0}
+                                                </p>
+                                            </div>
+                                            <div className="text-center border-l border-gray-100">
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">대기</p>
+                                                <p className="text-lg font-black text-gray-800">
+                                                    {invite.guests?.filter((g: any) => g.status === 'pending').length || 0}
+                                                </p>
+                                            </div>
+                                            <div className="text-center border-l border-gray-100">
+                                                <p className="text-[10px] text-red-400 font-bold uppercase mb-0.5">거절</p>
+                                                <p className="text-lg font-black text-gray-800">
+                                                    {invite.guests?.filter((g: any) => g.status === 'declined').length || 0}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <button className="w-full mt-4 py-2 bg-gray-50 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors">
+                                            초대장 보기
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                </div>
+                        ))}
+
+                        {/* New Item Card (Sent Tab) */}
+                        {activeTab === 'sent' && (
+                            <div
+                                onClick={() => router.push('/invitations/create')}
+                                className="bg-white rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center p-8 cursor-pointer hover:border-[#E74C3C] hover:bg-red-50/50 transition-all group min-h-[300px]"
+                            >
+                                <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mb-4 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm">
+                                    <Sparkles size={24} className="text-gray-400 group-hover:text-[#E74C3C]" />
+                                </div>
+                                <p className="font-bold text-gray-500 group-hover:text-[#E74C3C]">새로운 초대장 만들기</p>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {selectedInvitation && (
