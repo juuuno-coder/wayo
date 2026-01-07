@@ -42,4 +42,7 @@ Devise.setup do |config|
   # Allow GET requests for OmniAuth (Required for window.location.href)
   OmniAuth.config.allowed_request_methods = [:post, :get]
   OmniAuth.config.silence_get_warning = true
+  
+  # Ensure callback URL is always HTTPS and matches Fly.io domain
+  OmniAuth.config.full_host = 'https://wayo.fly.dev'
 end
