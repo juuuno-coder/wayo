@@ -55,6 +55,9 @@ export default function WayoLogin() {
                 const userData = data.user || data;
 
                 if (userData && userData.email) {
+                    const userObj = { id: String(userData.id), email: userData.email, nickname: userData.nickname, avatarUrl: userData.avatar_url };
+                    localStorage.setItem("userData", JSON.stringify(userObj));
+
                     localStorage.setItem("userEmail", userData.email);
                     localStorage.setItem("userId", String(userData.id));
                 }

@@ -34,10 +34,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const savedToken = localStorage.getItem("authToken");
         const savedUser = localStorage.getItem("userData");
 
-        if (savedToken && savedUser) {
-            setToken(savedToken);
-            setUser(JSON.parse(savedUser));
-            setIsLoggedIn(true);
+        if (savedToken) {
+            if (savedUser) {
+                setToken(savedToken);
+                setUser(JSON.parse(savedUser));
+                setIsLoggedIn(true);
+            } else {
+                // Fallback for legacy login (GabojagoLogin)
+                const savedEmail = localStorage.getItem("userEmail");
+                const savedId = localStorage.getItem("userId");
+                if (savedEmail && savedId) {
+                    setToken(savedToken);
+                    setUser({ id: savedId, email: savedEmail });
+                    setIsLoggedIn(true);
+
+                    // Migrate to new format
+                    localStorage.setItem("userData", JSON.stringify({ id: savedId, email: savedEmail }));
+                }
+            }
         }
     }, []);
 

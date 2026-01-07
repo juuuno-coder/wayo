@@ -72,6 +72,10 @@ export default function GabojagoLogin() {
                 const userData = data.user || data;
 
                 if (userData && userData.email) {
+                    const userObj = { id: String(userData.id), email: userData.email, nickname: userData.nickname, avatarUrl: userData.avatar_url };
+                    localStorage.setItem("userData", JSON.stringify(userObj));
+
+                    // Legacy support (optional, can keep for other components)
                     localStorage.setItem("userEmail", userData.email);
                     localStorage.setItem("userId", String(userData.id));
                 }

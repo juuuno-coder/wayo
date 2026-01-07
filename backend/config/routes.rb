@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     post :verify, on: :collection
   end
   devise_for :users, defaults: { format: :json }, controllers: {
+    sessions: 'users/sessions',
     registrations: 'users/registrations',
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
