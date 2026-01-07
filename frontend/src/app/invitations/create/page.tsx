@@ -187,375 +187,378 @@ export default function CreateInvitationPage() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#FDFBF7] flex flex-col ${inter.className}`}>
-      {/* Header & Progress */}
-      <div className={`sticky top-0 bg-white z-50 transition-all ${isPC ? 'w-[450px] border-r border-gray-100' : 'w-full'}`}>
-        <header className="px-4 py-3 flex items-center h-14">
-          <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
-            <ArrowLeft size={24} />
-          </button>
-        </header>
-        <div className="h-1 bg-gray-100 w-full">
-          <div
-            className="h-full bg-[#E74C3C] transition-all duration-300 ease-out"
-            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      <div className={`flex-1 flex flex-col px-6 pt-8 pb-32 w-full overflow-y-auto ${isPC ? 'max-w-[450px] border-r border-gray-100 bg-gray-50/30' : 'max-w-md mx-auto'}`}>
-        {/* Step Header */}
-        <div className="mb-10 animate-in slide-in-from-right fade-in duration-500">
-          <div className="text-6xl mb-6 animate-bounce-slow transform hover:scale-110 transition-transform origin-left cursor-default">
-            {steps[currentStep].icon}
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 whitespace-pre-wrap leading-tight">
-            {steps[currentStep].title}
-          </h2>
-          <p className="text-gray-500 text-lg font-medium">
-            {steps[currentStep].subtitle}
-          </p>
-        </div>
-
-        {/* Step 0: Layout Selection (NEW POSITION) */}
-        {currentStep === 0 && (
-          <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
-            <div className="grid grid-cols-1 gap-4">
-              {[
-                { id: 'single', label: '단면 포스터 (Single)', desc: '심플하고 강렬한 한 장의 포스터 (Standard)', icon: '🖼️', isPremium: false },
-                { id: 'spread', label: '양면 펼침 (Spread)', desc: '책처럼 펼쳐지는 클래식한 스타일 (Standard)', icon: '📖', isPremium: false },
-                { id: 'leaflet', label: '4단 리플렛 (Leaflet)', desc: '정보를 풍성하게 담는 브로슈어 (Premium)', icon: '📰', isPremium: true },
-              ].map((layout) => (
-                <button
-                  key={layout.id}
-                  onClick={() => setFormData({ ...formData, default_layout: layout.id })}
-                  className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${formData.default_layout === layout.id
-                    ? "bg-gray-900 border-gray-900 text-white shadow-xl ring-2 ring-gray-200"
-                    : "bg-white border-gray-100 text-gray-400 hover:border-gray-200"
-                    }`}
-                >
-                  <div className="text-3xl">{layout.icon}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className={`text-lg font-bold ${formData.default_layout === layout.id ? 'text-white' : 'text-gray-900'}`}>{layout.label}</p>
-                      {layout.isPremium && <span className="text-[10px] bg-[#E74C3C] text-white px-2 py-0.5 rounded-full font-bold">PREMIUM</span>}
-                    </div>
-                    <p className={`text-sm ${formData.default_layout === layout.id ? 'text-gray-400' : 'text-gray-500'}`}>{layout.desc}</p>
-                  </div>
-                  {formData.default_layout === layout.id && (
-                    <div className="ml-auto mt-1 text-green-400">
-                      <CheckCircle2 size={24} />
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step 1: Title (Was 0) */}
-        {currentStep === 1 && (
-          <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="예) 15분도시 부산 워크숍"
-              className="w-full p-4 bg-white border-none rounded-2xl font-bold text-2xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
-              autoFocus
+    <div className={`min-h-screen bg-[#FDFBF7] flex flex-col lg:flex-row ${inter.className} overflow-hidden`}>
+      {/* Left: Editor Area */}
+      <div className={`flex flex-col bg-white border-r border-gray-100 z-50 shadow-xl transition-all ${isPC ? 'w-[450px]' : 'w-full'}`}>
+        {/* Header & Progress inside Editor */}
+        <div className="sticky top-0 bg-white z-50">
+          <header className="px-4 py-3 flex items-center h-14 justify-between">
+            <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+              <ArrowLeft size={24} />
+            </button>
+            <div className="text-xs font-black text-[#E74C3C] tracking-widest uppercase">Editor v1.1</div>
+          </header>
+          <div className="h-1 bg-gray-100 w-full overflow-hidden">
+            <div
+              className="h-full bg-[#E74C3C] transition-all duration-300 ease-out"
+              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
             />
           </div>
-        )}
+        </div>
 
-        {/* Step 2: Date & Time (Was 1) */}
-        {currentStep === 2 && (
-          <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
-              <label className="block text-sm font-bold text-gray-500 mb-2">날짜</label>
-              <input
-                type="date"
-                value={formData.event_date.split('T')[0] || ''}
-                onChange={(e) => {
-                  const time = formData.event_date.split('T')[1] || '00:00';
-                  setFormData({ ...formData, event_date: `${e.target.value}T${time}` });
-                }}
-                className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
-              />
+        <div className="flex-1 overflow-y-auto no-scrollbar px-8 pt-10 pb-32">
+          {/* Step Header */}
+          <div className="mb-10 animate-in slide-in-from-right fade-in duration-500">
+            <div className="text-6xl mb-6 animate-bounce-slow transform hover:scale-110 transition-transform origin-left cursor-default">
+              {steps[currentStep].icon}
             </div>
-            <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
-              <label className="block text-sm font-bold text-gray-500 mb-2">시간</label>
-              <input
-                type="time"
-                value={formData.event_date.split('T')[1] || ''}
-                onChange={(e) => {
-                  const date = formData.event_date.split('T')[0] || new Date().toISOString().split('T')[0];
-                  setFormData({ ...formData, event_date: `${date}T${e.target.value}` });
-                }}
-                className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
-              />
-            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3 whitespace-pre-wrap leading-tight">
+              {steps[currentStep].title}
+            </h2>
+            <p className="text-gray-500 text-lg font-medium">
+              {steps[currentStep].subtitle}
+            </p>
           </div>
-        )}
 
-        {/* Step 3: Location (Was 2) */}
-        {currentStep === 3 && (
-          <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <div className="relative space-y-4">
-              {/* Place Name Input */}
-              <div className="relative">
-                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
-                  <MapPin size={24} />
-                </div>
-                <input
-                  type="text"
-                  value={placeName}
-                  onChange={(e) => setPlaceName(e.target.value)}
-                  placeholder="예) 강남역 10번 출구, 우리집"
-                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
-                  autoFocus
-                />
-              </div>
-
-              {/* Address Display & Search Button */}
-              {roadAddress ? (
-                <div className="p-4 bg-red-50 rounded-2xl flex items-center justify-between group cursor-pointer" onClick={() => setIsAddressOpen(true)}>
-                  <div className="flex items-center gap-2 text-[#E74C3C]">
-                    <span className="text-xs font-bold bg-red-100 px-2 py-1 rounded-md">도로명</span>
-                    <span className="font-medium text-sm">{roadAddress}</span>
-                  </div>
-                  <span className="text-red-400 text-xs">수정</span>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsAddressOpen(true)}
-                  className="text-gray-500 text-sm font-medium underline underline-offset-4 hover:text-[#E74C3C] transition-colors ml-4"
-                >
-                  정확한 주소도 입력할게요
-                </button>
-              )}
-            </div>
-
-            {/* Daum Postcode Modal */}
-            {isAddressOpen && (
-              <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                <div className="bg-white w-full max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative animate-in slide-in-from-bottom duration-300">
-                  <div className="p-4 flex items-center justify-between border-b border-gray-100">
-                    <h3 className="font-bold text-lg">주소 검색</h3>
-                    <button onClick={() => setIsAddressOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                  </div>
-                  <div className="flex-1 relative">
-                    <DaumPostcodeEmbed
-                      onComplete={(data: any) => {
-                        setRoadAddress(data.roadAddress || data.address);
-                        setIsAddressOpen(false);
-                      }}
-                      style={{ width: '100%', height: '100%' }}
-                      className="absolute inset-0"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Step 4: Image Upload (Was 3) */}
-        {currentStep === 4 && (
-          <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <div className="grid grid-cols-2 gap-4">
-              <div
-                className="aspect-square bg-white border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-[#E74C3C] hover:bg-red-50 transition-all active:scale-95"
-                onClick={() => document.getElementById('image-upload')?.click()}
-              >
-                <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-2">
-                  <Sparkles className="text-[#E74C3C]" size={20} />
-                </div>
-                <p className="font-bold text-gray-600 text-sm">사진 추가</p>
-                <input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-              </div>
-
-              {previewUrls.map((url, index) => (
-                <div key={index} className="aspect-square relative rounded-3xl overflow-hidden border border-gray-100 shadow-sm animate-in zoom-in duration-300">
-                  <NextImage src={url} alt={`Preview ${index}`} fill className="object-cover" />
+          {/* Step 0: Layout Selection (NEW POSITION) */}
+          {currentStep === 0 && (
+            <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
+              <div className="grid grid-cols-1 gap-4">
+                {[
+                  { id: 'single', label: '단면 포스터 (Single)', desc: '심플하고 강렬한 한 장의 포스터 (Standard)', icon: '🖼️', isPremium: false },
+                  { id: 'spread', label: '양면 펼침 (Spread)', desc: '책처럼 펼쳐지는 클래식한 스타일 (Standard)', icon: '📖', isPremium: false },
+                  { id: 'leaflet', label: '4단 리플렛 (Leaflet)', desc: '정보를 풍성하게 담는 브로슈어 (Premium)', icon: '📰', isPremium: true },
+                ].map((layout) => (
                   <button
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80 transition-colors backdrop-blur-sm"
+                    key={layout.id}
+                    onClick={() => setFormData({ ...formData, default_layout: layout.id })}
+                    className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${formData.default_layout === layout.id
+                      ? "bg-gray-900 border-gray-900 text-white shadow-xl ring-2 ring-gray-200"
+                      : "bg-white border-gray-100 text-gray-400 hover:border-gray-200"
+                      }`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                  </button>
-                  {index === 0 && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] font-bold text-center py-1 backdrop-blur-sm">대표 사진</div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step 5: Theme (Was 4) */}
-        {currentStep === 5 && (
-          <div className="animate-in slide-in-from-right fade-in duration-500 delay-100 pb-4">
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(themes).map(([key, value]) => (
-                <button
-                  key={key}
-                  onClick={() => setFormData({ ...formData, theme_color: key })}
-                  className={`p-4 rounded-3xl border-2 transition-all duration-300 text-left relative overflow-hidden group ${formData.theme_color === key ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100" : "border-gray-100 bg-white hover:border-gray-200"
-                    }`}
-                >
-                  <div className={`w-12 h-12 rounded-2xl mb-4 ${value.bg} flex items-center justify-center shadow-inner`}>
-                    <Sparkles className={`${value.text.replace('text-', 'text-opacity-70 text-')}`} size={20} />
-                  </div>
-                  <p className="font-bold text-gray-900 text-lg mb-1">{value.name}</p>
-                  {formData.theme_color === key && (
-                    <div className="absolute top-4 right-4 text-[#E74C3C] animate-in zoom-in">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div className="text-3xl">{layout.icon}</div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className={`text-lg font-bold ${formData.default_layout === layout.id ? 'text-white' : 'text-gray-900'}`}>{layout.label}</p>
+                        {layout.isPremium && <span className="text-[10px] bg-[#E74C3C] text-white px-2 py-0.5 rounded-full font-bold">PREMIUM</span>}
+                      </div>
+                      <p className={`text-sm ${formData.default_layout === layout.id ? 'text-gray-400' : 'text-gray-500'}`}>{layout.desc}</p>
                     </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step 6: Ticket Selection (Was 5) */}
-        {currentStep === 6 && (
-          <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <p className="text-gray-500 mb-4 font-medium">초대장을 받는 분들에게 나누어 줄 티켓을 선택해주세요.<br />(선택하지 않아도 됩니다)</p>
-
-            <button
-              onClick={() => setFormData({ ...formData, ticket_type_id: null })}
-              className={`w-full p-5 rounded-2xl border-2 transition-all flex items-center justify-between ${!formData.ticket_type_id
-                ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
-                : "border-gray-100 bg-white hover:border-gray-200"
-                }`}
-            >
-              <span className="font-bold text-gray-700">선택 안함</span>
-              {!formData.ticket_type_id && <Sparkles className="text-[#E74C3C]" size={20} />}
-            </button>
-
-            {ticketTypes.map((ticket) => (
-              <button
-                key={ticket.id}
-                onClick={() => setFormData({ ...formData, ticket_type_id: ticket.id })}
-                className={`w-full p-5 rounded-2xl border-2 transition-all text-left group ${formData.ticket_type_id === ticket.id
-                  ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
-                  : "border-gray-100 bg-white hover:border-gray-200"
-                  }`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className="font-bold text-lg text-gray-900">{ticket.name}</span>
-                  <span className="font-bold text-[#E74C3C] bg-red-100 px-3 py-1 rounded-full text-xs">
-                    {ticket.price === 0 ? "FREE" : `₩${ticket.price.toLocaleString()}`}
-                  </span>
-                </div>
-                <div className="text-xs text-gray-500 flex gap-2">
-                  <span>재고: {ticket.quantity}개</span>
-                  <span>•</span>
-                  <span>{ticket.event?.title || "이벤트"}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Step 7: Detail Decoration (Was 6) */}
-        {currentStep === 7 && (
-          <div className="space-y-8 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
-
-            {/* Font Selection */}
-            <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-500 ml-1">글씨체</label>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { id: 'serif', label: '명조체', font: 'font-serif' },
-                  { id: 'sans', label: '고딕체', font: 'font-sans' },
-                  { id: 'hand', label: '손글씨', font: 'font-hand' } // Assuming css class exists or fallback
-                ].map(font => (
-                  <button
-                    key={font.id}
-                    onClick={() => setFormData({ ...formData, font_style: font.id })}
-                    className={`p-4 rounded-2xl border transition-all ${formData.font_style === font.id
-                      ? "bg-gray-900 text-white border-gray-900 shadow-lg"
-                      : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                  >
-                    <span className={`text-lg ${font.id === 'serif' ? 'font-serif' : font.id === 'sans' ? 'font-sans' : ''}`}>
-                      {font.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Effect Selection */}
-            <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-500 ml-1">텍스트 효과</label>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { id: 'none', label: '기본', icon: 'aa' },
-                  { id: 'gold', label: '금박', icon: '✨' },
-                  { id: 'silver', label: '은박', icon: '⚪️' }
-                ].map(effect => (
-                  <button
-                    key={effect.id}
-                    onClick={() => setFormData({ ...formData, text_effect: effect.id })}
-                    className={`p-4 rounded-2xl border transition-all relative overflow-hidden ${formData.text_effect === effect.id
-                      ? "bg-red-50 border-[#E74C3C] text-[#E74C3C] ring-1 ring-[#E74C3C]"
-                      : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                  >
-                    <span className={`block mb-1 text-xl ${effect.id === 'gold' ? 'text-yellow-500' : effect.id === 'silver' ? 'text-gray-400' : ''
-                      }`}>{effect.icon}</span>
-                    <span className="text-sm font-bold">{effect.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* BGM Selection */}
-            <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-500 ml-1">배경음악 (BGM)</label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { id: 'none', label: '없음', icon: '🔇' },
-                  { id: 'classic', label: '클래식 (Piano)', icon: '🎹' },
-                  { id: 'jazz', label: '재즈 (Jazz)', icon: '🎷' },
-                  { id: 'acoustic', label: '어쿠스틱', icon: '🎸' }
-                ].map(bgm => (
-                  <button
-                    key={bgm.id}
-                    onClick={() => setFormData({ ...formData, bgm: bgm.id })}
-                    className={`p-4 rounded-2xl border transition-all flex items-center gap-3 ${formData.bgm === bgm.id
-                      ? "bg-green-50 border-green-500 text-green-700 ring-1 ring-green-500"
-                      : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                  >
-                    <span className="text-xl">{bgm.icon}</span>
-                    <span className="font-bold text-sm">{bgm.label}</span>
-                    {formData.bgm === bgm.id && (
-                      <div className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    {formData.default_layout === layout.id && (
+                      <div className="ml-auto mt-1 text-green-400">
+                        <CheckCircle2 size={24} />
+                      </div>
                     )}
                   </button>
                 ))}
               </div>
             </div>
+          )}
 
-          </div>
-        )}
+          {/* Step 1: Title (Was 0) */}
+          {currentStep === 1 && (
+            <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="예) 15분도시 부산 워크숍"
+                className="w-full p-4 bg-white border-none rounded-2xl font-bold text-2xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                autoFocus
+              />
+            </div>
+          )}
 
-        {/* OLD STEP 7 REMOVED HERE (Layout was here) */}
+          {/* Step 2: Date & Time (Was 1) */}
+          {currentStep === 2 && (
+            <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
+                <label className="block text-sm font-bold text-gray-500 mb-2">날짜</label>
+                <input
+                  type="date"
+                  value={formData.event_date.split('T')[0] || ''}
+                  onChange={(e) => {
+                    const time = formData.event_date.split('T')[1] || '00:00';
+                    setFormData({ ...formData, event_date: `${e.target.value}T${time}` });
+                  }}
+                  className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
+                />
+              </div>
+              <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
+                <label className="block text-sm font-bold text-gray-500 mb-2">시간</label>
+                <input
+                  type="time"
+                  value={formData.event_date.split('T')[1] || ''}
+                  onChange={(e) => {
+                    const date = formData.event_date.split('T')[0] || new Date().toISOString().split('T')[0];
+                    setFormData({ ...formData, event_date: `${date}T${e.target.value}` });
+                  }}
+                  className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
+                />
+              </div>
+            </div>
+          )}
 
-        {/* Step 8: Description (Was 8 -> Now 8? No, previously 7 was Layout, 8 was Desc. Since we inserted 0, 8 becomes 8. Wait.
+          {/* Step 3: Location (Was 2) */}
+          {currentStep === 3 && (
+            <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <div className="relative space-y-4">
+                {/* Place Name Input */}
+                <div className="relative">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                    <MapPin size={24} />
+                  </div>
+                  <input
+                    type="text"
+                    value={placeName}
+                    onChange={(e) => setPlaceName(e.target.value)}
+                    placeholder="예) 강남역 10번 출구, 우리집"
+                    className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                    autoFocus
+                  />
+                </div>
+
+                {/* Address Display & Search Button */}
+                {roadAddress ? (
+                  <div className="p-4 bg-red-50 rounded-2xl flex items-center justify-between group cursor-pointer" onClick={() => setIsAddressOpen(true)}>
+                    <div className="flex items-center gap-2 text-[#E74C3C]">
+                      <span className="text-xs font-bold bg-red-100 px-2 py-1 rounded-md">도로명</span>
+                      <span className="font-medium text-sm">{roadAddress}</span>
+                    </div>
+                    <span className="text-red-400 text-xs">수정</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsAddressOpen(true)}
+                    className="text-gray-500 text-sm font-medium underline underline-offset-4 hover:text-[#E74C3C] transition-colors ml-4"
+                  >
+                    정확한 주소도 입력할게요
+                  </button>
+                )}
+              </div>
+
+              {/* Daum Postcode Modal */}
+              {isAddressOpen && (
+                <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                  <div className="bg-white w-full max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl relative animate-in slide-in-from-bottom duration-300">
+                    <div className="p-4 flex items-center justify-between border-b border-gray-100">
+                      <h3 className="font-bold text-lg">주소 검색</h3>
+                      <button onClick={() => setIsAddressOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                    </div>
+                    <div className="flex-1 relative">
+                      <DaumPostcodeEmbed
+                        onComplete={(data: any) => {
+                          setRoadAddress(data.roadAddress || data.address);
+                          setIsAddressOpen(false);
+                        }}
+                        style={{ width: '100%', height: '100%' }}
+                        className="absolute inset-0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 4: Image Upload (Was 3) */}
+          {currentStep === 4 && (
+            <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <div className="grid grid-cols-2 gap-4">
+                <div
+                  className="aspect-square bg-white border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-[#E74C3C] hover:bg-red-50 transition-all active:scale-95"
+                  onClick={() => document.getElementById('image-upload')?.click()}
+                >
+                  <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-2">
+                    <Sparkles className="text-[#E74C3C]" size={20} />
+                  </div>
+                  <p className="font-bold text-gray-600 text-sm">사진 추가</p>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </div>
+
+                {previewUrls.map((url, index) => (
+                  <div key={index} className="aspect-square relative rounded-3xl overflow-hidden border border-gray-100 shadow-sm animate-in zoom-in duration-300">
+                    <NextImage src={url} alt={`Preview ${index}`} fill className="object-cover" />
+                    <button
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80 transition-colors backdrop-blur-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    {index === 0 && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] font-bold text-center py-1 backdrop-blur-sm">대표 사진</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Theme (Was 4) */}
+          {currentStep === 5 && (
+            <div className="animate-in slide-in-from-right fade-in duration-500 delay-100 pb-4">
+              <div className="grid grid-cols-2 gap-4">
+                {Object.entries(themes).map(([key, value]) => (
+                  <button
+                    key={key}
+                    onClick={() => setFormData({ ...formData, theme_color: key })}
+                    className={`p-4 rounded-3xl border-2 transition-all duration-300 text-left relative overflow-hidden group ${formData.theme_color === key ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100" : "border-gray-100 bg-white hover:border-gray-200"
+                      }`}
+                  >
+                    <div className={`w-12 h-12 rounded-2xl mb-4 ${value.bg} flex items-center justify-center shadow-inner`}>
+                      <Sparkles className={`${value.text.replace('text-', 'text-opacity-70 text-')}`} size={20} />
+                    </div>
+                    <p className="font-bold text-gray-900 text-lg mb-1">{value.name}</p>
+                    {formData.theme_color === key && (
+                      <div className="absolute top-4 right-4 text-[#E74C3C] animate-in zoom-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Ticket Selection (Was 5) */}
+          {currentStep === 6 && (
+            <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <p className="text-gray-500 mb-4 font-medium">초대장을 받는 분들에게 나누어 줄 티켓을 선택해주세요.<br />(선택하지 않아도 됩니다)</p>
+
+              <button
+                onClick={() => setFormData({ ...formData, ticket_type_id: null })}
+                className={`w-full p-5 rounded-2xl border-2 transition-all flex items-center justify-between ${!formData.ticket_type_id
+                  ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
+                  : "border-gray-100 bg-white hover:border-gray-200"
+                  }`}
+              >
+                <span className="font-bold text-gray-700">선택 안함</span>
+                {!formData.ticket_type_id && <Sparkles className="text-[#E74C3C]" size={20} />}
+              </button>
+
+              {ticketTypes.map((ticket) => (
+                <button
+                  key={ticket.id}
+                  onClick={() => setFormData({ ...formData, ticket_type_id: ticket.id })}
+                  className={`w-full p-5 rounded-2xl border-2 transition-all text-left group ${formData.ticket_type_id === ticket.id
+                    ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
+                    : "border-gray-100 bg-white hover:border-gray-200"
+                    }`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-bold text-lg text-gray-900">{ticket.name}</span>
+                    <span className="font-bold text-[#E74C3C] bg-red-100 px-3 py-1 rounded-full text-xs">
+                      {ticket.price === 0 ? "FREE" : `₩${ticket.price.toLocaleString()}`}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500 flex gap-2">
+                    <span>재고: {ticket.quantity}개</span>
+                    <span>•</span>
+                    <span>{ticket.event?.title || "이벤트"}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Step 7: Detail Decoration (Was 6) */}
+          {currentStep === 7 && (
+            <div className="space-y-8 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
+
+              {/* Font Selection */}
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-gray-500 ml-1">글씨체</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: 'serif', label: '명조체', font: 'font-serif' },
+                    { id: 'sans', label: '고딕체', font: 'font-sans' },
+                    { id: 'hand', label: '손글씨', font: 'font-hand' } // Assuming css class exists or fallback
+                  ].map(font => (
+                    <button
+                      key={font.id}
+                      onClick={() => setFormData({ ...formData, font_style: font.id })}
+                      className={`p-4 rounded-2xl border transition-all ${formData.font_style === font.id
+                        ? "bg-gray-900 text-white border-gray-900 shadow-lg"
+                        : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                    >
+                      <span className={`text-lg ${font.id === 'serif' ? 'font-serif' : font.id === 'sans' ? 'font-sans' : ''}`}>
+                        {font.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Effect Selection */}
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-gray-500 ml-1">텍스트 효과</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { id: 'none', label: '기본', icon: 'aa' },
+                    { id: 'gold', label: '금박', icon: '✨' },
+                    { id: 'silver', label: '은박', icon: '⚪️' }
+                  ].map(effect => (
+                    <button
+                      key={effect.id}
+                      onClick={() => setFormData({ ...formData, text_effect: effect.id })}
+                      className={`p-4 rounded-2xl border transition-all relative overflow-hidden ${formData.text_effect === effect.id
+                        ? "bg-red-50 border-[#E74C3C] text-[#E74C3C] ring-1 ring-[#E74C3C]"
+                        : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                    >
+                      <span className={`block mb-1 text-xl ${effect.id === 'gold' ? 'text-yellow-500' : effect.id === 'silver' ? 'text-gray-400' : ''
+                        }`}>{effect.icon}</span>
+                      <span className="text-sm font-bold">{effect.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* BGM Selection */}
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-gray-500 ml-1">배경음악 (BGM)</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { id: 'none', label: '없음', icon: '🔇' },
+                    { id: 'classic', label: '클래식 (Piano)', icon: '🎹' },
+                    { id: 'jazz', label: '재즈 (Jazz)', icon: '🎷' },
+                    { id: 'acoustic', label: '어쿠스틱', icon: '🎸' }
+                  ].map(bgm => (
+                    <button
+                      key={bgm.id}
+                      onClick={() => setFormData({ ...formData, bgm: bgm.id })}
+                      className={`p-4 rounded-2xl border transition-all flex items-center gap-3 ${formData.bgm === bgm.id
+                        ? "bg-green-50 border-green-500 text-green-700 ring-1 ring-green-500"
+                        : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                    >
+                      <span className="text-xl">{bgm.icon}</span>
+                      <span className="font-bold text-sm">{bgm.label}</span>
+                      {formData.bgm === bgm.id && (
+                        <div className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* OLD STEP 7 REMOVED HERE (Layout was here) */}
+
+          {/* Step 8: Description (Was 8 -> Now 8? No, previously 7 was Layout, 8 was Desc. Since we inserted 0, 8 becomes 8. Wait.
             Orig: 0,1,2,3,4,5,6,7(Layout),8(Desc),9(Preview)
             New:  0(Layout), 1,2,3,4,5,6,7, 8(Desc), 9(Preview)
             Wait. If we insert at 0, everything shifts by +1.
@@ -584,147 +587,156 @@ export default function CreateInvitationPage() {
             9 (Preview)
         */}
 
-        {/* Step 8: Description */}
-        {currentStep === 8 && (
-          <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="따뜻한 인사말을 건네보세요."
-              className="w-full p-6 bg-white border-none rounded-3xl h-80 resize-none font-medium text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none leading-relaxed shadow-sm"
-              autoFocus
-            />
-          </div>
-        )}
+          {/* Step 8: Description */}
+          {currentStep === 8 && (
+            <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="따뜻한 인사말을 건네보세요."
+                className="w-full p-6 bg-white border-none rounded-3xl h-80 resize-none font-medium text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none leading-relaxed shadow-sm"
+                autoFocus
+              />
+            </div>
+          )}
 
-        {/* Step 9: Final Preview */}
-        {currentStep === 9 && (
-          <div className="flex flex-col items-center animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
-            <div className={`w-full max-w-xs aspect-3/4 bg-white rounded-[2rem] shadow-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-500 ${selectedTheme.bg} ring-1 ring-black/5`}>
+          {/* Step 9: Final Preview */}
+          {currentStep === 9 && (
+            <div className="flex flex-col items-center animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
+              <div className={`w-full max-w-xs aspect-3/4 bg-white rounded-[2rem] shadow-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-500 ${selectedTheme.bg} ring-1 ring-black/5`}>
 
-              {/* Background Pattern/Image */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 -mt-8 opacity-100 z-0">
-                <NextImage src="/images/wayo_envelope_3d.jpg" alt="Envelope" fill className="object-contain mix-blend-multiply" />
+                {/* Background Pattern/Image */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 -mt-8 opacity-100 z-0">
+                  <NextImage src="/images/wayo_envelope_3d.jpg" alt="Envelope" fill className="object-contain mix-blend-multiply" />
+                </div>
+
+                {/* User Uploaded Image or Default Sparkles */}
+                {previewUrls.length > 0 && (
+                  <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+                    <NextImage src={previewUrls[0]} alt="Cover Background" fill className="object-cover" />
+                  </div>
+                )}
+
+                <div className="relative z-10 mt-24 w-full">
+                  {/* Title with Effects */}
+                  <h1 className={`text-xl font-black mb-3 leading-tight break-keep ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? '!text-yellow-600 drop-shadow-sm' : formData.text_effect === 'silver' ? '!text-gray-400 drop-shadow-sm' : ''}`}>
+                    {formData.title || "제목을 입력해주세요"}
+                  </h1>
+
+                  <div className={`w-8 h-1 bg-current opacity-20 mx-auto mb-4 rounded-full ${selectedTheme.text}`}></div>
+
+                  <p className={`font-medium text-xs mb-6 opacity-80 whitespace-pre-wrap ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
+                    {formData.description || "초대 문구가\n여기에 표시됩니다."}
+                  </p>
+
+                  <div className={`text-[10px] bg-white/10 backdrop-blur-md rounded-xl p-3 inline-block ${selectedTheme.text}`}>
+                    <p className="font-bold opacity-90 mb-1">{formData.event_date ? new Date(formData.event_date).toLocaleDateString() : "0000.00.00"}</p>
+                    <p className="opacity-70">{formData.location || "장소 미정"}</p>
+                  </div>
+                </div>
               </div>
 
-              {/* User Uploaded Image or Default Sparkles */}
-              {previewUrls.length > 0 && (
-                <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-                  <NextImage src={previewUrls[0]} alt="Cover Background" fill className="object-cover" />
+              {/* BGM Indicator in Preview */}
+              {formData.bgm !== 'none' && (
+                <div className="mt-6 flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full text-xs font-bold animate-pulse">
+                  <span>🎵 {formData.bgm === 'classic' ? '클래식' : formData.bgm === 'jazz' ? '재즈' : '어쿠스틱'} 음악이 함께 전송됩니다</span>
                 </div>
               )}
-
-              <div className="relative z-10 mt-24 w-full">
-                {/* Title with Effects */}
-                <h1 className={`text-xl font-black mb-3 leading-tight break-keep ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? '!text-yellow-600 drop-shadow-sm' : formData.text_effect === 'silver' ? '!text-gray-400 drop-shadow-sm' : ''}`}>
-                  {formData.title || "제목을 입력해주세요"}
-                </h1>
-
-                <div className={`w-8 h-1 bg-current opacity-20 mx-auto mb-4 rounded-full ${selectedTheme.text}`}></div>
-
-                <p className={`font-medium text-xs mb-6 opacity-80 whitespace-pre-wrap ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
-                  {formData.description || "초대 문구가\n여기에 표시됩니다."}
-                </p>
-
-                <div className={`text-[10px] bg-white/10 backdrop-blur-md rounded-xl p-3 inline-block ${selectedTheme.text}`}>
-                  <p className="font-bold opacity-90 mb-1">{formData.event_date ? new Date(formData.event_date).toLocaleDateString() : "0000.00.00"}</p>
-                  <p className="opacity-70">{formData.location || "장소 미정"}</p>
-                </div>
-              </div>
             </div>
-
-            {/* BGM Indicator in Preview */}
-            {formData.bgm !== 'none' && (
-              <div className="mt-6 flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full text-xs font-bold animate-pulse">
-                <span>🎵 {formData.bgm === 'classic' ? '클래식' : formData.bgm === 'jazz' ? '재즈' : '어쿠스틱'} 음악이 함께 전송됩니다</span>
-              </div>
-            )}
-          </div>
-        )}
-
-      </div>
-
-      {/* Fixed Bottom Action Bar */}
-      <div className={`fixed bottom-0 left-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 z-50 safe-area-bottom transition-all ${isPC ? 'w-[450px]' : 'w-full mx-auto max-w-md right-0'}`}>
-        <div className="flex gap-3">
-          {currentStep > 0 && (
-            <button
-              onClick={handlePrev}
-              className="px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors active:scale-95"
-            >
-              이전
-            </button>
           )}
-          <button
-            onClick={currentStep < steps.length - 1 ? handleNext : handleSubmit}
-            disabled={isNextDisabled()}
-            className="flex-1 py-4 bg-[#E74C3C] text-white text-lg rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-[#c0392b] disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95"
-          >
-            {currentStep < steps.length - 1 ? "다음" : "초대장 완성하기"}
-          </button>
+
         </div>
-        <p className="text-[10px] text-center text-gray-300 mt-2 font-mono">v1.1</p>
+
+        {/* Fixed Bottom Action Bar (Inside Sidebar on PC, Global on Mobile) */}
+        <div className={`p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 z-50 safe-area-bottom sticky bottom-0`}>
+          <div className="flex gap-3">
+            {currentStep > 0 && (
+              <button
+                onClick={handlePrev}
+                className="px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors active:scale-95"
+              >
+                이전
+              </button>
+            )}
+            <button
+              onClick={currentStep < steps.length - 1 ? handleNext : handleSubmit}
+              disabled={isNextDisabled()}
+              className="flex-1 py-4 bg-[#E74C3C] text-white text-lg rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-[#c0392b] disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95"
+            >
+              {currentStep < steps.length - 1 ? "다음" : "초대장 완성하기"}
+            </button>
+          </div>
+          <p className="text-[10px] text-center text-gray-300 mt-2 font-mono">v1.1 Editor</p>
+        </div>
       </div>
 
-      {/* PC Side Preview */}
+      {/* Right: PC Side Preview (Visible Hub) */}
       {isPC && (
-        <div className="fixed top-0 right-0 bottom-0 left-[450px] bg-[#1a1a1a] flex items-center justify-center p-20 z-0">
-          <div className="relative w-full h-full max-w-4xl max-h-[800px] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-8 border-[#333]">
-            {/* Mocking the PCInvitationView for live preview */}
+        <div className="flex-1 bg-[#1a1a1a] flex flex-col items-center justify-center p-12 relative overflow-hidden">
+          {/* Background Ambient Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-500/10 blur-[150px] rounded-full" />
+
+          {/* Phone Frame for Live Preview */}
+          <div className="relative w-full max-w-[380px] h-[780px] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-[12px] border-[#333] z-10 scale-[0.9] xl:scale-100 transition-transform">
+            {/* Dynamic Content inside Mock Phone */}
             <div className="absolute inset-0 bg-white overflow-y-auto no-scrollbar">
               <div className="relative h-[400px]">
                 {previewUrls.length > 0 ? (
                   <NextImage src={previewUrls[0]} alt="Preview" fill className="object-cover" />
                 ) : (
-                  <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-300">
-                    이미지를 추가해 주세요
+                  <div className="absolute inset-0 bg-gray-50 flex flex-col items-center justify-center text-gray-300">
+                    <Sparkles size={48} className="mb-4 opacity-20" />
+                    <p className="text-sm font-bold opacity-30">이미지를 추가해 주세요</p>
                   </div>
                 )}
               </div>
-              <div className="p-12">
-                <h1 className={`text-4xl font-bold mb-6 ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''
+              <div className="p-8 pb-20">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E74C3C] rounded-lg text-[10px] font-black uppercase mb-4 tracking-tighter">
+                  <Sparkles size={10} /> Live Preview
+                </div>
+                <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''
                   }`}>
                   {formData.title || "초대장 제목"}
                 </h1>
-                <p className={`text-xl opacity-70 mb-12 whitespace-pre-wrap ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
-                  {formData.description || "초대 문구가 여기에 표시됩니다."}
+                <div className="w-10 h-1 bg-gray-100 mb-6 rounded-full" />
+                <p className={`text-lg opacity-70 mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
+                  {formData.description || "초대 문구가 여기에 표시됩니다.\n아직 작성된 내용이 없습니다."}
                 </p>
-                <div className="grid grid-cols-2 gap-8 border-t pt-10">
-                  <div>
-                    <p className="text-[10px] font-black uppercase text-gray-400 mb-2">Date</p>
-                    <p className="font-bold">{formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}</p>
+                <div className="space-y-4 border-t border-gray-50 pt-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
+                      <Calendar size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-gray-400">Date & Time</p>
+                      <p className="font-bold text-sm">{formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase text-gray-400 mb-2">Location</p>
-                    <p className="font-bold">{formData.location || "장소 미정"}</p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
+                      <MapPin size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-gray-400">Location</p>
+                      <p className="font-bold text-sm">{formData.location || "장소 미정"}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Preview Label */}
-          <div className="absolute top-10 right-10 flex items-center gap-3 bg-white/10 backdrop-blur-xl px-6 py-3 rounded-full border border-white/20 text-white/60 text-sm font-bold">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
-            LIVE PREVIEW
-          </div>
+          <div className="mt-8 text-white/30 text-[10px] font-black uppercase tracking-[0.2em] z-10">Wayo Pro Creator Studio</div>
         </div>
       )}
 
-      {/* Global CSS for animations if needed inline, though tailwind plugins handle most */}
+      {/* Global Style */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .safe-area-bottom {
-          padding-bottom: env(safe-area-inset-bottom, 16px);
-        }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(-5%); }
-          50% { transform: translateY(5%); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 3s infinite ease-in-out;
-        }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }
+        @keyframes bounce-slow { 0%, 100% { transform: translateY(-5%); } 50% { transform: translateY(5%); } }
+        .animate-bounce-slow { animation: bounce-slow 3s infinite ease-in-out; }
       `}</style>
     </div>
   );

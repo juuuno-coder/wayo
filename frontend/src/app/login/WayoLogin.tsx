@@ -78,85 +78,80 @@ export default function WayoLogin() {
     };
 
     return (
-        <div className="p-8 pb-24">
-            {/* Brand */}
-            <div className="text-center mb-10 mt-4">
-                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 bg-[#FFF0F0] text-[#E02424] rounded-full text-[10px] font-bold uppercase tracking-widest">
-                    <Sparkles size={12} />
-                    New Generation Invitation
-                </div>
-                <h1 className="text-6xl font-black text-[#E02424] tracking-tighter mb-4">WAYO</h1>
-                <p className="text-gray-400 font-medium leading-relaxed text-sm">
-                    마음을 담은 정교한 초대장이<br />
-                    당신의 공간으로 <span className="text-gray-800 font-bold underline decoration-[#E02424]/30 decoration-4">지금 바로 와요 💌</span>
-                </p>
-            </div>
-
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="이메일 입력"
-                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl text-base focus:border-[#E02424] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
-                    />
-                </div>
-                <div>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="비밀번호 입력"
-                        className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl text-base focus:border-[#E02424] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
-                    />
-                </div>
-
-                <button type="submit" className="w-full bg-[#E02424] hover:bg-[#C81E1E] text-white py-4.5 rounded-2xl font-black text-lg shadow-xl shadow-red-200 active:scale-[0.98] transition-all">
-                    로그인하기
-                </button>
-
-                <div className="relative my-8">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-100"></div>
+        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6">
+            <div className="w-full max-w-md">
+                {/* Brand */}
+                <div className="text-center mb-10">
+                    <div className="mb-4 inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 text-[#E74C3C] rounded-full text-xs font-bold uppercase tracking-widest">
+                        <Sparkles size={14} /> Wayo Member
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-white text-gray-400 font-bold uppercase tracking-wider text-[10px]">또는</span>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    onClick={handleGoogleLogin}
-                    className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
-                >
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
-                    Google로 계속하기
-                </button>
-
-                <div className="text-center mt-8">
-                    <Link href="/signup" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-500 font-bold text-sm transition-all active:scale-95">
-                        <span>아직 계정이 없으신가요?</span>
-                        <span className="text-[#E02424]">회원가입</span>
-                    </Link>
-                </div>
-            </form>
-
-            {/* Footer Card */}
-            <div className="mt-12 bg-[#FDF2F2] rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group cursor-pointer hover:bg-[#FEECEC] transition-colors">
-                <div className="absolute -right-4 -top-4 w-20 h-20 bg-[#FCD5D5] rounded-full opacity-50 blur-xl group-hover:scale-110 transition-transform"></div>
-
-                <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#E02424] z-10">
-                    <Heart size={20} className="fill-current" />
-                </div>
-                <div className="z-10">
-                    <p className="text-[10px] items-center gap-1 text-[#E02424] font-bold flex uppercase tracking-wider mb-0.5">
-                        New RSVPs <span className="w-1.5 h-1.5 rounded-full bg-[#E02424] animate-pulse" />
+                    <h1 className="text-7xl font-black text-[#E74C3C] tracking-tighter mb-4">WAYO</h1>
+                    <p className="text-gray-400 font-medium leading-relaxed text-sm">
+                        마음을 담은 정교한 초대장<br />
+                        <span className="text-gray-900 font-bold decoration-[#E74C3C]/30 decoration-4">지금 바로 와요 💌</span>
                     </p>
-                    <p className="font-bold text-2xl text-[#8E1B1B]">+24 Guests</p>
+                </div>
+
+                {/* Login Card */}
+                <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Email</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="이메일을 입력해주세요"
+                                className="w-full px-6 py-4.5 bg-gray-50 border border-transparent rounded-2xl text-base focus:bg-white focus:border-[#E74C3C] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="비밀번호를 입력해주세요"
+                                className="w-full px-6 py-4.5 bg-gray-50 border border-transparent rounded-2xl text-base focus:bg-white focus:border-[#E74C3C] focus:ring-4 focus:ring-red-50 outline-none transition-all font-medium placeholder:text-gray-300"
+                            />
+                        </div>
+
+                        <button type="submit" className="w-full bg-[#E74C3C] hover:bg-[#c0392b] text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-red-200 active:scale-[0.98] transition-all mt-4">
+                            로그인
+                        </button>
+
+                        <div className="relative my-8">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-100"></div>
+                            </div>
+                            <div className="relative flex justify-center text-xs">
+                                <span className="px-4 bg-white text-gray-300 font-bold uppercase tracking-widest text-[10px]">Social Login</span>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleGoogleLogin}
+                            className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-4.5 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                        >
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                            Google 계정으로 시작하기
+                        </button>
+
+                        <div className="text-center mt-8">
+                            <Link href="/signup" className="text-sm font-bold text-gray-400 hover:text-[#E74C3C] transition-colors">
+                                아직 계정이 없으신가요? <span className="text-[#E74C3C] border-b border-[#E74C3C]/30 ml-1">회원가입</span>
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+
+                {/* Footer Info */}
+                <div className="mt-12 text-center opacity-30">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Wayo App Service Platform</p>
                 </div>
             </div>
         </div>
+    );
     );
 }

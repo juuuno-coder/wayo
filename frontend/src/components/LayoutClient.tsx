@@ -29,20 +29,21 @@ export default function LayoutClient({
   }, []);
 
   const isAdminPage = pathname?.startsWith("/admin");
-  const isSideApp = pathname?.startsWith("/invitations");
+  const isInvitationRoute = pathname?.startsWith("/invitations");
+  const isProfilePage = pathname === "/profile";
+  const isLoginPage = pathname === "/login";
+  const isLikesPage = pathname === "/likes";
 
   // Wayo Landing: ONLY root path on Wayo domain shows full PC version
   const isWayoLanding = isWayoDomain && pathname === "/";
 
-  // 1. 관리자 페이지나 Wayo 랜딩 페이지는 전체 화면
-  if (isAdminPage || isWayoLanding) {
-    return <>{children}</>;
-  }
+  // 1. Pages that MUST be full screen on PC
+  // For Wayo, we want most pages to be native web experiences except the initial landing.
+  const isFullScreenPage = isAdminPage || isWayoLanding || isProfilePage || isLoginPage || isLikesPage || isInvitationRoute;
 
-  // 2. 사이드 앱 내부 진입 시 - 심플 레이아웃
-  if (isSideApp) {
+  if (isFullScreenPage) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FDFBF7]">
         {children}
       </div>
     );
