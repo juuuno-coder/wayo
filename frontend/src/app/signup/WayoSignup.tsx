@@ -188,5 +188,4 @@ export default function WayoSignup() {
             />
         </div>
     );
-    );
 }
