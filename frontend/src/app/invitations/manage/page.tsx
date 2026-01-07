@@ -17,7 +17,7 @@ import GuestListModal from "@/components/GuestListModal";
 
 export default function ManageInvitationsPage() {
     const router = useRouter();
-    const { isLoggedIn, token } = useAuth();
+    const { isLoggedIn, token, isLoading } = useAuth();
     const [invitations, setInvitations] = useState<any[]>([]);
     const [receivedInvitations, setReceivedInvitations] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
@@ -27,9 +27,10 @@ export default function ManageInvitationsPage() {
     const [isGuestListOpen, setIsGuestListOpen] = useState(false);
 
     useEffect(() => {
+        if (isLoading) return;
         fetchMyInvitations();
         fetchReceivedInvitations();
-    }, []);
+    }, [token, isLoading]);
 
     const fetchMyInvitations = async () => {
         try {
@@ -156,8 +157,11 @@ export default function ManageInvitationsPage() {
                     </button>
                 </div>
 
-                {loading ? (
-                    <div className="py-20 text-center text-gray-400">데이터를 불러오고 있습니다...</div>
+                {loading || isLoading ? (
+                    <div className="py-20 text-center text-gray-400">
+                        <div className="animate-spin w-8 h-8 border-4 border-gray-200 border-t-blue-500 rounded-full mx-auto mb-4"></div>
+                        데이터를 불러오고 있습니다...
+                    </div>
                 ) : (activeTab === 'sent' ? invitations : receivedInvitations).length === 0 ? (
                     <div className="py-20 flex flex-col items-center text-center opacity-60">
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">

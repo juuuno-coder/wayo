@@ -12,6 +12,14 @@ import NextImage from "next/image";
 import DaumPostcodeEmbed from 'react-daum-postcode';
 import { motion, AnimatePresence } from "framer-motion";
 import PCInvitationView from "@/components/PCInvitationView";
+import { Black_Han_Sans, Inter } from "next/font/google";
+
+const blackHanSans = Black_Han_Sans({
+  weight: "400",
+  subsets: ["latin"],
+});
+
+const inter = Inter({ subsets: ["latin"] });
 
 const themes: Record<string, { name: string, bg: string, text: string, accent: string }> = {
   classic: { name: '클래식', bg: 'bg-[#2C3E50]', text: 'text-white', accent: 'border-gold-500' },
@@ -178,7 +186,7 @@ export default function CreateInvitationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans">
+    <div className={`min-h-screen bg-[#FDFBF7] flex flex-col ${inter.className}`}>
       {/* Header & Progress */}
       <div className={`sticky top-0 bg-white z-50 transition-all ${isPC ? 'w-[450px] border-r border-gray-100' : 'w-full'}`}>
         <header className="px-4 py-3 flex items-center h-14">
@@ -188,7 +196,7 @@ export default function CreateInvitationPage() {
         </header>
         <div className="h-1 bg-gray-100 w-full">
           <div
-            className="h-full bg-blue-500 transition-all duration-300 ease-out"
+            className="h-full bg-[#E74C3C] transition-all duration-300 ease-out"
             style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
           />
         </div>
@@ -216,7 +224,7 @@ export default function CreateInvitationPage() {
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="예) 15분도시 부산 워크숍"
-              className="w-full p-4 bg-gray-50 border-none rounded-2xl font-bold text-2xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+              className="w-full p-4 bg-white border-none rounded-2xl font-bold text-2xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
               autoFocus
             />
           </div>
@@ -225,7 +233,7 @@ export default function CreateInvitationPage() {
         {/* Step 2: Date & Time */}
         {currentStep === 1 && (
           <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
-            <div className="p-5 bg-gray-50 rounded-2xl border border-transparent focus-within:border-blue-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+            <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
               <label className="block text-sm font-bold text-gray-500 mb-2">날짜</label>
               <input
                 type="date"
@@ -237,7 +245,7 @@ export default function CreateInvitationPage() {
                 className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
               />
             </div>
-            <div className="p-5 bg-gray-50 rounded-2xl border border-transparent focus-within:border-blue-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+            <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
               <label className="block text-sm font-bold text-gray-500 mb-2">시간</label>
               <input
                 type="time"
@@ -266,24 +274,24 @@ export default function CreateInvitationPage() {
                   value={placeName}
                   onChange={(e) => setPlaceName(e.target.value)}
                   placeholder="예) 강남역 10번 출구, 우리집"
-                  className="w-full pl-14 pr-4 py-5 bg-gray-50 border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
                   autoFocus
                 />
               </div>
 
               {/* Address Display & Search Button */}
               {roadAddress ? (
-                <div className="p-4 bg-blue-50 rounded-2xl flex items-center justify-between group cursor-pointer" onClick={() => setIsAddressOpen(true)}>
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <span className="text-xs font-bold bg-blue-200 px-2 py-1 rounded-md">도로명</span>
+                <div className="p-4 bg-red-50 rounded-2xl flex items-center justify-between group cursor-pointer" onClick={() => setIsAddressOpen(true)}>
+                  <div className="flex items-center gap-2 text-[#E74C3C]">
+                    <span className="text-xs font-bold bg-red-100 px-2 py-1 rounded-md">도로명</span>
                     <span className="font-medium text-sm">{roadAddress}</span>
                   </div>
-                  <span className="text-blue-400 text-xs">수정</span>
+                  <span className="text-red-400 text-xs">수정</span>
                 </div>
               ) : (
                 <button
                   onClick={() => setIsAddressOpen(true)}
-                  className="text-gray-500 text-sm font-medium underline underline-offset-4 hover:text-blue-500 transition-colors ml-4"
+                  className="text-gray-500 text-sm font-medium underline underline-offset-4 hover:text-[#E74C3C] transition-colors ml-4"
                 >
                   정확한 주소도 입력할게요
                 </button>
@@ -321,11 +329,11 @@ export default function CreateInvitationPage() {
           <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100">
             <div className="grid grid-cols-2 gap-4">
               <div
-                className="aspect-square bg-gray-50 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all active:scale-95"
+                className="aspect-square bg-white border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-[#E74C3C] hover:bg-red-50 transition-all active:scale-95"
                 onClick={() => document.getElementById('image-upload')?.click()}
               >
                 <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-2">
-                  <Sparkles className="text-blue-500" size={20} />
+                  <Sparkles className="text-[#E74C3C]" size={20} />
                 </div>
                 <p className="font-bold text-gray-600 text-sm">사진 추가</p>
                 <input
@@ -364,7 +372,7 @@ export default function CreateInvitationPage() {
                 <button
                   key={key}
                   onClick={() => setFormData({ ...formData, theme_color: key })}
-                  className={`p-4 rounded-3xl border-2 transition-all duration-300 text-left relative overflow-hidden group ${formData.theme_color === key ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100" : "border-gray-100 bg-white hover:border-gray-200"
+                  className={`p-4 rounded-3xl border-2 transition-all duration-300 text-left relative overflow-hidden group ${formData.theme_color === key ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100" : "border-gray-100 bg-white hover:border-gray-200"
                     }`}
                 >
                   <div className={`w-12 h-12 rounded-2xl mb-4 ${value.bg} flex items-center justify-center shadow-inner`}>
@@ -372,7 +380,7 @@ export default function CreateInvitationPage() {
                   </div>
                   <p className="font-bold text-gray-900 text-lg mb-1">{value.name}</p>
                   {formData.theme_color === key && (
-                    <div className="absolute top-4 right-4 text-blue-500 animate-in zoom-in">
+                    <div className="absolute top-4 right-4 text-[#E74C3C] animate-in zoom-in">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </div>
                   )}
@@ -390,12 +398,12 @@ export default function CreateInvitationPage() {
             <button
               onClick={() => setFormData({ ...formData, ticket_type_id: null })}
               className={`w-full p-5 rounded-2xl border-2 transition-all flex items-center justify-between ${!formData.ticket_type_id
-                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
                 : "border-gray-100 bg-white hover:border-gray-200"
                 }`}
             >
               <span className="font-bold text-gray-700">선택 안함</span>
-              {!formData.ticket_type_id && <Sparkles className="text-blue-500" size={20} />}
+              {!formData.ticket_type_id && <Sparkles className="text-[#E74C3C]" size={20} />}
             </button>
 
             {ticketTypes.map((ticket) => (
@@ -403,13 +411,13 @@ export default function CreateInvitationPage() {
                 key={ticket.id}
                 onClick={() => setFormData({ ...formData, ticket_type_id: ticket.id })}
                 className={`w-full p-5 rounded-2xl border-2 transition-all text-left group ${formData.ticket_type_id === ticket.id
-                  ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                  ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
                   : "border-gray-100 bg-white hover:border-gray-200"
                   }`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-bold text-lg text-gray-900">{ticket.name}</span>
-                  <span className="font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-xs">
+                  <span className="font-bold text-[#E74C3C] bg-red-100 px-3 py-1 rounded-full text-xs">
                     {ticket.price === 0 ? "FREE" : `₩${ticket.price.toLocaleString()}`}
                   </span>
                 </div>
@@ -465,7 +473,7 @@ export default function CreateInvitationPage() {
                     key={effect.id}
                     onClick={() => setFormData({ ...formData, text_effect: effect.id })}
                     className={`p-4 rounded-2xl border transition-all relative overflow-hidden ${formData.text_effect === effect.id
-                      ? "bg-blue-50 border-blue-500 text-blue-700 ring-1 ring-blue-500"
+                      ? "bg-red-50 border-[#E74C3C] text-[#E74C3C] ring-1 ring-[#E74C3C]"
                       : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
                       }`}
                   >
@@ -550,7 +558,7 @@ export default function CreateInvitationPage() {
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="따뜻한 인사말을 건네보세요."
-              className="w-full p-6 bg-gray-50 border-none rounded-3xl h-80 resize-none font-medium text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none leading-relaxed"
+              className="w-full p-6 bg-white border-none rounded-3xl h-80 resize-none font-medium text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none leading-relaxed shadow-sm"
               autoFocus
             />
           </div>
@@ -617,7 +625,7 @@ export default function CreateInvitationPage() {
           <button
             onClick={currentStep < steps.length - 1 ? handleNext : handleSubmit}
             disabled={isNextDisabled()}
-            className="flex-1 py-4 bg-blue-500 text-white text-lg rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95"
+            className="flex-1 py-4 bg-[#E74C3C] text-white text-lg rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-[#c0392b] disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95"
           >
             {currentStep < steps.length - 1 ? "다음" : "초대장 완성하기"}
           </button>

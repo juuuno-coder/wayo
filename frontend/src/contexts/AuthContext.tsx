@@ -12,6 +12,7 @@ interface User {
 
 interface AuthContextType {
     isLoggedIn: boolean;
+    isLoading: boolean;
     user: User | null;
     token: string | null;
     login: (token: string, user: User) => void;
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [showWelcome, setShowWelcome] = useState(false);
@@ -81,6 +83,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
             } catch (error) {
                 console.error("Auth verification failed", error);
+                // If verification fails (network error etc), we might want to keep the local token or invalidate it.
+                // For safety, let's assume if network fails we keep optimistic state but maybe show a warning.
+                // For now, doing nothing is safest vs logging out on offline.
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -133,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, user, token, login, logout, showWelcome, clearWelcome }}>
+        <AuthContext.Provider value={{ isLoggedIn, isLoading, user, token, login, logout, showWelcome, clearWelcome }}>
             {children}
         </AuthContext.Provider>
     );
