@@ -8,6 +8,7 @@ primary_region = "nrt" # 도쿄 지역 (한국에서 가장 빠름)
 [env]
   RAILS_ENV = "production"
   DATABASE_URL = "sqlite3:///rails/storage/production.sqlite3"
+  PORT = "8080"
 
 [[mounts]]
   source = "rails_storage"
