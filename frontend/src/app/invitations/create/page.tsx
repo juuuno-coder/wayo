@@ -78,8 +78,8 @@ export default function CreateInvitationPage() {
 
   // Separate date/time state
   const [eventDateOnly, setEventDateOnly] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("00:00");
   const [showEndTime, setShowEndTime] = useState(false);
 
   useEffect(() => {
