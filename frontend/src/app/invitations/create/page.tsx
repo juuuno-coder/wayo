@@ -223,7 +223,7 @@ export default function CreateInvitationPage() {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="제목을 입력하세요"
-                    className="w-full p-5 bg-gray-50 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] transition-all outline-none"
+                    className="w-full p-5 bg-gray-50 text-gray-900 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none"
                     autoFocus
                   />
                 </div>
@@ -234,7 +234,7 @@ export default function CreateInvitationPage() {
                     value={formData.sender_name}
                     onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
                     placeholder="성함 또는 닉네임"
-                    className="w-full p-5 bg-gray-50 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] transition-all outline-none"
+                    className="w-full p-5 bg-gray-50 text-gray-900 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none"
                   />
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function CreateInvitationPage() {
                   type="datetime-local"
                   value={formData.event_date}
                   onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
-                  className="w-full p-5 bg-gray-50 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] transition-all outline-none"
+                  className="w-full p-5 bg-gray-50 text-gray-900 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none"
                 />
               </div>
             )}
@@ -258,7 +258,7 @@ export default function CreateInvitationPage() {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="예: 서울숲 야외공원"
-                  className="w-full p-5 bg-gray-50 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] transition-all outline-none"
+                  className="w-full p-5 bg-gray-50 text-gray-900 border-none rounded-2xl font-bold text-lg focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none"
                 />
               </div>
             )}
@@ -304,7 +304,7 @@ export default function CreateInvitationPage() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="따뜻한 인사말을 나누어보세요."
-                  className="w-full p-6 bg-gray-50 border-none rounded-2xl h-60 font-medium text-lg focus:ring-2 focus:ring-[#E74C3C] transition-all outline-none leading-relaxed"
+                  className="w-full p-6 bg-gray-50 text-gray-900 border-none rounded-2xl h-60 font-medium text-lg focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none leading-relaxed"
                 />
               </div>
             )}
