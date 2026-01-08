@@ -268,6 +268,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           isOpen={showSignupModal}
           onClose={() => setShowSignupModal(false)}
           guestName={confirmedGuestName}
+          hasTicket={!!myTicket}
         />
         <SendInvitationModal
           isOpen={showSendModal}
@@ -336,6 +337,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}
         guestName={confirmedGuestName}
+        hasTicket={!!myTicket}
       />
       <SendInvitationModal
         isOpen={showSendModal}

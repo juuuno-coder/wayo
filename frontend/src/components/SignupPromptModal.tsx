@@ -2,15 +2,16 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { X, Ticket, ArrowRight } from "lucide-react";
+import { X, Ticket, ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface SignupPromptModalProps {
     isOpen: boolean;
     onClose: () => void;
     guestName?: string;
+    hasTicket?: boolean;
 }
 
-export default function SignupPromptModal({ isOpen, onClose, guestName }: SignupPromptModalProps) {
+export default function SignupPromptModal({ isOpen, onClose, guestName, hasTicket = false }: SignupPromptModalProps) {
     const router = useRouter();
 
     return (
@@ -37,16 +38,19 @@ export default function SignupPromptModal({ isOpen, onClose, guestName }: Signup
 
                         <div className="p-8 text-center">
                             <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-100 rotate-3">
-                                <Ticket size={32} />
+                                {hasTicket ? <Ticket size={32} /> : <CheckCircle2 size={32} />}
                             </div>
 
                             <h3 className="text-2xl font-bold text-gray-900 mb-2">
                                 {guestName ? `${guestName}님,` : "잠깐!"} <br />
-                                티켓을 저장할까요?
+                                {hasTicket ? "티켓을 저장할까요?" : "초대장을 저장할까요?"}
                             </h3>
 
                             <p className="text-gray-500 mb-8 leading-relaxed text-sm">
-                                회원가입 하시면 티켓을 안전하게 보관하고<br />입장 시 빠르게 꺼낼 수 있어요.
+                                {hasTicket
+                                    ? "회원가입 하시면 티켓을 안전하게 보관하고<br />입장 시 빠르게 꺼낼 수 있어요."
+                                    : "회원가입 하시면 받은 초대장을 보관하고<br />일정을 편리하게 관리할 수 있어요."
+                                }
                             </p>
 
                             <div className="space-y-3">
@@ -67,7 +71,10 @@ export default function SignupPromptModal({ isOpen, onClose, guestName }: Signup
 
                         <div className="bg-gray-50 p-4 text-center">
                             <p className="text-[10px] text-gray-400">
-                                * 가입 시 카카오톡으로도 티켓을 받아볼 수 있습니다.
+                                {hasTicket
+                                    ? "* 가입 시 카카오톡으로도 티켓을 받아볼 수 있습니다."
+                                    : "* 가입 시 카카오톡으로 일정 알림을 받아볼 수 있습니다."
+                                }
                             </p>
                         </div>
                     </motion.div>
