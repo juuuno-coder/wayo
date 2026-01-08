@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, X, Clock, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import Toast from "./Toast";
+import { API_BASE_URL } from "@/config";
 
 interface RSVPFormProps {
     invitationId: number;
@@ -32,7 +33,7 @@ export default function RSVPForm({
             const token = localStorage.getItem("authToken");
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${invitationId}/guests/${guestId}/rsvp`,
+                `${API_BASE_URL}/invitations/${invitationId}/guests/${guestId}/rsvp`,
                 {
                     method: "PATCH",
                     headers: {

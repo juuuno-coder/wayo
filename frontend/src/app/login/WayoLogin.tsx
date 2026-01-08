@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { MoveLeft, Heart, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { API_BASE_URL } from "@/config";
 
 export default function WayoLogin() {
     const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function WayoLogin() {
     }, [router]);
 
     const handleGoogleLogin = () => {
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";
+        const backendUrl = API_BASE_URL;
         // Pass current origin to backend so it knows where to return
         const origin = window.location.origin;
         window.location.href = `${backendUrl}/users/auth/google_oauth2?origin=${encodeURIComponent(origin)}`;
@@ -42,7 +43,7 @@ export default function WayoLogin() {
         localStorage.removeItem("userEmail");
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/users/sign_in`, {
+            const response = await fetch(`${API_BASE_URL}/users/sign_in`, {
                 method: "POST", // 실제 엔드포인트에 맞게 조정 필요
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ user: { email, password } }),

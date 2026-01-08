@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 
 interface User {
     id: string;
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             try {
                 // Verify with backend
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
+                const apiUrl = API_BASE_URL;
                 const response = await fetch(`${apiUrl}/users/me`, {
                     headers: {
                         'Authorization': savedToken.startsWith('Bearer ') ? savedToken : `Bearer ${savedToken}`,
@@ -130,7 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (guestKeys.length === 0) return;
 
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
+        const apiUrl = API_BASE_URL;
 
         for (const key of guestKeys) {
             const guestId = localStorage.getItem(key);
@@ -189,7 +190,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!token) return;
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
+            const apiUrl = API_BASE_URL;
             const response = await fetch(`${apiUrl}/users/me`, {
                 method: 'PATCH',
                 headers: {

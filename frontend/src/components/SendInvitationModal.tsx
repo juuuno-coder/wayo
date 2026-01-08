@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Search, User, Send, CheckCircle2, Loader2, Mail, QrCode } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 
 interface SendInvitationModalProps {
     isOpen: boolean;
@@ -42,7 +43,7 @@ export default function SendInvitationModal({ isOpen, onClose, invitationId }: S
     const searchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/users/search?query=${encodeURIComponent(query)}`);
+            const res = await fetch(`${API_BASE_URL}/users/search?query=${encodeURIComponent(query)}`);
             if (res.ok) {
                 const data = await res.json();
                 setResults(data);
@@ -69,7 +70,7 @@ export default function SendInvitationModal({ isOpen, onClose, invitationId }: S
     const executeSend = async (guestName: string, userId?: number, contact?: string) => {
         setSending(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${invitationId}/guests`, {
+            const res = await fetch(`${API_BASE_URL}/invitations/${invitationId}/guests`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

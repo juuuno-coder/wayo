@@ -1,5 +1,6 @@
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3401";
+import { API_BASE_URL } from "@/config";
+
+const BASE_URL = API_BASE_URL;
 
 const getHeaders = () => {
   const headers: HeadersInit = {

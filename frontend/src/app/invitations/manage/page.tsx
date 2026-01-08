@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import GuestListModal from "@/components/GuestListModal";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
+import { API_BASE_URL } from "@/config";
 
 const blackHanSans = Black_Han_Sans({
     weight: "400",
@@ -44,7 +45,7 @@ export default function ManageInvitationsPage() {
     const fetchMyInvitations = async () => {
         try {
             if (token) {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations`, {
+                const res = await fetch(`${API_BASE_URL}/invitations`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -52,7 +53,7 @@ export default function ManageInvitationsPage() {
                     const myInvites = await res.json();
                     const results = await Promise.all(
                         myInvites.map(async (invite: any) => {
-                            const guestRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${invite.id}/guests`);
+                            const guestRes = await fetch(`${API_BASE_URL}/invitations/${invite.id}/guests`);
                             const guests = guestRes.ok ? await guestRes.json() : [];
                             return { ...invite, guests };
                         })
@@ -74,10 +75,10 @@ export default function ManageInvitationsPage() {
                 }
                 const results = await Promise.all(
                     pendingIds.map(async (id: number) => {
-                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`);
+                        const res = await fetch(`${API_BASE_URL}/invitations/${id}`);
                         if (res.ok) {
                             const invite = await res.json();
-                            const guestRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/guests`);
+                            const guestRes = await fetch(`${API_BASE_URL}/invitations/${id}/guests`);
                             const guests = guestRes.ok ? await guestRes.json() : [];
                             return { ...invite, guests };
                         }
@@ -96,7 +97,7 @@ export default function ManageInvitationsPage() {
     const fetchReceivedInvitations = async () => {
         try {
             if (!token) return;
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/received`, {
+            const res = await fetch(`${API_BASE_URL}/invitations/received`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             if (res.ok) {

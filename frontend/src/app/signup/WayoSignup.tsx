@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { MoveLeft, Sparkles, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthModal from "@/components/AuthModal";
+import { API_BASE_URL } from "@/config";
 
 export default function WayoSignup() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function WayoSignup() {
     }, [router]);
 
     const handleGoogleLogin = () => {
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";
+        const backendUrl = API_BASE_URL;
         const origin = window.location.origin;
         window.location.href = `${backendUrl}/users/auth/google_oauth2?origin=${encodeURIComponent(origin)}`;
     };
@@ -42,7 +43,7 @@ export default function WayoSignup() {
         }
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/users`, {
+            const response = await fetch(`${API_BASE_URL}/users`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 
 interface InvitationRSVPFormProps {
     invitationId: string | number;
@@ -36,7 +37,7 @@ export default function InvitationRSVPForm({ invitationId, onSuccess, className 
                 headers["Authorization"] = `Bearer ${token}`;
             }
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${invitationId}/guests`, {
+            const res = await fetch(`${API_BASE_URL}/invitations/${invitationId}/guests`, {
                 method: "POST",
                 headers,
                 body: JSON.stringify({

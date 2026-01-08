@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Megaphone,
   CalendarPlus,
-  CalendarPlus,
   Send,
   Loader2
 } from "lucide-react";
@@ -24,6 +23,7 @@ import SendInvitationModal from "@/components/SendInvitationModal";
 import BlockRenderer from "@/components/blocks/BlockRenderer";
 import InvitationFooter from "@/components/InvitationFooter";
 import { ThemeContext } from "@/contexts/ThemeContext";
+import { API_BASE_URL } from "@/config";
 
 const themes: Record<string, { bg: string, text: string, button: string, accent: string }> = {
   classic: { bg: 'bg-[#2C3E50]', text: 'text-white', button: 'bg-[#E0F7FA] text-[#2C3E50]', accent: 'bg-white/10' },
@@ -88,7 +88,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     if (sessionStorage.getItem(viewKey)) return;
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/track_view`, {
+      await fetch(`${API_BASE_URL}/invitations/${id}/track_view`, {
         method: "POST"
       });
       sessionStorage.setItem(viewKey, "true");
@@ -108,7 +108,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
 
   const fetchInvitation = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/invitations/${id}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("authToken")}`
         }
@@ -125,7 +125,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
 
   const fetchGuests = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/guests`);
+      const res = await fetch(`${API_BASE_URL}/invitations/${id}/guests`);
       if (res.ok) {
         const guestsData = await res.json();
         setGuests(guestsData); // Store full list for creator dashboard
@@ -244,7 +244,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   const handleRSVP_PC = async (name: string, msg: string, status: string = 'accepted') => {
     // Sync to local state if needed, but mainly we call the same logic
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/guests`, {
+      const res = await fetch(`${API_BASE_URL}/invitations/${id}/guests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -435,14 +435,16 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
         <div className="relative bg-gray-50 flex items-center justify-center overflow-hidden min-h-[300px]">
           {/* Mock Poster if no image */}
           {(invitation.image_urls && invitation.image_urls.length > 0) || invitation.cover_image_url ? (
-            <img
-              src={invitation.image_urls?.[0] || invitation.cover_image_url}
-              alt="Cover"
-              className="w-full h-auto object-contain"
-            />
-            <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur rounded-full text-xs font-bold text-gray-800 shadow-md z-10">
+            <>
+              <img
+                src={invitation.image_urls?.[0] || invitation.cover_image_url}
+                alt="Cover"
+                className="w-full h-auto object-contain"
+              />
+              <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur rounded-full text-xs font-bold text-gray-800 shadow-md z-10">
                 {dDayStr}
-            </div>
+              </div>
+            </>
           ) : (
             <div className="w-full h-[600px] bg-[#F5F5F0] p-10 flex flex-col items-center justify-center text-center border-12 border-white inner-border relative">
               <p className="font-serif text-[#8D6E63] text-sm tracking-[0.5em] mb-6">INVITATION</p>

@@ -16,6 +16,7 @@ import DaumPostcodeEmbed from 'react-daum-postcode';
 import { motion, AnimatePresence } from "framer-motion";
 import PCInvitationView from "@/components/PCInvitationView";
 import { Black_Han_Sans, Inter } from "next/font/google";
+import { API_BASE_URL } from "@/config";
 
 const blackHanSans = Black_Han_Sans({
   weight: "400",
@@ -79,7 +80,7 @@ export default function CreateInvitationPage() {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/ticket_types`)
+    fetch(`${API_BASE_URL}/ticket_types`)
       .then(res => res.json())
       .then(data => setTicketTypes(data))
       .catch(err => console.error("Failed to load tickets", err));
@@ -144,7 +145,7 @@ export default function CreateInvitationPage() {
         formDataToSend.append("invitation[images][]", file);
       });
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations`, {
+      const response = await fetch(`${API_BASE_URL}/invitations`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`

@@ -1,6 +1,5 @@
 class GuestsController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create, :index]
-  before_action :authenticate_request, only: [:update, :claim]
+  before_action :authenticate_user!, only: [:update, :claim]
 
   # GET /invitations/:invitation_id/guests
   def index
@@ -12,11 +11,11 @@ class GuestsController < ApplicationController
   def create
     invitation = Invitation.find(params[:invitation_id])
     
-    # Check if user is logged in via header (optional)
-    authenticate_request rescue nil
+    # Check if user is logged in (optional) through Devise
+    # current_user will be available if token is valid
     
     guest = invitation.guests.new(guest_params)
-    guest.user = @current_user if @current_user
+    guest.user = current_user if user_signed_in?
 
     if guest.save
       render json: guest, status: :created
@@ -27,18 +26,18 @@ class GuestsController < ApplicationController
 
   # POST /guests/:id/claim
   def claim
-    return render json: { error: 'Not authenticated' }, status: :unauthorized unless @current_user
+    return render json: { error: 'Not authenticated' }, status: :unauthorized unless user_signed_in?
 
     guest = Guest.find(params[:id])
 
     # Only allow claiming if currently unassigned
     if guest.user_id.nil?
-      if guest.update(user_id: @current_user.id)
+      if guest.update(user_id: current_user.id)
         render json: { message: 'Guest record claimed successfully', guest: guest }, status: :ok
       else
         render json: guest.errors, status: :unprocessable_entity
       end
-    elsif guest.user_id == @current_user.id
+    elsif guest.user_id == current_user.id
       render json: { message: 'Already claimed' }, status: :ok
     else
       render json: { error: 'Guest record already belongs to another user' }, status: :forbidden
