@@ -204,16 +204,10 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                     <p className="text-2xl font-light text-gray-500 leading-relaxed whitespace-pre-wrap">
                                         {invitation.description}
                                     </p>
-                                    <div className="flex gap-4 border-t border-gray-50 pt-8 mt-auto">
-                                        <button
-                                            onClick={() => setShowRsvpModal(true)}
-                                            className="flex-1 py-5 bg-[#E74C3C] text-white rounded-2xl text-xl font-black shadow-2xl hover:scale-[1.02] transition-all"
-                                        >
-                                            참석할게요!
-                                        </button>
-                                        <button className="p-5 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors">
-                                            <Share2 size={24} />
-                                        </button>
+                                    <div className="mt-auto pt-8">
+                                        <p className="text-center text-[10px] text-gray-300 uppercase tracking-widest font-light">
+                                            Official Invitation
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -309,24 +303,9 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                     <div className="p-12 border-t border-gray-50 flex flex-col gap-6">
                                         {!hasResponded ? (
                                             <div className="flex flex-col gap-3">
-                                                <button
-                                                    onClick={() => setShowRsvpModal(true)}
-                                                    className="w-full py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-black shadow-2xl hover:scale-[1.02] transition-all"
-                                                >
-                                                    참석할게요!
-                                                </button>
-                                                <button
-                                                    onClick={async () => {
-                                                        const name = prompt("이름을 입력해주세요", "");
-                                                        if (name) {
-                                                            await onRSVP(name, "참석이 어렵습니다.", "declined");
-                                                            alert("참석이 어렵다는 소식을 전했습니다.");
-                                                        }
-                                                    }}
-                                                    className="w-full py-2 text-gray-400 font-bold hover:text-gray-600 transition-colors"
-                                                >
-                                                    참석이 어려워요
-                                                </button>
+                                                <p className="text-center text-gray-400 text-sm">
+                                                    하단의 버튼을 눌러 참석 여부를 알려주세요.
+                                                </p>
                                             </div>
                                         ) : (
                                             <div className="w-full py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3">
@@ -539,6 +518,45 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                         )}
                     </button>
                 </div>
+            )}
+
+            {/* Floating Bottom Dock (Action Bar) */}
+            {stage === 'content' && !hasResponded && (
+                <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[90] flex items-center gap-4"
+                >
+                    <button
+                        onClick={() => setShowRsvpModal(true)}
+                        className="px-10 py-5 bg-[#E74C3C] hover:bg-[#c0392b] text-white rounded-full text-xl font-black shadow-2xl shadow-red-900/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 backdrop-blur-md"
+                    >
+                        <CheckCircle2 size={24} />
+                        참석할게요!
+                    </button>
+                    <button
+                        onClick={() => {
+                            navigator.clipboard.writeText(window.location.href);
+                            alert("링크가 복사되었습니다.");
+                        }}
+                        className="p-5 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md border border-white/10 shadow-xl transition-all hover:scale-105 active:scale-95"
+                    >
+                        <Share2 size={24} />
+                    </button>
+                </motion.div>
+            )}
+
+            {hasResponded && stage === 'content' && (
+                <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[90]"
+                >
+                    <div className="px-8 py-4 bg-green-500/90 text-white rounded-full font-bold shadow-2xl backdrop-blur-md flex items-center gap-2">
+                        <CheckCircle2 size={20} />
+                        참석 소식이 전달되었습니다
+                    </div>
+                </motion.div>
             )}
 
             {/* Hidden Audio */}
