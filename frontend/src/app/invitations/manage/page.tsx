@@ -40,8 +40,10 @@ export default function ManageInvitationsPage() {
     const fetchMyInvitations = useCallback(async () => {
         try {
             if (token) {
-                const res = await fetch(`${API_BASE_URL}/invitations`, {
-                    headers: { "Authorization": `Bearer ${token}` }
+                const res = await fetch(`${API_BASE_URL}/invitations?t=${Date.now()}`, {
+                    headers: { "Authorization": `Bearer ${token}` },
+                    cache: 'no-store',
+                    next: { revalidate: 0 }
                 });
 
                 if (res.ok) {
@@ -88,8 +90,9 @@ export default function ManageInvitationsPage() {
     const fetchReceivedInvitations = useCallback(async () => {
         try {
             if (!token) return;
-            const res = await fetch(`${API_BASE_URL}/invitations/received`, {
-                headers: { "Authorization": `Bearer ${token}` }
+            const res = await fetch(`${API_BASE_URL}/invitations/received?t=${Date.now()}`, {
+                headers: { "Authorization": `Bearer ${token}` },
+                cache: 'no-store'
             });
             if (res.ok) {
                 const results = await res.json();
@@ -223,25 +226,82 @@ export default function ManageInvitationsPage() {
                         ? invitations.filter(inv => activeFilter === 'all' || (inv.status || 'draft') === activeFilter)
                         : receivedInvitations
                 ).length === 0 ? (
-                    <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm flex flex-col items-center">
-                        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-gray-300">
-                            <Sparkles size={40} />
+                    <div className="flex flex-col gap-12">
+                        <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm flex flex-col items-center">
+                            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-gray-300">
+                                <Sparkles size={40} />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                {activeTab === 'sent' ? "아직 만든 초대장이 없어요" : "아직 받은 초대가 없어요"}
+                            </h3>
+                            <p className="text-gray-400 mb-8 max-w-sm mx-auto">
+                                {activeTab === 'sent'
+                                    ? "특별한 날을 위한 나만의 초대장을 만들어보세요.\n몇 번의 클릭으로 멋진 초대장이 완성됩니다."
+                                    : "친구들이 보낸 초대장이 이곳에 쌓입니다.\n새로운 소식을 기다려보세요!"}
+                            </p>
+                            {activeTab === 'sent' && (
+                                <button
+                                    onClick={() => router.push('/invitations/create')}
+                                    className="px-8 py-3 bg-[#E74C3C] text-white rounded-xl font-bold hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-200"
+                                >
+                                    초대장 만들기 시작
+                                </button>
+                            )}
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                            {activeTab === 'sent' ? "아직 만든 초대장이 없어요" : "아직 받은 초대가 없어요"}
-                        </h3>
-                        <p className="text-gray-400 mb-8 max-w-sm mx-auto">
-                            {activeTab === 'sent'
-                                ? "특별한 날을 위한 나만의 초대장을 만들어보세요.\n몇 번의 클릭으로 멋진 초대장이 완성됩니다."
-                                : "친구들이 보낸 초대장이 이곳에 쌓입니다.\n새로운 소식을 기다려보세요!"}
-                        </p>
+
+                        {/* Sample Preview Section */}
                         {activeTab === 'sent' && (
-                            <button
-                                onClick={() => router.push('/invitations/create')}
-                                className="px-8 py-3 bg-[#E74C3C] text-white rounded-xl font-bold hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-200"
-                            >
-                                초대장 만들기 시작
-                            </button>
+                            <div className="opacity-50 pointer-events-none grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="h-px bg-gray-200 flex-1"></div>
+                                    <span className="text-sm font-bold text-gray-400">초대장을 만들면 이렇게 보여요 (예시)</span>
+                                    <div className="h-px bg-gray-200 flex-1"></div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full relative">
+                                        <div className="aspect-[4/3] bg-gray-100 relative">
+                                            <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-200">
+                                                <Sparkles size={32} />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                                            <div className="absolute bottom-3 right-3 flex gap-2">
+                                                <div className="bg-yellow-400 text-yellow-900 px-2.5 py-1 rounded-full text-xs font-bold border border-yellow-300">
+                                                    작성 중
+                                                </div>
+                                                <div className="bg-black/40 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-white/20">
+                                                    <Users size={12} />
+                                                    0
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="p-6 flex flex-col flex-1">
+                                            <div className="flex-1">
+                                                <h3 className="font-bold text-lg text-gray-900 mb-2 leading-tight line-clamp-2">
+                                                    나의 첫 번째 초대장
+                                                </h3>
+                                                <p className="text-sm text-gray-500 flex items-center gap-2 mb-4">
+                                                    <Calendar size={14} />
+                                                    {new Date().toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-2 mt-auto pt-4 border-t border-gray-50">
+                                                <div className="text-center">
+                                                    <p className="text-[10px] text-green-600 font-bold uppercase mb-0.5">참석</p>
+                                                    <p className="text-lg font-black text-gray-800">0</p>
+                                                </div>
+                                                <div className="text-center border-l border-gray-100">
+                                                    <p className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">대기</p>
+                                                    <p className="text-lg font-black text-gray-800">0</p>
+                                                </div>
+                                                <div className="text-center border-l border-gray-100">
+                                                    <p className="text-[10px] text-red-400 font-bold uppercase mb-0.5">거절</p>
+                                                    <p className="text-lg font-black text-gray-800">0</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
                 ) : (
