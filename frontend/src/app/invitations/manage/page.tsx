@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import NextImage from "next/image";
 import {
@@ -37,13 +37,7 @@ export default function ManageInvitationsPage() {
     const [selectedInvitation, setSelectedInvitation] = useState<any | null>(null);
     const [isGuestListOpen, setIsGuestListOpen] = useState(false);
 
-    useEffect(() => {
-        if (isLoading) return;
-        fetchMyInvitations();
-        fetchReceivedInvitations();
-    }, [token, isLoading]);
-
-    const fetchMyInvitations = async () => {
+    const fetchMyInvitations = useCallback(async () => {
         try {
             if (token) {
                 const res = await fetch(`${API_BASE_URL}/invitations`, {
@@ -61,15 +55,11 @@ export default function ManageInvitationsPage() {
                     );
                     setInvitations(results);
                 } else {
-                    // Token issue or other error: fail silently or fallback
                     console.warn("Failed to fetch authenticated invitations", res.status);
-                    // Do NOT redirect to login automatically to prevent loops
                 }
             } else {
-                // User is not logged in - check for pending invitations in local storage
                 const pendingIds = JSON.parse(localStorage.getItem("pending_invitations") || "[]");
                 if (pendingIds.length === 0) {
-                    // No pending invitations - show empty state and auth modal, but don't return early
                     setIsAuthModalOpen(true);
                     setLoading(false);
                     return;
@@ -93,9 +83,9 @@ export default function ManageInvitationsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [token]);
 
-    const fetchReceivedInvitations = async () => {
+    const fetchReceivedInvitations = useCallback(async () => {
         try {
             if (!token) return;
             const res = await fetch(`${API_BASE_URL}/invitations/received`, {
@@ -108,7 +98,31 @@ export default function ManageInvitationsPage() {
         } catch (error) {
             console.error("Failed to fetch received invitations", error);
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        if (isLoading) return;
+        fetchMyInvitations();
+        fetchReceivedInvitations();
+
+        // Poll every 3 seconds for real-time updates
+        const interval = setInterval(() => {
+            fetchMyInvitations();
+            fetchReceivedInvitations();
+        }, 3000);
+
+        // Also refetch on window focus
+        const onFocus = () => {
+            fetchMyInvitations();
+            fetchReceivedInvitations();
+        };
+        window.addEventListener('focus', onFocus);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('focus', onFocus);
+        };
+    }, [token, isLoading, fetchMyInvitations, fetchReceivedInvitations]);
 
     return (
         <div className={`min-h-screen bg-[#FDFBF7] ${inter.className} pb-20`}>
@@ -189,8 +203,8 @@ export default function ManageInvitationsPage() {
                                 key={filter.id}
                                 onClick={() => setActiveFilter(filter.id as any)}
                                 className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors border ${activeFilter === filter.id
-                                        ? 'bg-gray-900 text-white border-gray-900'
-                                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                    ? 'bg-gray-900 text-white border-gray-900'
+                                    : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
                                     }`}
                             >
                                 {filter.label}
