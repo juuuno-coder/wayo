@@ -18,14 +18,15 @@ import {
 
 interface PCInvitationViewProps {
     invitation: any;
-    onRSVP: (name: string, message: string) => Promise<void>;
+    onRSVP: (name: string, message: string, status?: string) => Promise<void>;
     hasResponded: boolean;
     myTicket: any;
 }
 
 export default function PCInvitationView({ invitation, onRSVP, hasResponded, myTicket }: PCInvitationViewProps) {
     const [stage, setStage] = useState<'intro' | 'envelope' | 'opening' | 'content'>('intro');
-    const [isMuted, setIsMuted] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
+    const [showAudioTooltip, setShowAudioTooltip] = useState(false);
     const [guestName, setGuestName] = useState("");
     const [rsvpMessage, setRsvpMessage] = useState("");
     const [showRsvpModal, setShowRsvpModal] = useState(false);
@@ -41,6 +42,9 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
         // Start background music subtly if possible
         if (invitation.bgm && invitation.bgm !== 'none' && audioRef.current) {
             audioRef.current.play().catch(e => console.log("Audio play blocked", e));
+            // Show tooltip for 5 seconds after start to inform about music
+            setShowAudioTooltip(true);
+            setTimeout(() => setShowAudioTooltip(false), 5000);
         }
     };
 
@@ -176,18 +180,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                         animate={{ opacity: 1, scale: 1 }}
                         className="z-10 w-full h-full flex flex-col items-center justify-center p-12"
                     >
-                        {/* Layout Selector UI */}
-                        <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl z-50">
-                            {(['single', 'spread', 'leaflet'] as const).map((mode) => (
-                                <button
-                                    key={mode}
-                                    onClick={() => setLayoutMode(mode)}
-                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${layoutMode === mode ? 'bg-white text-black shadow-xl' : 'text-white/40 hover:text-white/70'}`}
-                                >
-                                    {mode === 'single' ? 'Single' : mode === 'spread' ? 'Double' : '4p Leaflet'}
-                                </button>
-                            ))}
-                        </div>
+                        {/* Layout Selector UI - REMOVED per user request */}
 
                         {/* Layout: SINGLE (Poster Only Style) */}
                         {layoutMode === 'single' && (
@@ -214,7 +207,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             onClick={() => setShowRsvpModal(true)}
                                             className="flex-1 py-5 bg-[#E74C3C] text-white rounded-2xl text-xl font-black shadow-2xl hover:scale-[1.02] transition-all"
                                         >
-                                            참석 가능합니다!
+                                            참석할게요!
                                         </button>
                                         <button className="p-5 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors">
                                             <Share2 size={24} />
@@ -310,17 +303,71 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             )}
                                         </AnimatePresence>
                                     </div>
-                                    <div className="p-12 border-t border-gray-50 flex gap-4">
+                                    <div className="p-12 border-t border-gray-50 flex flex-col gap-6">
                                         {!hasResponded ? (
-                                            <button onClick={() => setShowRsvpModal(true)} className="flex-1 py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-black shadow-2xl hover:scale-[1.02] transition-all">참석 가능합니다!</button>
+                                            <div className="flex flex-col gap-3">
+                                                <button
+                                                    onClick={() => setShowRsvpModal(true)}
+                                                    className="w-full py-6 bg-[#E74C3C] text-white rounded-2xl text-2xl font-black shadow-2xl hover:scale-[1.02] transition-all"
+                                                >
+                                                    참석할게요!
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        const name = prompt("이름을 입력해주세요", "");
+                                                        if (name) {
+                                                            await onRSVP(name, "참석이 어렵습니다.", "declined");
+                                                            alert("참석이 어렵다는 소식을 전했습니다.");
+                                                        }
+                                                    }}
+                                                    className="w-full py-2 text-gray-400 font-bold hover:text-gray-600 transition-colors"
+                                                >
+                                                    참석이 어려워요
+                                                </button>
+                                            </div>
                                         ) : (
-                                            <div className="flex-1 flex gap-4">
-                                                <div className="flex-1 py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3"><CheckCircle2 size={32} /> 참석 예약 완료</div>
-                                                {/* Global Signup Trigger */}
-                                                <button onClick={() => (window as any).triggerSignupModal?.()} className="flex-1 py-6 bg-black text-white rounded-2xl text-xl font-black">보관함에 저장</button>
+                                            <div className="w-full py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3">
+                                                <CheckCircle2 size={32} /> 참석 예약 완료
                                             </div>
                                         )}
-                                        <button className="p-6 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900 transition-colors"><Share2 size={32} /></button>
+
+                                        {/* Social Sharing Buttons */}
+                                        <div className="mt-4 pt-8 border-t border-gray-100">
+                                            <p className="text-gray-400 text-[10px] font-black mb-6 uppercase tracking-[0.3em] text-center">Share this memory</p>
+                                            <div className="flex items-center justify-center gap-6">
+                                                <button
+                                                    onClick={() => alert("카카오톡으로 공유합니다.")}
+                                                    className="w-14 h-14 bg-[#FEE500] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                                                    title="KakaoTalk"
+                                                >
+                                                    <div className="w-6 h-6 bg-[#3A1D1D] rounded-lg transform -rotate-12" />
+                                                </button>
+                                                <button
+                                                    onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`)}
+                                                    className="w-14 h-14 bg-[#1877F2] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                                                    title="Facebook"
+                                                >
+                                                    <NextImage src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="FB" width={24} height={24} className="rounded-sm" />
+                                                </button>
+                                                <button
+                                                    onClick={() => alert("Threads로 공유합니다.")}
+                                                    className="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                                                    title="Threads"
+                                                >
+                                                    <div className="text-xl font-black transform rotate-12">@</div>
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(window.location.href);
+                                                        alert("링크가 복사되었습니다.");
+                                                    }}
+                                                    className="w-14 h-14 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                                                    title="Copy Link"
+                                                >
+                                                    <Share2 size={24} />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -403,7 +450,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                         }}
                                         className="w-full py-7 bg-[#E74C3C] text-white rounded-3xl text-3xl font-black hover:bg-red-600 transition-colors active:scale-[0.98] shadow-2xl shadow-red-200"
                                     >
-                                        Confirm Attendance
+                                        참석할게요!
                                     </button>
                                 </div>
                             </div>
@@ -414,12 +461,30 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
 
             {/* Floating Audio Toggle */}
             {invitation.bgm && invitation.bgm !== 'none' && (
-                <div className="fixed bottom-10 right-10 z-[120]">
+                <div className="fixed bottom-10 right-10 z-[120] flex items-center gap-4">
+                    <AnimatePresence>
+                        {showAudioTooltip && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shadow-xl text-black text-xs font-bold"
+                            >
+                                음악을 켤 수 있어요! 🎵
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                     <button
-                        onClick={() => setIsMuted(!isMuted)}
-                        className="w-16 h-16 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-full flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all"
+                        onClick={() => {
+                            setIsMuted(!isMuted);
+                            setShowAudioTooltip(false);
+                        }}
+                        className="w-16 h-16 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-full flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all relative overflow-hidden group"
                     >
                         {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                        {isMuted && (
+                            <div className="absolute inset-0 bg-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        )}
                     </button>
                 </div>
             )}

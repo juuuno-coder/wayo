@@ -179,12 +179,8 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   };
 
   const handleOpen = () => {
-    // Play Audio if exists
-    if (invitation.bgm && invitation.bgm !== 'none' && audioRef.current) {
-      audioRef.current.volume = 0.5;
-      audioRef.current.play().catch(e => console.log("Auto-play prevented", e));
-      setIsPlaying(true);
-    }
+    // Music starts OFF by default per user request
+    setIsPlaying(false);
 
     setStage('notification');
     setTimeout(() => {
@@ -222,7 +218,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     ) : null
   );
 
-  const handleRSVP_PC = async (name: string, msg: string) => {
+  const handleRSVP_PC = async (name: string, msg: string, status: string = 'accepted') => {
     // Sync to local state if needed, but mainly we call the same logic
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/guests`, {
@@ -235,7 +231,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           guest: {
             name: name,
             message: msg,
-            status: 'attending'
+            status: status
           }
         })
       });
