@@ -24,6 +24,13 @@ Rails.application.routes.draw do
   resources :tickets, only: [:index, :show, :create] do
     post :verify, on: :collection
   end
+  
+  resources :guests, only: [] do
+    member do
+      post :claim
+    end
+  end
+  
   devise_for :users, defaults: { format: :json }, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations',
