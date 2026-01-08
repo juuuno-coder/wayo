@@ -188,11 +188,11 @@ export default function CreateInvitationPage() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#FDFBF7] flex flex-col lg:flex-row ${inter.className} overflow-hidden`}>
+    <div className={`h-screen bg-[#FDFBF7] flex flex-col lg:flex-row ${inter.className} overflow-hidden`}>
       {/* Left: Editor Area */}
-      <div className={`flex flex-col bg-white border-r border-gray-100 z-50 shadow-xl transition-all ${isPC ? 'w-[450px]' : 'w-full'}`}>
+      <div className={`flex flex-col bg-white border-r border-gray-100 z-50 shadow-xl transition-all h-screen ${isPC ? 'w-[450px]' : 'w-full'}`}>
         {/* Header & Progress inside Editor */}
-        <div className="sticky top-0 bg-white z-50">
+        <div className="shrink-0 bg-white z-50">
           <header className="px-4 py-3 flex items-center h-14 justify-between">
             <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
               <ArrowLeft size={24} />
@@ -207,7 +207,7 @@ export default function CreateInvitationPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto no-scrollbar px-8 pt-10 pb-32">
+        <div className="flex-1 overflow-y-auto no-scrollbar px-8 pt-10 pb-8">
           {/* Step Header */}
           <div className="mb-10 animate-in slide-in-from-right fade-in duration-500">
             <div className="text-6xl mb-6 animate-bounce-slow transform hover:scale-110 transition-transform origin-left cursor-default">
@@ -649,7 +649,7 @@ export default function CreateInvitationPage() {
         </div>
 
         {/* Fixed Bottom Action Bar (Inside Sidebar on PC, Global on Mobile) */}
-        <div className={`p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 z-50 safe-area-bottom sticky bottom-0`}>
+        <div className="shrink-0 p-4 bg-white border-t border-gray-100 z-50 safe-area-bottom">
           <div className="flex gap-3">
             {currentStep > 0 && (
               <button
