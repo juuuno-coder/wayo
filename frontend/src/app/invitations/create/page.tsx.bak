@@ -361,38 +361,6 @@ export default function CreateInvitationPage() {
               </div>
             )}
 
-
-            {currentStep === 6 && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                  <Ticket size={40} className="text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">프리미엄 기능</h3>
-                <p className="text-gray-500 text-base leading-relaxed mb-6">
-                  입장 티켓 발행 기능은<br />
-                  곧 만나보실 수 있어요!
-                </p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <Sparkles size={14} /> Coming Soon
-                </div>
-              </div>
-            )}
-
-            {currentStep === 7 && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                  <Sparkles size={40} className="text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">프리미엄 기능</h3>
-                <p className="text-gray-500 text-base leading-relaxed mb-6">
-                  특별한 효과 기능은<br />
-                  곧 만나보실 수 있어요!
-                </p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <Sparkles size={14} /> Coming Soon
-                </div>
-              </div>
-            )}
             {currentStep === 8 && (
               <div className="space-y-4">
                 <textarea
