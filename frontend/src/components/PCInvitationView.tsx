@@ -511,23 +511,6 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                     참석 확인 메시지가 전달되었습니다.<br />
                                     <strong>와요 회원가입</strong>을 하면 받은 초대장들을 한눈에 관리할 수 있어요!
                                 </p>
-                                <div className="space-y-3">
-                                    <button
-                                        onClick={() => {
-                                            setShowGuidanceModal(false);
-                                            if ((window as any).triggerSignupModal) (window as any).triggerSignupModal();
-                                        }}
-                                        className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
-                                    >
-                                        내 초대장에 저장하기
-                                    </button>
-                                    <button
-                                        onClick={() => setShowGuidanceModal(false)}
-                                        className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
-                                    >
-                                        나중에 하기
-                                    </button>
-                                </div>
                                 <p className="mt-6 text-[10px] text-gray-300 uppercase tracking-widest font-black">Wayo Invitation Service</p>
                             </div>
                         </motion.div>
