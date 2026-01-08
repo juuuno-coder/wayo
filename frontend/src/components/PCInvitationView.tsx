@@ -34,7 +34,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const fontClass = invitation.font_style === 'serif' ? 'font-serif' : 'font-sans';
-    const hostName = invitation.user?.nickname || "가보자고 친구";
+    const hostName = invitation.sender_name || invitation.user?.nickname || "가보자고 친구";
 
     const handleStart = () => {
         setStage('envelope');

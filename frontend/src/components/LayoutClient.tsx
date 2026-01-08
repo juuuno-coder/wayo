@@ -5,6 +5,8 @@ import BottomNav from "./BottomNav";
 import FloatingActionButton from "./FloatingActionButton";
 import { Smartphone, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function LayoutClient({
   children,
@@ -14,6 +16,8 @@ export default function LayoutClient({
   initialState?: { isWayoHost: boolean }
 }) {
   const pathname = usePathname();
+  const { isLoggedIn, user, isLoading } = useAuth();
+  const router = useRouter();
   const [refreshKey, setRefreshKey] = useState(0);
   const [isWayoDomain, setIsWayoDomain] = useState(initialState?.isWayoHost ?? false);
 
@@ -27,6 +31,15 @@ export default function LayoutClient({
       !hostname.includes('gabojago')
     );
   }, []);
+
+  useEffect(() => {
+    // Strict onboarding: If logged in but no nickname, force onboarding
+    // Skip if already on the onboarding page or login/signup/logout related paths
+    const publicPaths = ["/login", "/signup", "/onboarding/nickname"];
+    if (!isLoading && isLoggedIn && !user?.nickname && !publicPaths.includes(pathname || "")) {
+      router.push("/onboarding/nickname");
+    }
+  }, [isLoggedIn, user, isLoading, pathname, router]);
 
   const isAdminPage = pathname?.startsWith("/admin");
   const isInvitationRoute = pathname?.startsWith("/invitations");

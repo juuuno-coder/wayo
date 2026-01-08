@@ -146,7 +146,7 @@ class InvitationsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def invitation_params
       params.fetch(:invitation, {}).permit(
-        :title, :description, :event_date, :event_end_date, :location, :cover_image_url, 
+        :title, :description, :sender_name, :event_date, :event_end_date, :location, :cover_image_url, 
         :theme_color, :theme_ribbon, :user_id, :event_id, :font_style, 
         :bgm, :text_effect, :ticket_type_id, :default_layout, images: [],
         content_blocks: [:id, :type, data: {}]

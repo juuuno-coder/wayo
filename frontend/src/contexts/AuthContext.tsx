@@ -19,6 +19,7 @@ interface AuthContextType {
     logout: () => void;
     showWelcome: boolean;
     clearWelcome: () => void;
+    updateNickname: (nickname: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -139,8 +140,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setShowWelcome(false);
     };
 
+    const updateNickname = async (newNickname: string) => {
+        if (!token) return;
+
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
+            const response = await fetch(`${apiUrl}/users/me`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user: { nickname: newNickname } })
+            });
+
+            if (response.ok) {
+                const refreshedUserData = await response.json();
+                const updatedUser = {
+                    ...user!,
+                    nickname: refreshedUserData.nickname,
+                    avatarUrl: refreshedUserData.avatar_url
+                };
+                setUser(updatedUser);
+                localStorage.setItem("userData", JSON.stringify(updatedUser));
+            } else {
+                throw new Error("Failed to update nickname");
+            }
+        } catch (error) {
+            console.error("Nickname update failed", error);
+            throw error;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, isLoading, user, token, login, logout, showWelcome, clearWelcome }}>
+        <AuthContext.Provider value={{ isLoggedIn, isLoading, user, token, login, logout, showWelcome, clearWelcome, updateNickname }}>
             {children}
         </AuthContext.Provider>
     );

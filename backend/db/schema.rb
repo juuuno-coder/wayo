@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_012222) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_08_012729) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -120,6 +120,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_012222) do
     t.integer "event_id"
     t.string "font_style"
     t.string "location"
+    t.string "sender_name"
     t.string "text_effect"
     t.string "theme_color"
     t.string "theme_ribbon"

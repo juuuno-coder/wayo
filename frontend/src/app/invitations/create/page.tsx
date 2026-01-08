@@ -8,7 +8,8 @@ import {
   CheckCircle2,
   Sparkles,
   Calendar,
-  Ticket
+  Ticket,
+  User
 } from "lucide-react";
 import NextImage from "next/image";
 import DaumPostcodeEmbed from 'react-daum-postcode';
@@ -50,6 +51,7 @@ export default function CreateInvitationPage() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    sender_name: "",
     event_date: "",
     event_end_date: "",
     location: "",
@@ -262,15 +264,37 @@ export default function CreateInvitationPage() {
 
           {/* Step 1: Title (Was 0) */}
           {currentStep === 1 && (
-            <div className="animate-in slide-in-from-right fade-in duration-500 delay-100">
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="예) 15분도시 부산 워크숍"
-                className="w-full p-4 bg-white border-none rounded-2xl font-bold text-2xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
-                autoFocus
-              />
+            <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <div className="relative">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Sparkles size={24} />
+                </div>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="초대장 제목 (예: 15분도시 부산 워크숍)"
+                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                  autoFocus
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                  <User size={24} />
+                </div>
+                <input
+                  type="text"
+                  value={formData.sender_name}
+                  onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
+                  placeholder="초대하시는 분의 이름/단체명"
+                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                />
+              </div>
+              <p className="text-xs text-gray-400 px-2 leading-relaxed">
+                * 입력하신 이름은 초대장 인트로 화면에 표시됩니다.<br />
+                (예: <span className="text-[#E74C3C] font-bold">{formData.sender_name || "홍길동"}</span>님으로부터 소중한 초대장이 도착했습니다)
+              </p>
             </div>
           )}
 
