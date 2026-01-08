@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -107,70 +107,6 @@ export default function CreateInvitationPage() {
     fetchTickets();
   }, []);
 
-  // Auto-save function
-  const autoSave = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return; // Only auto-save for logged-in users
-
-    // Only save if there's meaningful content
-    if (!formData.title && !formData.description && !formData.sender_name) return;
-
-    setIsSaving(true);
-
-    try {
-      const saveData = {
-        ...formData,
-        status: 'draft'
-      };
-
-      if (draftId) {
-        // Update existing draft
-        const response = await fetch(`${API_BASE_URL}/invitations/${draftId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ invitation: saveData })
-        });
-
-        if (response.ok) {
-          setLastSaved(new Date());
-        }
-      } else {
-        // Create new draft
-        const response = await fetch(`${API_BASE_URL}/invitations`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ invitation: saveData })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setDraftId(data.id);
-          setCreatedId(data.id);
-          setLastSaved(new Date());
-        }
-      }
-    } catch (error) {
-      console.error('Auto-save failed:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  }, [formData, draftId]);
-
-  // Debounced auto-save on formData change
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      autoSave();
-    }, 2000); // 2초 후 자동 저장
-
-    return () => clearTimeout(timer);
-  }, [formData, autoSave]);
-
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -205,29 +141,15 @@ export default function CreateInvitationPage() {
       Object.entries(formData).forEach(([key, value]) => {
         if (value) data.append(`invitation[${key}]`, value);
       });
-      data.append('invitation[status]', 'published'); // Mark as published
       images.forEach(img => data.append("invitation[images][]", img));
 
-      let res;
-      if (draftId) {
-        // Update existing draft to final
-        res = await fetch(`${API_BASE_URL}/invitations/${draftId}`, {
-          method: "PATCH",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-          },
-          body: data
-        });
-      } else {
-        // Create new invitation
-        res = await fetch(`${API_BASE_URL}/invitations`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-          },
-          body: data
-        });
-      }
+      const res = await fetch(`${API_BASE_URL}/invitations`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+        },
+        body: data
+      });
 
       if (res.ok) {
         const result = await res.json();

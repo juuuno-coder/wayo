@@ -155,7 +155,7 @@ class InvitationsController < ApplicationController
       params.fetch(:invitation, {}).permit(
         :title, :description, :sender_name, :event_date, :event_end_date, :location, :cover_image_url, 
         :theme_color, :theme_ribbon, :user_id, :event_id, :font_style, 
-        :bgm, :text_effect, :ticket_type_id, :default_layout, images: [],
+        :bgm, :text_effect, :ticket_type_id, :default_layout, :status, images: [],
         content_blocks: [:id, :type, data: {}]
       )
     end

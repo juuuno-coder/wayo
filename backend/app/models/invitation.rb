@@ -7,4 +7,7 @@ class Invitation < ApplicationRecord
   
   validates :title, presence: true
   validates :event_date, presence: true
+  validates :status, presence: true
+
+  enum :status, { draft: 'draft', published: 'published', sending: 'sending', completed: 'completed' }, default: 'draft'
 end

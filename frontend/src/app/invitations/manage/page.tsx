@@ -31,6 +31,7 @@ export default function ManageInvitationsPage() {
     const [invitations, setInvitations] = useState<any[]>([]);
     const [receivedInvitations, setReceivedInvitations] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
+    const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'published' | 'completed'>('all'); // Filter state
     const [loading, setLoading] = useState(true);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [selectedInvitation, setSelectedInvitation] = useState<any | null>(null);
@@ -175,12 +176,39 @@ export default function ManageInvitationsPage() {
                     </div>
                 </div>
 
+                {/* Filter Tabs (Only for Sent Invitations) */}
+                {activeTab === 'sent' && (
+                    <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar">
+                        {[
+                            { id: 'all', label: '전체' },
+                            { id: 'draft', label: '작성 중' },
+                            { id: 'published', label: '발행됨' },
+                            { id: 'completed', label: '행사 완료' }
+                        ].map((filter) => (
+                            <button
+                                key={filter.id}
+                                onClick={() => setActiveFilter(filter.id as any)}
+                                className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors border ${activeFilter === filter.id
+                                        ? 'bg-gray-900 text-white border-gray-900'
+                                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                    }`}
+                            >
+                                {filter.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {loading || isLoading ? (
                     <div className="py-32 text-center text-gray-400 flex flex-col items-center">
                         <div className="animate-spin w-10 h-10 border-4 border-gray-200 border-t-[#E74C3C] rounded-full mb-6"></div>
                         <p>데이터를 불러오고 있습니다...</p>
                     </div>
-                ) : (activeTab === 'sent' ? invitations : receivedInvitations).length === 0 ? (
+                ) : (
+                    activeTab === 'sent'
+                        ? invitations.filter(inv => activeFilter === 'all' || (inv.status || 'draft') === activeFilter)
+                        : receivedInvitations
+                ).length === 0 ? (
                     <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm flex flex-col items-center">
                         <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-gray-300">
                             <Sparkles size={40} />
@@ -205,14 +233,21 @@ export default function ManageInvitationsPage() {
                 ) : (
                     /* Grid Layout for Cards */
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {(activeTab === 'sent' ? invitations : receivedInvitations).map((invite) => (
+                        {(activeTab === 'sent'
+                            ? invitations.filter(inv => activeFilter === 'all' || (inv.status || 'draft') === activeFilter)
+                            : receivedInvitations
+                        ).map((invite) => (
                             <div
                                 key={invite.id}
                                 className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col h-full relative"
                                 onClick={() => {
                                     if (activeTab === 'sent') {
-                                        setSelectedInvitation(invite);
-                                        setIsGuestListOpen(true);
+                                        if (invite.status === 'draft') {
+                                            router.push(`/invitations/create?id=${invite.id}`); // Edit draft
+                                        } else {
+                                            setSelectedInvitation(invite);
+                                            setIsGuestListOpen(true);
+                                        }
                                     } else {
                                         router.push(`/invitations/${invite.id}`);
                                     }
@@ -240,9 +275,28 @@ export default function ManageInvitationsPage() {
 
                                     {/* View Count Badge */}
                                     {activeTab === 'sent' && (
-                                        <div className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-white/20">
-                                            <Users size={12} />
-                                            {invite.view_count || 0}
+                                        <div className="absolute bottom-3 right-3 flex gap-2">
+                                            {/* Status Badge */}
+                                            {invite.status === 'draft' && (
+                                                <div className="bg-yellow-400 text-yellow-900 px-2.5 py-1 rounded-full text-xs font-bold border border-yellow-300">
+                                                    작성 중
+                                                </div>
+                                            )}
+                                            {invite.status === 'published' && (
+                                                <div className="bg-green-500 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-green-400">
+                                                    발행됨
+                                                </div>
+                                            )}
+                                            {invite.status === 'completed' && (
+                                                <div className="bg-gray-500 text-white px-2.5 py-1 rounded-full text-xs font-bold border border-gray-400">
+                                                    완료됨
+                                                </div>
+                                            )}
+
+                                            <div className="bg-black/40 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-white/20">
+                                                <Users size={12} />
+                                                {invite.view_count || 0}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
