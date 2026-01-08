@@ -16,14 +16,14 @@ import {
     ArrowLeft
 } from "lucide-react";
 
-interface PCInvitationViewProps {
-    invitation: any;
-    onRSVP: (name: string, message: string, status?: string) => Promise<void>;
-    hasResponded: boolean;
-    myTicket: any;
+invitation: any;
+onRSVP: (name: string, message: string, status?: string) => Promise<void>;
+hasResponded: boolean;
+myTicket: any;
+styleMode ?: 'fullscreen' | 'embedded';
 }
 
-export default function PCInvitationView({ invitation, onRSVP, hasResponded, myTicket }: PCInvitationViewProps) {
+export default function PCInvitationView({ invitation, onRSVP, hasResponded, myTicket, styleMode = 'fullscreen' }: PCInvitationViewProps) {
     const [stage, setStage] = useState<'intro' | 'envelope' | 'opening' | 'content'>('intro');
     const [isMuted, setIsMuted] = useState(true);
     const [showAudioTooltip, setShowAudioTooltip] = useState(false);
@@ -63,7 +63,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
     };
 
     return (
-        <div className={`fixed inset-0 overflow-hidden bg-[#1a1a1a] flex items-center justify-center ${fontClass}`}>
+        <div className={`${styleMode === 'fullscreen' ? 'fixed inset-0' : 'relative w-full h-full rounded-3xl overflow-hidden'} bg-[#1a1a1a] flex items-center justify-center ${fontClass}`}>
             {/* Background Ambience */}
             <div className="absolute inset-0 z-0">
                 <NextImage
@@ -82,7 +82,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, scale: 1.1 }}
-                        className="z-[100] fixed inset-0 bg-black flex flex-col items-center justify-center text-center p-6"
+                        className={`${styleMode === 'fullscreen' ? 'fixed inset-0' : 'absolute inset-0'} z-[100] bg-black flex flex-col items-center justify-center text-center p-6`}
                     >
                         <motion.div
                             initial={{ y: 20, opacity: 0 }}
@@ -487,7 +487,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
 
             {/* Floating Audio Toggle */}
             {invitation.bgm && invitation.bgm !== 'none' && (
-                <div className="fixed bottom-10 right-10 z-[120] flex items-center gap-4">
+                <div className={`${styleMode === 'fullscreen' ? 'fixed' : 'absolute'} bottom-10 right-10 z-[120] flex items-center gap-4`}>
                     <AnimatePresence>
                         {showAudioTooltip && (
                             <motion.div
@@ -520,7 +520,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                 <motion.div
                     initial={{ y: 100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[90] flex items-center gap-4"
+                    className={`${styleMode === 'fullscreen' ? 'fixed' : 'absolute'} bottom-10 left-1/2 -translate-x-1/2 z-[90] flex items-center gap-4`}
                 >
                     <button
                         onClick={() => setShowRsvpModal(true)}
@@ -545,7 +545,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                 <motion.div
                     initial={{ y: 100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[90]"
+                    className={`${styleMode === 'fullscreen' ? 'fixed' : 'absolute'} bottom-10 left-1/2 -translate-x-1/2 z-[90]`}
                 >
                     <div className="px-8 py-4 bg-green-500/90 text-white rounded-full font-bold shadow-2xl backdrop-blur-md flex items-center gap-2">
                         <CheckCircle2 size={20} />

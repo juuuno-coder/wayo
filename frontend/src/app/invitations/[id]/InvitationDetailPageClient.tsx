@@ -11,10 +11,13 @@ import {
   ArrowRight,
   Megaphone,
   CalendarPlus,
-  Send
+  CalendarPlus,
+  Send,
+  Loader2
 } from "lucide-react";
 import React from "react";
 import PCInvitationView from "@/components/PCInvitationView";
+import InvitationDashboardSidebar from "@/components/InvitationDashboardSidebar";
 import InvitationRSVPForm from "@/components/InvitationRSVPForm";
 import SignupPromptModal from "@/components/SignupPromptModal";
 import SendInvitationModal from "@/components/SendInvitationModal";
@@ -52,6 +55,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
 
   // User Type (Simple check for now, can be improved)
   const [isCreator, setIsCreator] = useState(false);
+  const [guests, setGuests] = useState<any[]>([]);
   const [myTicket, setMyTicket] = useState<any>(null); // Ticket Info
   const [isPC, setIsPC] = useState(false);
 
@@ -122,9 +126,11 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}/guests`);
       if (res.ok) {
-        const guests = await res.json();
+        const guestsData = await res.json();
+        setGuests(guestsData); // Store full list for creator dashboard
 
         let me = null;
+        const guests = guestsData; // Use the parsed data
 
         // 1. Strict Match: If Logged In, find guest by User ID
         const myUserId = localStorage.getItem("userId");
@@ -256,6 +262,40 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   };
 
   if (isPC) {
+    if (isCreator) {
+      return (
+        <div className="flex h-screen bg-[#1a1a1a] overflow-hidden">
+          <InvitationDashboardSidebar
+            invitation={invitation}
+            guests={guests}
+            onShare={handleShare}
+            onEdit={() => alert("수정 기능은 곧 업데이트 예정입니다!")}
+          />
+          <div className="flex-1 relative h-full">
+            <PCInvitationView
+              invitation={invitation}
+              onRSVP={handleRSVP_PC}
+              hasResponded={hasResponded}
+              myTicket={myTicket}
+              styleMode="embedded"
+            />
+          </div>
+          {/* Modals for PC Creator View */}
+          <SignupPromptModal
+            isOpen={showSignupModal}
+            onClose={() => setShowSignupModal(false)}
+            guestName={confirmedGuestName}
+            hasTicket={!!myTicket}
+          />
+          <SendInvitationModal
+            isOpen={showSendModal}
+            onClose={() => setShowSendModal(false)}
+            invitationId={id as string}
+          />
+        </div>
+      );
+    }
+
     return (
       <>
         <PCInvitationView
