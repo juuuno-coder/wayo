@@ -185,19 +185,17 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
 
                         {/* Layout: SINGLE (Poster Only Style) */}
                         {layoutMode === 'single' && (
-                            <div className="w-full max-w-[600px] h-[850px] bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col">
-                                <div className="h-2/3 relative">
-                                    <NextImage
+                            <div className="w-full max-w-[600px] bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col max-h-[90vh]">
+                                <div className="relative w-full overflow-hidden bg-gray-100">
+                                    <img
                                         src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
                                         alt="Cover"
-                                        fill
-                                        className="object-cover"
-                                        unoptimized={!!invitation.image_urls?.[0]}
+                                        className="w-full h-auto object-contain max-h-[60vh] mx-auto"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    <div className="absolute bottom-12 left-12 right-12 text-white">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                                    <div className="absolute bottom-6 left-8 right-8 text-white pointer-events-none opacity-0 hover:opacity-100 transition-opacity">
                                         <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2">OFFICIAL INVITATION</p>
-                                        <h3 className="text-4xl font-black leading-tight break-keep">{invitation.title}</h3>
+                                        <h3 className="text-4xl font-black leading-tight break-keep shadow-black drop-shadow-lg">{invitation.title}</h3>
                                     </div>
                                 </div>
                                 <div className="flex-1 p-12 overflow-y-auto custom-scrollbar flex flex-col gap-8">
@@ -217,18 +215,15 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                         {layoutMode === 'spread' && (
                             <div className="w-full max-w-[1200px] h-[750px] flex items-stretch bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden relative">
                                 {/* Left Page: Poster */}
-                                <div className="flex-1 relative overflow-hidden border-r border-gray-100">
-                                    <NextImage
+                                <div className="flex-1 relative overflow-hidden border-r border-gray-100 bg-gray-50 flex items-center justify-center">
+                                    <img
                                         src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
                                         alt="Cover"
-                                        fill
-                                        className="object-cover"
-                                        unoptimized={!!invitation.image_urls?.[0]}
+                                        className="w-full h-full object-contain p-4"
                                     />
-                                    <div className="absolute inset-0 bg-black/5" />
-                                    <div className="absolute bottom-12 left-12 right-12 z-10 text-white drop-shadow-lg">
-                                        <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2">OFFICIAL INVITATION</p>
-                                        <h3 className="text-3xl font-black">{invitation.title}</h3>
+                                    <div className="absolute bottom-12 left-12 right-12 z-10 text-gray-900 drop-shadow-lg mix-blend-difference pointer-events-none">
+                                        <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2 text-white/50">OFFICIAL INVITATION</p>
+                                        <h3 className="text-3xl font-black text-white/80">{invitation.title}</h3>
                                     </div>
                                 </div>
 

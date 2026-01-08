@@ -732,11 +732,15 @@ export default function CreateInvitationPage() {
           <div className="relative w-full max-w-[380px] h-[780px] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-[12px] border-[#333] z-10 scale-[0.9] xl:scale-100 transition-transform">
             {/* Dynamic Content inside Mock Phone */}
             <div className="absolute inset-0 bg-white overflow-y-auto no-scrollbar">
-              <div className="relative h-[400px]">
+              <div className="relative w-full">
                 {previewUrls.length > 0 ? (
-                  <NextImage src={previewUrls[0]} alt="Preview" fill className="object-cover" />
+                  <img
+                    src={previewUrls[0]}
+                    alt="Preview"
+                    className="w-full h-auto object-contain"
+                  />
                 ) : (
-                  <div className="absolute inset-0 bg-gray-50 flex flex-col items-center justify-center text-gray-300">
+                  <div className="h-[400px] bg-gray-50 flex flex-col items-center justify-center text-gray-300">
                     <Sparkles size={48} className="mb-4 opacity-20" />
                     <p className="text-sm font-bold opacity-30">이미지를 추가해 주세요</p>
                   </div>

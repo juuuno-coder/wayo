@@ -373,18 +373,17 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
       <div className={`max-w-md mx-auto min-h-screen shadow-2xl overflow-hidden bg-white animate-in slide-in-from-bottom-20 duration-1000 ${stage === 'content' ? 'opacity-100' : 'opacity-0'}`}>
 
         {/* Poster / Cover Area */}
-        <div className="relative h-[600px] bg-gray-50 flex items-center justify-center overflow-hidden">
+        {/* Poster / Cover Area */}
+        <div className="relative bg-gray-50 flex items-center justify-center overflow-hidden min-h-[300px]">
           {/* Mock Poster if no image */}
           {(invitation.image_urls && invitation.image_urls.length > 0) || invitation.cover_image_url ? (
-            <NextImage
+            <img
               src={invitation.image_urls?.[0] || invitation.cover_image_url}
               alt="Cover"
-              fill
-              className="object-cover"
-              unoptimized={!!invitation.image_urls?.[0]}
+              className="w-full h-auto object-contain"
             />
           ) : (
-            <div className="absolute inset-0 bg-[#F5F5F0] p-10 flex flex-col items-center justify-center text-center border-12 border-white inner-border">
+            <div className="w-full h-[600px] bg-[#F5F5F0] p-10 flex flex-col items-center justify-center text-center border-12 border-white inner-border relative">
               <p className="font-serif text-[#8D6E63] text-sm tracking-[0.5em] mb-6">INVITATION</p>
               <h1 className={`text-4xl text-[#3E2723] leading-tight mb-8 font-bold ${effectClass} ${fontClass}`}>{invitation.title}</h1>
               <div className="w-px h-16 bg-[#D7CCC8] mb-8"></div>
@@ -392,14 +391,14 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
                 {new Date(invitation.event_date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' })}
               </p>
               <p className={`text-[#8D6E63] text-sm mt-3 ${fontClass}`}>{invitation.location}</p>
+
+              {/* Scroll Indicator (Only for placeholder) */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center gap-1 opacity-60">
+                <span className="text-[10px] uppercase tracking-widest text-[#5D4037]">Scroll</span>
+                <ArrowRight className="rotate-90 text-[#5D4037]" size={16} />
+              </div>
             </div>
           )}
-
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center gap-1 opacity-60">
-            <span className="text-[10px] uppercase tracking-widest text-[#5D4037]">Scroll</span>
-            <ArrowRight className="rotate-90 text-[#5D4037]" size={16} />
-          </div>
         </div>
 
         import BlockRenderer from "@/components/blocks/BlockRenderer";
