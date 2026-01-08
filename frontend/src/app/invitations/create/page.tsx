@@ -7,7 +7,8 @@ import {
   MapPin,
   CheckCircle2,
   Sparkles,
-  Calendar
+  Calendar,
+  Ticket
 } from "lucide-react";
 import NextImage from "next/image";
 import DaumPostcodeEmbed from 'react-daum-postcode';
@@ -50,6 +51,7 @@ export default function CreateInvitationPage() {
     title: "",
     description: "",
     event_date: "",
+    event_end_date: "",
     location: "",
     theme_color: "classic",
     cover_image_url: "",
@@ -63,6 +65,7 @@ export default function CreateInvitationPage() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [ticketTypes, setTicketTypes] = useState<any[]>([]);
   const [isPC, setIsPC] = useState(false);
+  const [showEndTime, setShowEndTime] = useState(false);
 
   useEffect(() => {
     const checkPC = () => setIsPC(window.innerWidth >= 1024);
@@ -274,8 +277,9 @@ export default function CreateInvitationPage() {
           {/* Step 2: Date & Time (Was 1) */}
           {currentStep === 2 && (
             <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
+              {/* Start Date */}
               <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
-                <label className="block text-sm font-bold text-gray-500 mb-2">날짜</label>
+                <label className="block text-sm font-bold text-gray-500 mb-2">시작 날짜</label>
                 <input
                   type="date"
                   value={formData.event_date.split('T')[0] || ''}
@@ -286,8 +290,9 @@ export default function CreateInvitationPage() {
                   className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
                 />
               </div>
+              {/* Start Time */}
               <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
-                <label className="block text-sm font-bold text-gray-500 mb-2">시간</label>
+                <label className="block text-sm font-bold text-gray-500 mb-2">시작 시간</label>
                 <input
                   type="time"
                   value={formData.event_date.split('T')[1] || ''}
@@ -298,6 +303,65 @@ export default function CreateInvitationPage() {
                   className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
                 />
               </div>
+
+              {/* Toggle for End Time */}
+              {!showEndTime ? (
+                <button
+                  type="button"
+                  onClick={() => setShowEndTime(true)}
+                  className="w-full p-4 border-2 border-dashed border-gray-200 rounded-2xl text-gray-400 font-bold text-sm hover:border-[#E74C3C] hover:text-[#E74C3C] hover:bg-red-50/50 transition-all flex items-center justify-center gap-2"
+                >
+                  <span className="text-lg">⏰</span> 종료 시간도 입력할게요
+                </button>
+              ) : (
+                <>
+                  {/* Divider */}
+                  <div className="flex items-center gap-3 py-2">
+                    <div className="flex-1 h-px bg-gray-200"></div>
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">종료 시간</span>
+                    <div className="flex-1 h-px bg-gray-200"></div>
+                  </div>
+
+                  {/* End Date */}
+                  <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
+                    <label className="block text-sm font-bold text-gray-500 mb-2">종료 날짜</label>
+                    <input
+                      type="date"
+                      value={formData.event_end_date.split('T')[0] || ''}
+                      onChange={(e) => {
+                        const time = formData.event_end_date.split('T')[1] || '00:00';
+                        setFormData({ ...formData, event_end_date: `${e.target.value}T${time}` });
+                      }}
+                      className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
+                    />
+                  </div>
+                  {/* End Time */}
+                  <div className="p-5 bg-white rounded-2xl border border-transparent focus-within:border-[#E74C3C] focus-within:bg-white focus-within:ring-2 focus-within:ring-red-100 transition-all shadow-sm">
+                    <label className="block text-sm font-bold text-gray-500 mb-2">종료 시간</label>
+                    <input
+                      type="time"
+                      value={formData.event_end_date.split('T')[1] || ''}
+                      onChange={(e) => {
+                        const date = formData.event_end_date.split('T')[0] || formData.event_date.split('T')[0] || new Date().toISOString().split('T')[0];
+                        setFormData({ ...formData, event_end_date: `${date}T${e.target.value}` });
+                      }}
+                      className="w-full bg-transparent font-bold text-xl text-gray-900 outline-none"
+                    />
+                  </div>
+
+                  {/* Cancel End Time */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEndTime(false);
+                      setFormData({ ...formData, event_end_date: '' });
+                    }}
+                    className="w-full p-3 text-gray-400 font-bold text-xs hover:text-red-500 transition-colors"
+                  >
+                    종료 시간 삭제
+                  </button>
+                </>
+              )}
             </div>
           )}
 
@@ -431,44 +495,20 @@ export default function CreateInvitationPage() {
             </div>
           )}
 
-          {/* Step 6: Ticket Selection (Was 5) */}
+          {/* Step 6: Ticket Selection (Coming Soon) */}
           {currentStep === 6 && (
-            <div className="space-y-4 animate-in slide-in-from-right fade-in duration-500 delay-100">
-              <p className="text-gray-500 mb-4 font-medium">초대장을 받는 분들에게 나누어 줄 티켓을 선택해주세요.<br />(선택하지 않아도 됩니다)</p>
-
-              <button
-                onClick={() => setFormData({ ...formData, ticket_type_id: null })}
-                className={`w-full p-5 rounded-2xl border-2 transition-all flex items-center justify-between ${!formData.ticket_type_id
-                  ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
-                  : "border-gray-100 bg-white hover:border-gray-200"
-                  }`}
-              >
-                <span className="font-bold text-gray-700">선택 안함</span>
-                {!formData.ticket_type_id && <Sparkles className="text-[#E74C3C]" size={20} />}
-              </button>
-
-              {ticketTypes.map((ticket) => (
-                <button
-                  key={ticket.id}
-                  onClick={() => setFormData({ ...formData, ticket_type_id: ticket.id })}
-                  className={`w-full p-5 rounded-2xl border-2 transition-all text-left group ${formData.ticket_type_id === ticket.id
-                    ? "border-[#E74C3C] bg-red-50 ring-2 ring-red-100"
-                    : "border-gray-100 bg-white hover:border-gray-200"
-                    }`}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="font-bold text-lg text-gray-900">{ticket.name}</span>
-                    <span className="font-bold text-[#E74C3C] bg-red-100 px-3 py-1 rounded-full text-xs">
-                      {ticket.price === 0 ? "FREE" : `₩${ticket.price.toLocaleString()}`}
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 flex gap-2">
-                    <span>재고: {ticket.quantity}개</span>
-                    <span>•</span>
-                    <span>{ticket.event?.title || "이벤트"}</span>
-                  </div>
-                </button>
-              ))}
+            <div className="flex flex-col items-center justify-center py-10 animate-in slide-in-from-right fade-in duration-500 delay-100">
+              <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-8 text-[#E74C3C] animate-bounce-slow">
+                <Ticket size={48} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">티켓 첨부 기능</h3>
+              <p className="text-gray-500 text-center mb-10 leading-relaxed font-medium">
+                초대장에 실물 티켓을 첨부할 수 있는 기능은<br />
+                현재 <span className="text-[#E74C3C] font-black">프리미엄 기능</span>으로 준비 중입니다 🚀
+              </p>
+              <div className="w-full p-6 bg-gray-50 rounded-3xl border border-gray-100 italic text-sm text-gray-400 text-center">
+                곧 더 멋진 기능으로 찾아뵙겠습니다!
+              </div>
             </div>
           )}
 
@@ -710,7 +750,12 @@ export default function CreateInvitationPage() {
                     </div>
                     <div>
                       <p className="text-[10px] font-black uppercase text-gray-400">Date & Time</p>
-                      <p className="font-bold text-sm">{formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}</p>
+                      <p className="font-bold text-sm">
+                        {formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}
+                        {formData.event_end_date && (
+                          <span className="text-gray-400"> ~ {new Date(formData.event_end_date).toLocaleString()}</span>
+                        )}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">

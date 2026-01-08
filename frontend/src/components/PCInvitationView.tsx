@@ -273,7 +273,15 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                                             <div>
                                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">When</p>
                                                                 <p className="text-2xl font-bold text-gray-900">{new Date(invitation.event_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
-                                                                <p className="text-gray-500 font-medium">{new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                <p className="text-gray-500 font-medium">
+                                                                    {new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                                                                    {invitation.event_end_date && (
+                                                                        <>
+                                                                            <span className="text-gray-300 mx-2">~</span>
+                                                                            {new Date(invitation.event_end_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                                                                        </>
+                                                                    )}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                         <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
