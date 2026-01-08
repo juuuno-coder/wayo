@@ -16,7 +16,8 @@ import {
     ArrowLeft
 } from "lucide-react";
 
-invitation: any;
+interface PCInvitationViewProps {
+    invitation: any;
 onRSVP: (name: string, message: string, status?: string) => Promise<void>;
 hasResponded: boolean;
 myTicket: any;
