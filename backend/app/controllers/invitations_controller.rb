@@ -60,12 +60,19 @@ class InvitationsController < ApplicationController
 
   # POST /invitations
   def create
+    Rails.logger.info "DEBUG: invitation_params: #{invitation_params.inspect}"
     @invitation = Invitation.new(invitation_params)
     @invitation.user = current_user if user_signed_in?
+
+    # Explicitly attach images if present to ensure they are picked up
+    if params[:invitation] && params[:invitation][:images].present?
+      @invitation.images.attach(params[:invitation][:images])
+    end
 
     if @invitation.save
       render json: invitation_as_json(@invitation), status: :created
     else
+      Rails.logger.error "DEBUG: invitation errors: #{@invitation.errors.full_messages}"
       render json: @invitation.errors, status: :unprocessable_content
     end
   end

@@ -29,11 +29,11 @@ class InvitationGuestsController < ApplicationController
     # For simplicity, let's just create it as 'attending' or whatever status is passed.
     # If the sender is the creator, they might be "Inviting" someone.
     
-    @guest.status = 'attending' unless @guest.status.present?
+    @guest.status = 'accepted' unless @guest.status.present?
 
     if @guest.save
       # Issue a ticket if the invitation is linked to a ticket type and status is attending
-      if @invitation.ticket_type && @guest.status == 'attending'
+      if @invitation.ticket_type && @guest.status == 'accepted'
         # Issue ticket to the guest user (could be current_user or the target user)
         target_user = @guest.user || current_user 
         # Note: If guest.user is nil (non-member guest), ticket.user will be nil, which is allowed? 
