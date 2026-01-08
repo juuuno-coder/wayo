@@ -105,11 +105,11 @@ export default function ManageInvitationsPage() {
         fetchMyInvitations();
         fetchReceivedInvitations();
 
-        // Poll every 3 seconds for real-time updates
+        // Poll every 1 second for real-time updates
         const interval = setInterval(() => {
             fetchMyInvitations();
             fetchReceivedInvitations();
-        }, 3000);
+        }, 1000);
 
         // Also refetch on window focus
         const onFocus = () => {
@@ -390,6 +390,19 @@ export default function ManageInvitationsPage() {
                 isOpen={isAuthModalOpen}
                 onClose={() => setIsAuthModalOpen(false)}
             />
+
+            {/* Debug Panel for User Reassurance */}
+            <div className="fixed bottom-0 left-0 right-0 bg-black/80 text-white p-2 text-[10px] font-mono opacity-70 hover:opacity-100 transition-opacity z-[100] flex justify-between px-6 pointer-events-none sm:pointer-events-auto">
+                <div className="flex gap-4">
+                    <span>STATUS: {loading || isLoading ? "SYNCING..." : "LIVE"}</span>
+                    <span>ITEMS: {invitations.length} (Sent) / {receivedInvitations.length} (Received)</span>
+                    <span>FILTER: {activeFilter}</span>
+                </div>
+                <div>
+                    <span>TOKEN: {token ? "OK" : "NONE"}</span>
+                    <span className="ml-4 text-yellow-400">AUTO-REFRESH: ON (1s)</span>
+                </div>
+            </div>
         </div>
     );
 }
