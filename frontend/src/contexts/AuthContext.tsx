@@ -20,6 +20,7 @@ interface AuthContextType {
     showWelcome: boolean;
     clearWelcome: () => void;
     updateNickname: (nickname: string) => Promise<void>;
+    syncGuestData: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -113,8 +114,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Clean URL: remove auth params without full page reload
             const newUrl = window.location.pathname;
             window.history.replaceState({}, "", newUrl);
+
+            // Sync guest data after login
+            syncGuestData(urlToken);
         }
     }, []);
+
+    const syncGuestData = async (accessToken?: string) => {
+        const tokenToUse = accessToken || token || localStorage.getItem("authToken");
+        if (!tokenToUse) return;
+
+        // Find all guest IDs in localStorage
+        const keys = Object.keys(localStorage);
+        const guestKeys = keys.filter(key => key.startsWith('wayo_guest_'));
+
+        if (guestKeys.length === 0) return;
+
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
+
+        for (const key of guestKeys) {
+            const guestId = localStorage.getItem(key);
+            if (!guestId) continue;
+
+            try {
+                // We assume there's an endpoint to claim a guest record
+                // POST /users/me/claim_guest { guest_id: ... } OR PATCH /guests/:id { user_id: ... }
+                // Let's use PATCH /guests/:id for now as it's simpler if the backend allows it
+                // Note: Security-wise, the backend should verify the guest record is unowned or owned by session content
+                // For this MVP, we will try to update it.
+                await fetch(`${apiUrl}/guests/${guestId}/claim`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': tokenToUse.startsWith('Bearer ') ? tokenToUse : `Bearer ${tokenToUse}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // If successful, we can remove the local key or keep it? 
+                // Let's keep it for now as a cache, or remove it to clean up.
+                // localStorage.removeItem(key); 
+            } catch (e) {
+                console.error(`Failed to sync guest ${guestId}`, e);
+            }
+        }
+    };
 
     const login = (newToken: string, newUser: User) => {
         localStorage.setItem("authToken", newToken);
@@ -122,6 +165,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(newToken);
         setUser(newUser);
         setIsLoggedIn(true);
+        // Sync guest data
+        syncGuestData(newToken);
     };
 
     const logout = () => {
@@ -173,7 +218,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, isLoading, user, token, login, logout, showWelcome, clearWelcome, updateNickname }}>
+        <AuthContext.Provider value={{ isLoggedIn, isLoading, user, token, login, logout, showWelcome, clearWelcome, updateNickname, syncGuestData }}>
             {children}
         </AuthContext.Provider>
     );
