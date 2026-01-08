@@ -29,11 +29,3 @@ primary_region = "nrt" # 도쿄 지역 (한국에서 가장 빠름)
     method = "GET"
     timeout = "5s"
     path = "/up"
-
-
-  [[http_service.checks]]
-    grace_period = "10s"
-    interval = "60s"
-    method = "GET"
-    timeout = "10s"
-    path = "/invitations"

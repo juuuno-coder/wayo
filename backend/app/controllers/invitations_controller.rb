@@ -56,7 +56,7 @@ class InvitationsController < ApplicationController
     render json: stats
   end
 
-  skip_before_action :authenticate_user!, only: %i[ index received show create track_view ]
+  skip_before_action :authenticate_user!, only: %i[ show track_view ]
 
   # POST /invitations
   def create
