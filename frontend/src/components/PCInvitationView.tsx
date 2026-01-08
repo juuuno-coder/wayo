@@ -267,20 +267,20 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                                     <div className="space-y-6">
                                                         <h2 className="text-5xl font-bold leading-tight text-gray-900 break-keep">{invitation.title}</h2>
                                                         <div className="w-12 h-1 bg-[#E74C3C]" />
-                                                        <p className="text-2xl font-light text-gray-500 leading-relaxed whitespace-pre-wrap">{invitation.description}</p>
+                                                        <p className="text-2xl font-normal text-gray-700 leading-relaxed whitespace-pre-wrap">{invitation.description}</p>
                                                     </div>
                                                     <div className="grid grid-cols-1 gap-6">
                                                         <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
                                                             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#E74C3C] shadow-sm"><Calendar size={32} /></div>
                                                             <div className="flex-1">
-                                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">When</p>
+                                                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">When</p>
                                                                 <p className="text-2xl font-bold text-gray-900">{new Date(invitation.event_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
                                                                 <div className="flex items-center justify-between mt-1">
-                                                                    <p className="text-gray-500 font-medium">
+                                                                    <p className="text-gray-700 font-medium">
                                                                         {new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                                                                         {invitation.event_end_date && (
                                                                             <>
-                                                                                <span className="text-gray-300 mx-2">~</span>
+                                                                                <span className="text-gray-400 mx-2">~</span>
                                                                                 {new Date(invitation.event_end_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                                                                             </>
                                                                         )}
@@ -300,7 +300,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                                         <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
                                                             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm"><MapPin size={32} /></div>
                                                             <div className="flex-1">
-                                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
+                                                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Where</p>
                                                                 <p className="text-2xl font-bold text-gray-900 break-keep">{invitation.location}</p>
 
                                                                 {/* Map Links */}

@@ -404,19 +404,19 @@ export default function CreateInvitationPage() {
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E74C3C] rounded-lg text-[10px] font-black uppercase mb-4 tracking-tighter">
                   <Sparkles size={10} /> Live Preview
                 </div>
-                <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''}`}>
+                <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep text-gray-900 ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''}`}>
                   {formData.title || "초대장 제목"}
                 </h1>
                 <div className="w-10 h-1 bg-gray-100 mb-6 rounded-full" />
-                <p className={`text-lg opacity-70 mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
+                <p className={`text-lg text-gray-700 font-medium mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
                   {formData.description || "초대 문구가 여기에 표시됩니다.\n아직 작성된 내용이 없습니다."}
                 </p>
-                <div className="space-y-4 border-t border-gray-50 pt-8">
+                <div className="space-y-4 border-t border-gray-100 pt-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><Calendar size={18} /></div>
+                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500"><Calendar size={18} /></div>
                     <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400">Date & Time</p>
-                      <p className="font-bold text-sm">
+                      <p className="text-[10px] font-black uppercase text-gray-600">Date & Time</p>
+                      <p className="font-bold text-base text-gray-900">
                         {formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}
                         {formData.event_end_date && <span className="text-gray-400"> ~ {new Date(formData.event_end_date).toLocaleString()}</span>}
                       </p>
@@ -425,7 +425,7 @@ export default function CreateInvitationPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-8 text-white/30 text-[10px] font-black uppercase tracking-[0.2em] z-10">Wayo Pro Creator Studio</div>
+            <div className="mt-8 text-white/40 text-[10px] font-black uppercase tracking-[0.2em] z-10">Wayo Pro Creator Studio</div>
           </div>
         </div>
       )}
