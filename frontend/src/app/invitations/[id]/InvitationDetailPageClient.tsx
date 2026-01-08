@@ -56,6 +56,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   // User Type (Simple check for now, can be improved)
   const [isCreator, setIsCreator] = useState(false);
   const [guests, setGuests] = useState<any[]>([]);
+  const [viewCount, setViewCount] = useState(invitation.view_count || 0);
   const [myTicket, setMyTicket] = useState<any>(null); // Ticket Info
   const [isPC, setIsPC] = useState(false);
 
@@ -268,6 +269,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           <InvitationDashboardSidebar
             invitation={invitation}
             guests={guests}
+            viewCount={viewCount}
             onShare={handleShare}
             onEdit={() => alert("수정 기능은 곧 업데이트 예정입니다!")}
           />
