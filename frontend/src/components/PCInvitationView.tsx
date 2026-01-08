@@ -320,7 +320,10 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
 
                         {/* Layout: LEAFLET (Interactive Brochure Book Style) */}
                         {layoutMode === 'leaflet' && (
-                            <LeafletBookView invitation={invitation} hasResponded={hasResponded} onRSVP={() => setShowRsvpModal(true)} />
+                            <div className="text-center text-white/50 py-20">
+                                <p className="text-2xl font-bold mb-2">📰 Leaflet Layout</p>
+                                <p className="text-sm">Coming Soon - Premium Feature</p>
+                            </div>
                         )}
 
                         <button

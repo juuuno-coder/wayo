@@ -64,9 +64,12 @@ export default function ManageInvitationsPage() {
                     // Do NOT redirect to login automatically to prevent loops
                 }
             } else {
+                // User is not logged in - check for pending invitations in local storage
                 const pendingIds = JSON.parse(localStorage.getItem("pending_invitations") || "[]");
                 if (pendingIds.length === 0) {
+                    // No pending invitations - show empty state and auth modal, but don't return early
                     setIsAuthModalOpen(true);
+                    setLoading(false);
                     return;
                 }
                 const results = await Promise.all(
