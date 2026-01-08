@@ -162,6 +162,15 @@ export default function CreateInvitationPage() {
     }
   }, [formData, draftId]);
 
+  const handleManualSave = async () => {
+    if (!formData.title && !formData.description) {
+      alert("저장할 내용이 없습니다.");
+      return;
+    }
+    await autoSave();
+    alert("임시저장되었습니다.");
+  };
+
   // Debounced auto-save on formData change
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -261,6 +270,15 @@ export default function CreateInvitationPage() {
             <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
               <ArrowLeft size={24} />
             </button>
+            <div className="flex items-center gap-3">
+              {isSaving ? (
+                <span className="text-xs font-bold text-blue-500 animate-pulse">저장 중...</span>
+              ) : lastSaved ? (
+                <span className="text-xs font-bold text-green-500">
+                  {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 저장됨
+                </span>
+              ) : null}
+            </div>
           </header>
           <div className="h-1 bg-gray-100 w-full overflow-hidden">
             <div
@@ -519,6 +537,12 @@ export default function CreateInvitationPage() {
                 이전
               </button>
             )}
+            <button
+              onClick={handleManualSave}
+              className="px-4 py-4 bg-white border-2 border-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-50 hover:border-gray-200 transition-colors"
+            >
+              임시저장
+            </button>
             <button
               onClick={currentStep < steps.length - 1 ? handleNext : handleSubmit}
               disabled={isNextDisabled()}
