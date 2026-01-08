@@ -109,7 +109,7 @@ export default function CreateInvitationPage() {
 
   // Auto-save function
   const autoSave = useCallback(async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (!token) return; // Only auto-save for logged-in users
 
     // Only save if there's meaningful content

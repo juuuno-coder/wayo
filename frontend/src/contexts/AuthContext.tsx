@@ -38,8 +38,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const initializeAuth = async () => {
             const savedToken = localStorage.getItem("authToken");
-
-            if (!savedToken) return;
+            if (!savedToken) {
+                setIsLoading(false);
+                return;
+            }
 
             // Optimistic load
             const savedUser = localStorage.getItem("userData");
@@ -166,6 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(newToken);
         setUser(newUser);
         setIsLoggedIn(true);
+        setIsLoading(false); // Ensure loading state is cleared after manual or URL login
         // Sync guest data
         syncGuestData(newToken);
     };
