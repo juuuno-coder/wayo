@@ -30,6 +30,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
     const [guestName, setGuestName] = useState("");
     const [rsvpMessage, setRsvpMessage] = useState("");
     const [showRsvpModal, setShowRsvpModal] = useState(false);
+    const [showGuidanceModal, setShowGuidanceModal] = useState(false);
     const [activeSection, setActiveSection] = useState<'message' | 'schedule' | 'map'>('message');
     const [layoutMode, setLayoutMode] = useState<'single' | 'spread' | 'leaflet'>(invitation.default_layout || 'spread');
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -187,10 +188,11 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                             <div className="w-full max-w-[600px] h-[850px] bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col">
                                 <div className="h-2/3 relative">
                                     <NextImage
-                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
+                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
                                         alt="Cover"
                                         fill
                                         className="object-cover"
+                                        unoptimized={!!invitation.image_urls?.[0]}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                     <div className="absolute bottom-12 left-12 right-12 text-white">
@@ -223,10 +225,11 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                 {/* Left Page: Poster */}
                                 <div className="flex-1 relative overflow-hidden border-r border-gray-100">
                                     <NextImage
-                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.png"}
+                                        src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
                                         alt="Cover"
                                         fill
                                         className="object-cover"
+                                        unoptimized={!!invitation.image_urls?.[0]}
                                     />
                                     <div className="absolute inset-0 bg-black/5" />
                                     <div className="absolute bottom-12 left-12 right-12 z-10 text-white drop-shadow-lg">
@@ -327,7 +330,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             </div>
                                         ) : (
                                             <div className="w-full py-6 bg-green-500 text-white rounded-2xl text-2xl font-black flex items-center justify-center gap-3">
-                                                <CheckCircle2 size={32} /> 참석 예약 완료
+                                                <CheckCircle2 size={32} /> 참석 소식 전달 완료
                                             </div>
                                         )}
 
@@ -415,8 +418,8 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
 
                             <div className="p-12 md:p-20">
                                 <div className="text-center mb-12">
-                                    <h2 className="text-5xl font-black text-[#2c3e50] mb-4">RSVP</h2>
-                                    <p className="text-gray-400 text-lg">참석 여부를 알려주세요. 소중한 당신을 기다립니다.</p>
+                                    <h2 className="text-5xl font-black text-[#2c3e50] mb-4">참석 확인</h2>
+                                    <p className="text-gray-500 text-lg">소중한 당신을 기다립니다. 참석 여부를 알려주세요!</p>
                                 </div>
 
                                 <div className="space-y-8">
@@ -427,7 +430,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             value={guestName}
                                             onChange={(e) => setGuestName(e.target.value)}
                                             placeholder="성함을 입력해주세요"
-                                            className="w-full bg-gray-50 border-none rounded-2xl p-6 text-2xl focus:ring-4 focus:ring-red-100 placeholder:text-gray-300 outline-none transition-all"
+                                            className="w-full bg-gray-50 border-none rounded-2xl p-6 text-2xl text-gray-900 focus:ring-4 focus:ring-red-100 placeholder:text-gray-400 outline-none transition-all"
                                         />
                                     </div>
                                     <div>
@@ -436,7 +439,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             value={rsvpMessage}
                                             onChange={(e) => setRsvpMessage(e.target.value)}
                                             placeholder="메시지를 남겨보세요"
-                                            className="w-full bg-gray-50 border-none rounded-2xl p-6 h-40 text-2xl focus:ring-4 focus:ring-red-100 placeholder:text-gray-300 outline-none resize-none transition-all"
+                                            className="w-full bg-gray-50 border-none rounded-2xl p-6 h-40 text-2xl text-gray-900 focus:ring-4 focus:ring-red-100 placeholder:text-gray-400 outline-none resize-none transition-all"
                                         />
                                     </div>
                                     <button
@@ -447,12 +450,61 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             }
                                             await onRSVP(guestName, rsvpMessage);
                                             setShowRsvpModal(false);
+                                            setShowGuidanceModal(true);
                                         }}
                                         className="w-full py-7 bg-[#E74C3C] text-white rounded-3xl text-3xl font-black hover:bg-red-600 transition-colors active:scale-[0.98] shadow-2xl shadow-red-200"
                                     >
-                                        참석할게요!
+                                        참석 확인하기
                                     </button>
                                 </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Post-RSVP Guidance Modal */}
+            <AnimatePresence>
+                {showGuidanceModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-10 text-center">
+                                <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500">
+                                    <CheckCircle2 size={40} />
+                                </div>
+                                <h3 className="text-2xl font-black text-gray-900 mb-3">소식이 전달되었습니다!</h3>
+                                <p className="text-gray-500 font-medium leading-relaxed mb-8">
+                                    참석 확인 메시지가 전달되었습니다.<br />
+                                    <strong>와요 회원가입</strong>을 하면 받은 초대장들을 한눈에 관리할 수 있어요!
+                                </p>
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={() => {
+                                            setShowGuidanceModal(false);
+                                            if ((window as any).triggerSignupModal) (window as any).triggerSignupModal();
+                                        }}
+                                        className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
+                                    >
+                                        내 초대장에 저장하기
+                                    </button>
+                                    <button
+                                        onClick={() => setShowGuidanceModal(false)}
+                                        className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
+                                    >
+                                        나중에 하기
+                                    </button>
+                                </div>
+                                <p className="mt-6 text-[10px] text-gray-300 uppercase tracking-widest font-black">Wayo Invitation Service</p>
                             </div>
                         </motion.div>
                     </motion.div>

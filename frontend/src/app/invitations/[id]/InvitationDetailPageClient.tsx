@@ -379,6 +379,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
               alt="Cover"
               fill
               className="object-cover"
+              unoptimized={!!invitation.image_urls?.[0]}
             />
           ) : (
             <div className="absolute inset-0 bg-[#F5F5F0] p-10 flex flex-col items-center justify-center text-center border-12 border-white inner-border">

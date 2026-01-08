@@ -68,6 +68,8 @@ export default function CreateInvitationPage() {
   const [ticketTypes, setTicketTypes] = useState<any[]>([]);
   const [isPC, setIsPC] = useState(false);
   const [showEndTime, setShowEndTime] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdId, setCreatedId] = useState<number | null>(null);
 
   useEffect(() => {
     const checkPC = () => setIsPC(window.innerWidth >= 1024);
@@ -153,23 +155,8 @@ export default function CreateInvitationPage() {
       const data = await response.json();
 
       if (response.ok) {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          const pending = JSON.parse(localStorage.getItem("pending_invitations") || "[]");
-          if (!pending.includes(data.id)) {
-            pending.push(data.id);
-            localStorage.setItem("pending_invitations", JSON.stringify(pending));
-          }
-          alert("초대장이 임시 저장되었습니다.\n로그인하면 영구 보관할 수 있습니다.");
-        } else {
-          if (confirm("초대장이 생성되었습니다!\n고급 편집기로 이동하여 디자인을 꾸미시겠습니까?")) {
-            router.push(`/invitations/${data.id}/editor`);
-          } else {
-            router.push(`/invitations/${data.id}`);
-          }
-        }
-
-
+        setCreatedId(data.id);
+        setShowSuccessModal(true);
       } else {
         alert("초대장 생성에 실패했습니다.");
       }
@@ -274,7 +261,7 @@ export default function CreateInvitationPage() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="초대장 제목 (예: 15분도시 부산 워크숍)"
-                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
                   autoFocus
                 />
               </div>
@@ -288,7 +275,7 @@ export default function CreateInvitationPage() {
                   value={formData.sender_name}
                   onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
                   placeholder="초대하시는 분의 이름/단체명"
-                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                  className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
                 />
               </div>
               <p className="text-xs text-gray-400 px-2 leading-relaxed">
@@ -403,7 +390,7 @@ export default function CreateInvitationPage() {
                     value={placeName}
                     onChange={(e) => setPlaceName(e.target.value)}
                     placeholder="예) 강남역 10번 출구, 우리집"
-                    className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
+                    className="w-full pl-14 pr-4 py-5 bg-white border-none rounded-2xl font-bold text-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none shadow-sm"
                     autoFocus
                   />
                 </div>
@@ -659,7 +646,7 @@ export default function CreateInvitationPage() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="따뜻한 인사말을 건네보세요."
-                className="w-full p-6 bg-white border-none rounded-3xl h-80 resize-none font-medium text-xl text-gray-900 placeholder-gray-300 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none leading-relaxed shadow-sm"
+                className="w-full p-6 bg-white border-none rounded-3xl h-80 resize-none font-medium text-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#E74C3C] focus:bg-white transition-all outline-none leading-relaxed shadow-sm"
                 autoFocus
               />
             </div>
@@ -799,6 +786,48 @@ export default function CreateInvitationPage() {
           <div className="mt-8 text-white/30 text-[10px] font-black uppercase tracking-[0.2em] z-10">Wayo Pro Creator Studio</div>
         </div>
       )}
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl"
+            >
+              <div className="p-10 text-center">
+                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-[#E74C3C]">
+                  <Sparkles size={40} />
+                </div>
+                <h3 className="text-2xl font-black text-gray-900 mb-3">초대장 완성!</h3>
+                <p className="text-gray-500 font-medium leading-relaxed mb-8">
+                  멋진 초대장이 만들어졌습니다.<br />
+                  {localStorage.getItem("authToken")
+                    ? "고급 편집기 기능을 준비 중입니다.\n지금은 기본 초대장을 확인할 수 있어요!"
+                    : "로그인하시면 초대장을\n영구적으로 관리할 수 있습니다."
+                  }
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => router.push(`/invitations/${createdId}`)}
+                    className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
+                  >
+                    초대장 확인하기
+                  </button>
+                  <button
+                    onClick={() => setShowSuccessModal(false)}
+                    className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
+                  >
+                    닫기
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Global Style */}
       <style jsx global>{`

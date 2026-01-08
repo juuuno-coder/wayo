@@ -104,8 +104,8 @@ export default function RSVPForm({
                         key={option.value}
                         onClick={() => setStatus(option.value)}
                         className={`w-full p-4 rounded-2xl border-2 transition-all flex items-center gap-4 ${status === option.value
-                                ? `${option.color} ${option.activeColor}`
-                                : "border-gray-200 hover:border-gray-300"
+                            ? `${option.color} ${option.activeColor}`
+                            : "border-gray-200 hover:border-gray-300"
                             }`}
                     >
                         <div
@@ -138,7 +138,7 @@ export default function RSVPForm({
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="호스트에게 전할 메시지를 입력해주세요"
-                    className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
                     rows={3}
                 />
             </div>
@@ -148,8 +148,8 @@ export default function RSVPForm({
                 onClick={handleSubmit}
                 disabled={!hasChanges || loading}
                 className={`w-full py-4 rounded-2xl font-bold text-lg transition-all ${hasChanges && !loading
-                        ? "bg-blue-500 text-white hover:bg-blue-600 active:scale-95 shadow-lg shadow-blue-200"
-                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    ? "bg-blue-500 text-white hover:bg-blue-600 active:scale-95 shadow-lg shadow-blue-200"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
                     }`}
             >
                 {loading ? "저장 중..." : hasChanges ? "변경사항 저장하기" : "변경사항 없음"}
