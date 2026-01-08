@@ -60,10 +60,14 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   const [myTicket, setMyTicket] = useState<any>(null); // Ticket Info
   const [isPC, setIsPC] = useState(false);
 
-  // Expose signup modal trigger to PC view
+  // Expose signup modal trigger and save handler to PC view
   useEffect(() => {
     (window as any).triggerSignupModal = () => setShowSignupModal(true);
-    return () => { delete (window as any).triggerSignupModal; };
+    (window as any).handleSaveInvitation = handleSaveInvitation;
+    return () => {
+      delete (window as any).triggerSignupModal;
+      delete (window as any).handleSaveInvitation;
+    };
   }, []);
 
   useEffect(() => {
@@ -196,6 +200,42 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     }, 2000);
   };
 
+  const handleSaveInvitation = async () => {
+    const token = localStorage.getItem('token');
+
+    // If not logged in, show signup modal
+    if (!token) {
+      setShowSignupModal(true);
+      return;
+    }
+
+    // If logged in and has guest ID, claim it
+    if (myGuestId) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/guests/${myGuestId}/claim`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          // Successfully claimed, navigate to manage page
+          router.push('/invitations/manage?tab=received');
+        } else {
+          console.error('Failed to claim invitation');
+          alert('초대장 저장에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('Error claiming invitation:', error);
+        alert('초대장 저장 중 오류가 발생했습니다.');
+      }
+    } else {
+      // No guest ID, just navigate to manage page
+      router.push('/invitations/manage?tab=received');
+    }
+  };
 
   // Date & Utility Logic
   const eventDate = invitation ? new Date(invitation.event_date) : new Date();
