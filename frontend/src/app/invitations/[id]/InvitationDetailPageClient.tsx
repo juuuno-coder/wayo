@@ -197,8 +197,24 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   };
 
 
+  // Date & Utility Logic
+  const eventDate = invitation ? new Date(invitation.event_date) : new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = eventDate.getTime() - today.getTime();
+  const dDay = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  const dDayStr = dDay === 0 ? "Today" : dDay > 0 ? `D-${dDay}` : `D+${Math.abs(dDay)}`;
+
+  const googleCalendarUrl = invitation ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(invitation.title)}&dates=${eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "")}/${invitation.event_end_date ? new Date(invitation.event_end_date).toISOString().replace(/-|:|\.\d\d\d/g, "") : eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "")}&details=${encodeURIComponent(invitation.description || "")}&location=${encodeURIComponent(invitation.location || "")}` : '#';
+
+  const mapLinks = invitation ? {
+    naver: `https://map.naver.com/v5/search/${encodeURIComponent(invitation.location || "")}`,
+    kakao: `https://map.kakao.com/link/search/${encodeURIComponent(invitation.location || "")}`,
+    google: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(invitation.location || "")}`
+  } : { naver: '#', kakao: '#', google: '#' };
+
   const addToCalendar = () => {
-    alert("가보자고 캘린더에 일정이 등록되었습니다!");
+    window.open(googleCalendarUrl, '_blank');
   };
 
   const handleShare = async () => {
@@ -424,10 +440,16 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
               alt="Cover"
               className="w-full h-auto object-contain"
             />
+            <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur rounded-full text-xs font-bold text-gray-800 shadow-md z-10">
+                {dDayStr}
+            </div>
           ) : (
             <div className="w-full h-[600px] bg-[#F5F5F0] p-10 flex flex-col items-center justify-center text-center border-12 border-white inner-border relative">
               <p className="font-serif text-[#8D6E63] text-sm tracking-[0.5em] mb-6">INVITATION</p>
               <h1 className={`text-4xl text-[#3E2723] leading-tight mb-8 font-bold ${effectClass} ${fontClass}`}>{invitation.title}</h1>
+              <div className="inline-block px-4 py-1 border border-[#8D6E63]/30 rounded-full text-[#8D6E63] text-xs font-bold tracking-widest uppercase mb-6">
+                {dDayStr}
+              </div>
               <div className="w-px h-16 bg-[#D7CCC8] mb-8"></div>
               <p className={`text-lg text-[#5D4037] ${fontClass}`}>
                 {new Date(invitation.event_date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' })}
@@ -505,7 +527,23 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
                       {invitation.location}
                     </p>
                     {/* Map Link Button (Optional) */}
-                    <button className="mt-2 text-xs text-blue-500 underline underline-offset-4">지도 보기</button>
+                    <div className="flex gap-2 justify-center mt-3">
+                      {[
+                        { name: 'Naver', url: mapLinks.naver, color: 'bg-[#03C75A] text-white border-transparent' },
+                        { name: 'Kakao', url: mapLinks.kakao, color: 'bg-[#FEE500] text-black border-transparent' },
+                        { name: 'Google', url: mapLinks.google, color: 'bg-white border-gray-200 text-gray-600' }
+                      ].map(map => (
+                        <a
+                          key={map.name}
+                          href={map.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border ${map.color} hover:opacity-80 transition-opacity flex items-center gap-1 shadow-sm`}
+                        >
+                          {map.name}
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

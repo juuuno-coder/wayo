@@ -36,7 +36,24 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const fontClass = invitation.font_style === 'serif' ? 'font-serif' : 'font-sans';
+    const fontClass = invitation.font_style === 'serif' ? 'font-serif' : 'font-sans';
     const hostName = invitation.sender_name || invitation.user?.nickname || "가보자고 친구";
+
+    // Date Logic
+    const eventDate = new Date(invitation.event_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diff = eventDate.getTime() - today.getTime();
+    const dDay = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    const dDayStr = dDay === 0 ? "Today" : dDay > 0 ? `D-${dDay}` : `D+${Math.abs(dDay)}`;
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(invitation.title)}&dates=${eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "")}/${invitation.event_end_date ? new Date(invitation.event_end_date).toISOString().replace(/-|:|\.\d\d\d/g, "") : eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "")}&details=${encodeURIComponent(invitation.description || "")}&location=${encodeURIComponent(invitation.location || "")}`;
+
+    const mapLinks = {
+        naver: `https://map.naver.com/v5/search/${encodeURIComponent(invitation.location || "")}`,
+        kakao: `https://map.kakao.com/link/search/${encodeURIComponent(invitation.location || "")}`,
+        google: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(invitation.location || "")}`
+    };
 
     const handleStart = () => {
         setStage('envelope');
@@ -94,6 +111,9 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                             <h2 className="text-white text-4xl md:text-5xl font-black leading-tight break-keep">
                                 {hostName}님으로부터<br />소중한 초대장이 도착했습니다
                             </h2>
+                            <div className="inline-block px-4 py-1 border border-white/30 rounded-full text-white/60 text-xs font-bold tracking-widest uppercase">
+                                {dDayStr}
+                            </div>
                             <div className="w-12 h-px bg-white/20 mx-auto" />
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
@@ -264,13 +284,46 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                                                         </>
                                                                     )}
                                                                 </p>
-                                                            </div>
+                                                                    )}
+                                                            </p>
+
+                                                            {/* Calendar Button */}
+                                                            <a
+                                                                href={googleCalendarUrl}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-blue-500 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded-md transition-colors"
+                                                            >
+                                                                <Calendar size={12} /> Google Calendar
+                                                            </a>
                                                         </div>
-                                                        <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
-                                                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm"><MapPin size={32} /></div>
+                                                    </div>
+                                                    <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
+                                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm"><MapPin size={32} /></div>
+                                                        <div className="flex-1">
+                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
                                                             <div className="flex-1">
                                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
                                                                 <p className="text-2xl font-bold text-gray-900 break-keep">{invitation.location}</p>
+
+                                                                {/* Map Links */}
+                                                                <div className="flex gap-2 mt-3">
+                                                                    {[
+                                                                        { name: 'Naver', url: mapLinks.naver, color: 'bg-[#03C75A] text-white' },
+                                                                        { name: 'Kakao', url: mapLinks.kakao, color: 'bg-[#FEE500] text-black' },
+                                                                        { name: 'Google', url: mapLinks.google, color: 'bg-white border border-gray-200 text-gray-600' }
+                                                                    ].map(map => (
+                                                                        <a
+                                                                            key={map.name}
+                                                                            href={map.url}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold ${map.color} hover:opacity-80 transition-opacity flex items-center gap-1`}
+                                                                        >
+                                                                            {map.name === 'Google' && <MapPin size={10} />} {map.name}
+                                                                        </a>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
