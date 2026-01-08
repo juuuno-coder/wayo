@@ -218,9 +218,8 @@ export default function CreateInvitationPage() {
             <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
               <div className="grid grid-cols-1 gap-4">
                 {[
-                  { id: 'single', label: '단면 포스터 (Single)', desc: '심플하고 강렬한 한 장의 포스터 (Standard)', icon: '🖼️', isPremium: false },
-                  { id: 'spread', label: '양면 펼침 (Spread)', desc: '책처럼 펼쳐지는 클래식한 스타일 (Standard)', icon: '📖', isPremium: false },
-                  { id: 'leaflet', label: '4단 리플렛 (Leaflet)', desc: '정보를 풍성하게 담는 브로슈어 (Premium)', icon: '📰', isPremium: true },
+                  { id: 'spread', label: '스탠다드 (Standard)', desc: '모바일은 스크롤, PC는 2쪽 보기로 최적화된 기본 레이아웃', icon: '📱+💻', isPremium: false },
+                  { id: 'leaflet', label: '프리미엄 리플렛 (Leaflet)', desc: '앞뒤로 넘겨보는 인터랙티브 브로슈어 (Coming Soon)', icon: '✨', isPremium: true },
                 ].map((layout) => (
                   <button
                     key={layout.id}

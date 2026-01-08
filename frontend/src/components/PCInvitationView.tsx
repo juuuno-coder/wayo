@@ -214,17 +214,14 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                         {/* Layout: SPREAD (Current 2p Book Style) */}
                         {layoutMode === 'spread' && (
                             <div className="w-full max-w-[1200px] h-[750px] flex items-stretch bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden relative">
-                                {/* Left Page: Poster */}
+                                {/* Left Page: Poster (Clean Image Only) */}
                                 <div className="flex-1 relative overflow-hidden border-r border-gray-100 bg-gray-50 flex items-center justify-center">
                                     <img
                                         src={invitation.image_urls?.[0] || invitation.cover_image_url || "/images/wayo_envelope_3d.jpg"}
                                         alt="Cover"
                                         className="w-full h-full object-contain p-4"
                                     />
-                                    <div className="absolute bottom-12 left-12 right-12 z-10 text-gray-900 drop-shadow-lg mix-blend-difference pointer-events-none">
-                                        <p className="text-[10px] font-black tracking-[0.5em] opacity-80 mb-2 text-white/50">OFFICIAL INVITATION</p>
-                                        <h3 className="text-3xl font-black text-white/80">{invitation.title}</h3>
-                                    </div>
+                                    {/* Text Overlay Removed per user request to avoid overlapping with image text/subtitles */}
                                 </div>
 
                                 {/* Right Page: Content */}
