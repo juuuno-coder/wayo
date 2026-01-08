@@ -52,10 +52,16 @@ class InvitationGuestsController < ApplicationController
       end
       
       # Send Email if contact is an email address
-      if @guest.contact.present? && @guest.contact.match?( URI::MailTo::EMAIL_REGEXP )
-        # Use deliver_now for immediate feedback in this MVP, or deliver_later if Sidekiq configured
-        # Using deliver_later is safer generally
-        InvitationMailer.send_invitation_email(@guest, @invitation).deliver_later
+      if @guest.contact.present?
+        if @guest.contact.match?(URI::MailTo::EMAIL_REGEXP)
+          InvitationMailer.send_invitation_email(@guest, @invitation).deliver_later
+        elsif @guest.contact.gsub('-', '').match?(/^01[0-9]{8,9}$/)
+          # Check for phone number (remove hyphens, check for 01012345678 format)
+          # Send SMS
+          # Use a background job in production, but calling service directly for MVP
+          msg = "[Wayo] #{@invitation.sender_name || '호스트'}님의 초대장이 도착했습니다.\n확인하기: https://wayo.fly.dev/invitations/#{@invitation.id}?guest_id=#{@guest.id}"
+          SmsService.new.send_message(@guest.contact, msg)
+        end
       end
       
       render json: @guest.as_json(include: { ticket: { only: [:id, :qr_code, :status] } }), status: :created
