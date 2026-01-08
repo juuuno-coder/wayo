@@ -486,7 +486,7 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
 
             {/* Post-RSVP Guidance Modal */}
             <AnimatePresence>
-                {showGuidanceModal && (
+                {showGuidanceModal && styleMode === 'fullscreen' && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
