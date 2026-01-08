@@ -1,0 +1,11 @@
+<%= @invitation.title %>
+
+<%= @invitation.sender_name || '누군가' %>가 당신을 특별한 경험에 초대했습니다.
+
+일시: <%= @invitation.event_date.strftime("%Y년 %m월 %d일 %H:%M") %>
+장소: <%= @invitation.location %>
+
+아래 링크를 복사하여 브라우저에서 열어보세요:
+<%= @url %>
+
+본 메일은 Wayo 서비스(wayo.co.kr)를 통해 발송되었습니다.

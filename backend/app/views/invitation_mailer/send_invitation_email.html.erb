@@ -1,0 +1,22 @@
+<h1><%= @invitation.title %></h1>
+
+<p><%= @invitation.sender_name || '누군가' %>가 당신을 특별한 경험에 초대했습니다.</p>
+
+<p>
+  <strong>일시:</strong> <%= @invitation.event_date.strftime("%Y년 %m월 %d일 %H:%M") %><br>
+  <strong>장소:</strong> <%= @invitation.location %>
+</p>
+
+<p>
+  아래 링크를 클릭하여 모바일 초대장을 확인해 주세요.<br>
+  (참석 여부를 알려주시면 준비하는 데 큰 도움이 됩니다!)
+</p>
+
+<p>
+  <a href="<%= @url %>" style="display: inline-block; padding: 12px 24px; background-color: #E74C3C; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">초대장 보러가기</a>
+</p>
+
+<hr>
+<p style="font-size: 12px; color: #888;">
+  본 메일은 Wayo 서비스(wayo.co.kr)를 통해 발송되었습니다.
+</p>

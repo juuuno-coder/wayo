@@ -20,9 +20,13 @@ class InvitationGuestsController < ApplicationController
 
     @guest = @invitation.invitation_guests.build(guest_params)
     
-    # 2. Assign user if current_user is RSVPing themselves
+    # 2. Assign user if current_user is RSVPing themselves OR by email lookup
     if current_user && !@guest.user_id
         @guest.user = current_user
+    elsif !@guest.user_id && @guest.contact.present? && @guest.contact.match?( URI::MailTo::EMAIL_REGEXP )
+        # Auto-link to existing user by email
+        linked_user = User.find_by(email: @guest.contact)
+        @guest.user = linked_user if linked_user
     end
 
     # 3. If direct sending (user_id provided), status might be 'pending' or 'invited' initially?
@@ -45,6 +49,13 @@ class InvitationGuestsController < ApplicationController
           invitation_guest: @guest,
           status: 'active'
         )
+      end
+      
+      # Send Email if contact is an email address
+      if @guest.contact.present? && @guest.contact.match?( URI::MailTo::EMAIL_REGEXP )
+        # Use deliver_now for immediate feedback in this MVP, or deliver_later if Sidekiq configured
+        # Using deliver_later is safer generally
+        InvitationMailer.send_invitation_email(@guest, @invitation).deliver_later
       end
       
       render json: @guest.as_json(include: { ticket: { only: [:id, :qr_code, :status] } }), status: :created
