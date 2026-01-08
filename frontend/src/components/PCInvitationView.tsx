@@ -18,10 +18,10 @@ import {
 
 interface PCInvitationViewProps {
     invitation: any;
-onRSVP: (name: string, message: string, status?: string) => Promise<void>;
-hasResponded: boolean;
-myTicket: any;
-styleMode ?: 'fullscreen' | 'embedded';
+    onRSVP: (name: string, message: string, status?: string) => Promise<void>;
+    hasResponded: boolean;
+    myTicket: any;
+    styleMode?: 'fullscreen' | 'embedded';
 }
 
 export default function PCInvitationView({ invitation, onRSVP, hasResponded, myTicket, styleMode = 'fullscreen' }: PCInvitationViewProps) {
@@ -272,36 +272,33 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                                     <div className="grid grid-cols-1 gap-6">
                                                         <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
                                                             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#E74C3C] shadow-sm"><Calendar size={32} /></div>
-                                                            <div>
+                                                            <div className="flex-1">
                                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">When</p>
                                                                 <p className="text-2xl font-bold text-gray-900">{new Date(invitation.event_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</p>
-                                                                <p className="text-gray-500 font-medium">
-                                                                    {new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                                                                    {invitation.event_end_date && (
-                                                                        <>
-                                                                            <span className="text-gray-300 mx-2">~</span>
-                                                                            {new Date(invitation.event_end_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                                                                        </>
-                                                                    )}
-                                                                </p>
-                                                                    )}
-                                                            </p>
-
-                                                            {/* Calendar Button */}
-                                                            <a
-                                                                href={googleCalendarUrl}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-blue-500 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded-md transition-colors"
-                                                            >
-                                                                <Calendar size={12} /> Google Calendar
-                                                            </a>
+                                                                <div className="flex items-center justify-between mt-1">
+                                                                    <p className="text-gray-500 font-medium">
+                                                                        {new Date(invitation.event_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                                                                        {invitation.event_end_date && (
+                                                                            <>
+                                                                                <span className="text-gray-300 mx-2">~</span>
+                                                                                {new Date(invitation.event_end_date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                                                                            </>
+                                                                        )}
+                                                                    </p>
+                                                                    {/* Calendar Button */}
+                                                                    <a
+                                                                        href={googleCalendarUrl}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-500 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded-md transition-colors"
+                                                                    >
+                                                                        <Calendar size={12} /> Google Calendar
+                                                                    </a>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
-                                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm"><MapPin size={32} /></div>
-                                                        <div className="flex-1">
-                                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
+                                                        <div className="p-8 bg-gray-50 rounded-[2rem] flex items-center gap-6">
+                                                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm"><MapPin size={32} /></div>
                                                             <div className="flex-1">
                                                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Where</p>
                                                                 <p className="text-2xl font-bold text-gray-900 break-keep">{invitation.location}</p>
@@ -517,36 +514,6 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                                             setShowGuidanceModal(false);
                                             if ((window as any).handleSaveInvitation) {
                                                 (window as any).handleSaveInvitation();
-                                            } else if ((window as any).triggerSignupModal) {
-                                                (window as any).triggerSignupModal();
-                                            }
-                                        }}
-                                        className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
-                                    >
-                                        내 초대장에 저장하기
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setShowGuidanceModal(false);
-                                            window.location.href = '/invitations/manage?tab=received';
-                                        }}
-                                        className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-lg hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100"
-                                    >
-                                        받은 초대장 보기
-                                    </button>
-                                    <button
-                                        onClick={() => setShowGuidanceModal(false)}
-                                        className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
-                                    >
-                                        닫기
-                                    </button>
-                                </div>
-                                <p className="mt-6 text-[10px] text-gray-300 uppercase tracking-widest font-black">Wayo Invitation Service</p>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
                                             } else if ((window as any).triggerSignupModal) {
                                                 (window as any).triggerSignupModal();
                                             }
