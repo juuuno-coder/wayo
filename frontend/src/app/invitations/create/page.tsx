@@ -901,9 +901,39 @@ export default function CreateInvitationPage() {
       </div>
     </div>
 
-      {/* Right: PC Side Preview (Visible Hub) */ }
-  {
-    isPC && (
+
+      {/* Right: PC Side Preview (Visible Hub) */}
+      {isPC && currentStep === 9 ? (
+        <div className="flex-1 bg-[#1a1a1a] flex flex-col items-center justify-center p-12 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-500/10 blur-[150px] rounded-full" />
+          <div className="w-full h-full relative z-10">
+            <PCInvitationView
+              invitation={{
+                id: 0,
+                title: formData.title || "초대장 제목",
+                description: formData.description || "초대 문구를 입력해주세요",
+                sender_name: formData.sender_name || "가보자고 친구",
+                event_date: formData.event_date || new Date().toISOString(),
+                event_end_date: formData.event_end_date,
+                location: formData.location || "장소 미정",
+                theme_color: formData.theme_color,
+                cover_image_url: previewUrls[0] || "/images/wayo_envelope_3d.jpg",
+                image_urls: previewUrls,
+                font_style: formData.font_style,
+                bgm: formData.bgm,
+                text_effect: formData.text_effect,
+                default_layout: formData.default_layout,
+                view_count: 0,
+                user: { nickname: formData.sender_name || "가보자고 친구" }
+              }}
+              onRSVP={async () => {}}
+              hasResponded={false}
+              myTicket={null}
+              styleMode="embedded"
+            />
+          </div>
+        </div>
+      ) : isPC && (
       <div className="flex-1 bg-[#1a1a1a] flex flex-col items-center justify-center p-12 relative overflow-hidden">
         {/* Background Ambient Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-500/10 blur-[150px] rounded-full" />
