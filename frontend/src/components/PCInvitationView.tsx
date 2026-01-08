@@ -547,6 +547,36 @@ export default function PCInvitationView({ invitation, onRSVP, hasResponded, myT
                     </motion.div>
                 )}
             </AnimatePresence>
+                                            } else if ((window as any).triggerSignupModal) {
+                                                (window as any).triggerSignupModal();
+                                            }
+                                        }}
+                                        className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
+                                    >
+                                        내 초대장에 저장하기
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setShowGuidanceModal(false);
+                                            window.location.href = '/invitations/manage?tab=received';
+                                        }}
+                                        className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-lg hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100"
+                                    >
+                                        받은 초대장 보기
+                                    </button>
+                                    <button
+                                        onClick={() => setShowGuidanceModal(false)}
+                                        className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
+                                    >
+                                        닫기
+                                    </button>
+                                </div>
+                                <p className="mt-6 text-[10px] text-gray-300 uppercase tracking-widest font-black">Wayo Invitation Service</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Floating Audio Toggle */}
             {invitation.bgm && invitation.bgm !== 'none' && (

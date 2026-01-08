@@ -71,6 +71,8 @@ export default function CreateInvitationPage() {
   const [showEndTime, setShowEndTime] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdId, setCreatedId] = useState<number | null>(null);
+  const [showPreview, setShowPreview] = useState(false); // For mobile toggle
+  const [expandedSection, setExpandedSection] = useState<string | null>(null); // For collapsible sections
 
   useEffect(() => {
     const checkPC = () => setIsPC(window.innerWidth >= 1024);
@@ -652,195 +654,374 @@ export default function CreateInvitationPage() {
             </div>
           )}
 
-          {/* Step 9: Final Preview */}
+          {/* Step 9: Final Review with Live Preview */}
           {currentStep === 9 && (
-            <div className="flex flex-col items-center animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
-              <div className={`w-full max-w-xs aspect-3/4 bg-white rounded-[2rem] shadow-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-500 ${selectedTheme.bg} ring-1 ring-black/5`}>
-
-                {/* Background Pattern/Image */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 -mt-8 opacity-100 z-0">
-                  <NextImage src="/images/wayo_envelope_3d.jpg" alt="Envelope" fill className="object-contain mix-blend-multiply" />
+            <div className="animate-in slide-in-from-right fade-in duration-500 delay-100 pb-10">
+              {/* Mobile: Toggle between Edit and Preview */}
+              {!isPC && (
+                <div className="flex gap-2 mb-6">
+                  <button
+                    onClick={() => setShowPreview(false)}
+                    className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${!showPreview
+                        ? 'bg-[#E74C3C] text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-500'
+                      }`}
+                  >
+                    ✏️ 수정하기
+                  </button>
+                  <button
+                    onClick={() => setShowPreview(true)}
+                    className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${showPreview
+                        ? 'bg-[#E74C3C] text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-500'
+                      }`}
+                  >
+                    👁️ 미리보기
+                  </button>
                 </div>
+              )}
 
-                {/* User Uploaded Image or Default Sparkles */}
-                {previewUrls.length > 0 && (
-                  <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-                    <NextImage src={previewUrls[0]} alt="Cover Background" fill className="object-cover" />
+              {/* Edit Form (Mobile: conditional, PC: always visible) */}
+              {(!showPreview || isPC) && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">📝 최종 확인 및 수정</h3>
+
+                  {/* Basic Info Section */}
+                  <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900">기본 정보</h4>
+                      <button
+                        onClick={() => setCurrentStep(1)}
+                        className="text-xs text-[#E74C3C] font-bold hover:underline"
+                      >
+                        수정
+                      </button>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">제목:</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.title || '미입력'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">보내는 사람:</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.sender_name || '미입력'}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
 
-                <div className="relative z-10 mt-24 w-full">
-                  {/* Title with Effects */}
-                  <h1 className={`text-xl font-black mb-3 leading-tight break-keep ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? '!text-yellow-600 drop-shadow-sm' : formData.text_effect === 'silver' ? '!text-gray-400 drop-shadow-sm' : ''}`}>
-                    {formData.title || "제목을 입력해주세요"}
-                  </h1>
-
-                  <div className={`w-8 h-1 bg-current opacity-20 mx-auto mb-4 rounded-full ${selectedTheme.text}`}></div>
-
-                  <p className={`font-medium text-xs mb-6 opacity-80 whitespace-pre-wrap ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
-                    {formData.description || "초대 문구가\n여기에 표시됩니다."}
-                  </p>
-
-                  <div className={`text-[10px] bg-white/10 backdrop-blur-md rounded-xl p-3 inline-block ${selectedTheme.text}`}>
-                    <p className="font-bold opacity-90 mb-1">{formData.event_date ? new Date(formData.event_date).toLocaleDateString() : "0000.00.00"}</p>
-                    <p className="opacity-70">{formData.location || "장소 미정"}</p>
+                  {/* Date & Time Section */}
+                  <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900">일시</h4>
+                      <button
+                        onClick={() => setCurrentStep(2)}
+                        className="text-xs text-[#E74C3C] font-bold hover:underline"
+                      >
+                        수정
+                      </button>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">시작:</span>
+                        <span className="ml-2 font-medium text-gray-900">
+                          {formData.event_date ? new Date(formData.event_date).toLocaleString('ko-KR') : '미입력'}
+                        </span>
+                      </div>
+                      {formData.event_end_date && (
+                        <div>
+                          <span className="text-gray-500">종료:</span>
+                          <span className="ml-2 font-medium text-gray-900">
+                            {new Date(formData.event_end_date).toLocaleString('ko-KR')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* BGM Indicator in Preview */}
-              {formData.bgm !== 'none' && (
-                <div className="mt-6 flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full text-xs font-bold animate-pulse">
-                  <span>🎵 {formData.bgm === 'classic' ? '클래식' : formData.bgm === 'jazz' ? '재즈' : '어쿠스틱'} 음악이 함께 전송됩니다</span>
+                  {/* Location Section */}
+                  <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900">장소</h4>
+                      <button
+                        onClick={() => setCurrentStep(3)}
+                        className="text-xs text-[#E74C3C] font-bold hover:underline"
+                      >
+                        수정
+                      </button>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900">{formData.location || '미입력'}</p>
+                  </div>
+
+                  {/* Images Section */}
+                  <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900">이미지 ({previewUrls.length}장)</h4>
+                      <button
+                        onClick={() => setCurrentStep(4)}
+                        className="text-xs text-[#E74C3C] font-bold hover:underline"
+                      >
+                        수정
+                      </button>
+                    </div>
+                    {previewUrls.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-2">
+                        {previewUrls.slice(0, 3).map((url, idx) => (
+                          <div key={idx} className="aspect-square rounded-lg overflow-hidden border border-gray-100">
+                            <NextImage src={url} alt={`Preview ${idx}`} width={100} height={100} className="object-cover w-full h-full" />
+                          </div>
+                        ))}
+                        {previewUrls.length > 3 && (
+                          <div className="aspect-square rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-bold">
+                            +{previewUrls.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">이미지 없음</p>
+                    )}
+                  </div>
+
+                  {/* Theme & Style Section */}
+                  <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900">테마 & 스타일</h4>
+                      <button
+                        onClick={() => setCurrentStep(5)}
+                        className="text-xs text-[#E74C3C] font-bold hover:underline"
+                      >
+                        수정
+                      </button>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">테마:</span>
+                        <span className="ml-2 font-medium text-gray-900">{themes[formData.theme_color]?.name || '클래식'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">글씨체:</span>
+                        <span className="ml-2 font-medium text-gray-900">
+                          {formData.font_style === 'serif' ? '명조체' : formData.font_style === 'sans' ? '고딕체' : '손글씨'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">배경음악:</span>
+                        <span className="ml-2 font-medium text-gray-900">
+                          {formData.bgm === 'none' ? '없음' : formData.bgm === 'classic' ? '클래식' : formData.bgm === 'jazz' ? '재즈' : '어쿠스틱'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Description Section */}
+                  <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900">초대 문구</h4>
+                      <button
+                        onClick={() => setCurrentStep(8)}
+                        className="text-xs text-[#E74C3C] font-bold hover:underline"
+                      >
+                        수정
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {formData.description || '미입력'}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
           )}
 
-        </div>
+          {/* OLD Step 9 Preview Card - REMOVED */}
+          {currentStep === 999 && ( // Never rendered
+            <div className={`w-full max-w-xs aspect-3/4 bg-white rounded-[2rem] shadow-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-500 ${selectedTheme.bg} ring-1 ring-black/5`}>
 
-        {/* Fixed Bottom Action Bar (Inside Sidebar on PC, Global on Mobile) */}
-        <div className="shrink-0 p-4 bg-white border-t border-gray-100 z-50 safe-area-bottom">
-          <div className="flex gap-3">
-            {currentStep > 0 && (
-              <button
-                onClick={handlePrev}
-                className="px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors active:scale-95"
-              >
-                이전
-              </button>
-            )}
-            <button
-              onClick={currentStep < steps.length - 1 ? handleNext : handleSubmit}
-              disabled={isNextDisabled()}
-              className="flex-1 py-4 bg-[#E74C3C] text-white text-lg rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-[#c0392b] disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95"
-            >
-              {currentStep < steps.length - 1 ? "다음" : "초대장 완성하기"}
-            </button>
-          </div>
-          <p className="text-[10px] text-center text-gray-300 mt-2 font-mono">v1.1 Editor</p>
+              {/* Background Pattern/Image */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 -mt-8 opacity-100 z-0">
+                <NextImage src="/images/wayo_envelope_3d.jpg" alt="Envelope" fill className="object-contain mix-blend-multiply" />
+              </div>
+
+              {/* User Uploaded Image or Default Sparkles */}
+              {previewUrls.length > 0 && (
+                <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+                  <NextImage src={previewUrls[0]} alt="Cover Background" fill className="object-cover" />
+                </div>
+              )}
+
+              <div className="relative z-10 mt-24 w-full">
+                {/* Title with Effects */}
+                <h1 className={`text-xl font-black mb-3 leading-tight break-keep ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? '!text-yellow-600 drop-shadow-sm' : formData.text_effect === 'silver' ? '!text-gray-400 drop-shadow-sm' : ''}`}>
+                  {formData.title || "제목을 입력해주세요"}
+                </h1>
+
+                <div className={`w-8 h-1 bg-current opacity-20 mx-auto mb-4 rounded-full ${selectedTheme.text}`}></div>
+
+                <p className={`font-medium text-xs mb-6 opacity-80 whitespace-pre-wrap ${selectedTheme.text} ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
+                  {formData.description || "초대 문구가\n여기에 표시됩니다."}
+                </p>
+
+                <div className={`text-[10px] bg-white/10 backdrop-blur-md rounded-xl p-3 inline-block ${selectedTheme.text}`}>
+                  <p className="font-bold opacity-90 mb-1">{formData.event_date ? new Date(formData.event_date).toLocaleDateString() : "0000.00.00"}</p>
+                  <p className="opacity-70">{formData.location || "장소 미정"}</p>
+                </div>
+              </div>
+            </div>
+
+              {/* BGM Indicator in Preview */}
+          {formData.bgm !== 'none' && (
+            <div className="mt-6 flex items-center gap-2 text-gray-500 bg-gray-100 px-4 py-2 rounded-full text-xs font-bold animate-pulse">
+              <span>🎵 {formData.bgm === 'classic' ? '클래식' : formData.bgm === 'jazz' ? '재즈' : '어쿠스틱'} 음악이 함께 전송됩니다</span>
+            </div>
+          )}
         </div>
+          )}
+
       </div>
 
-      {/* Right: PC Side Preview (Visible Hub) */}
-      {isPC && (
-        <div className="flex-1 bg-[#1a1a1a] flex flex-col items-center justify-center p-12 relative overflow-hidden">
-          {/* Background Ambient Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-500/10 blur-[150px] rounded-full" />
+      {/* Fixed Bottom Action Bar (Inside Sidebar on PC, Global on Mobile) */}
+      <div className="shrink-0 p-4 bg-white border-t border-gray-100 z-50 safe-area-bottom">
+        <div className="flex gap-3">
+          {currentStep > 0 && (
+            <button
+              onClick={handlePrev}
+              className="px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors active:scale-95"
+            >
+              이전
+            </button>
+          )}
+          <button
+            onClick={currentStep < steps.length - 1 ? handleNext : handleSubmit}
+            disabled={isNextDisabled()}
+            className="flex-1 py-4 bg-[#E74C3C] text-white text-lg rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-[#c0392b] disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95"
+          >
+            {currentStep < steps.length - 1 ? "다음" : "초대장 완성하기"}
+          </button>
+        </div>
+        <p className="text-[10px] text-center text-gray-300 mt-2 font-mono">v1.1 Editor</p>
+      </div>
+    </div>
 
-          {/* Phone Frame for Live Preview */}
-          <div className="relative w-full max-w-[380px] h-[780px] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-[12px] border-[#333] z-10 scale-[0.9] xl:scale-100 transition-transform">
-            {/* Dynamic Content inside Mock Phone */}
-            <div className="absolute inset-0 bg-white overflow-y-auto no-scrollbar">
-              <div className="relative w-full">
-                {previewUrls.length > 0 ? (
-                  <img
-                    src={previewUrls[0]}
-                    alt="Preview"
-                    className="w-full h-auto object-contain"
-                  />
-                ) : (
-                  <div className="h-[400px] bg-gray-50 flex flex-col items-center justify-center text-gray-300">
-                    <Sparkles size={48} className="mb-4 opacity-20" />
-                    <p className="text-sm font-bold opacity-30">이미지를 추가해 주세요</p>
-                  </div>
-                )}
-              </div>
-              <div className="p-8 pb-20">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E74C3C] rounded-lg text-[10px] font-black uppercase mb-4 tracking-tighter">
-                  <Sparkles size={10} /> Live Preview
+      {/* Right: PC Side Preview (Visible Hub) */ }
+  {
+    isPC && (
+      <div className="flex-1 bg-[#1a1a1a] flex flex-col items-center justify-center p-12 relative overflow-hidden">
+        {/* Background Ambient Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-500/10 blur-[150px] rounded-full" />
+
+        {/* Phone Frame for Live Preview */}
+        <div className="relative w-full max-w-[380px] h-[780px] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-[12px] border-[#333] z-10 scale-[0.9] xl:scale-100 transition-transform">
+          {/* Dynamic Content inside Mock Phone */}
+          <div className="absolute inset-0 bg-white overflow-y-auto no-scrollbar">
+            <div className="relative w-full">
+              {previewUrls.length > 0 ? (
+                <img
+                  src={previewUrls[0]}
+                  alt="Preview"
+                  className="w-full h-auto object-contain"
+                />
+              ) : (
+                <div className="h-[400px] bg-gray-50 flex flex-col items-center justify-center text-gray-300">
+                  <Sparkles size={48} className="mb-4 opacity-20" />
+                  <p className="text-sm font-bold opacity-30">이미지를 추가해 주세요</p>
                 </div>
-                <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''
-                  }`}>
-                  {formData.title || "초대장 제목"}
-                </h1>
-                <div className="w-10 h-1 bg-gray-100 mb-6 rounded-full" />
-                <p className={`text-lg opacity-70 mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
-                  {formData.description || "초대 문구가 여기에 표시됩니다.\n아직 작성된 내용이 없습니다."}
-                </p>
-                <div className="space-y-4 border-t border-gray-50 pt-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
-                      <Calendar size={18} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400">Date & Time</p>
-                      <p className="font-bold text-sm">
-                        {formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}
-                        {formData.event_end_date && (
-                          <span className="text-gray-400"> ~ {new Date(formData.event_end_date).toLocaleString()}</span>
-                        )}
-                      </p>
-                    </div>
+              )}
+            </div>
+            <div className="p-8 pb-20">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E74C3C] rounded-lg text-[10px] font-black uppercase mb-4 tracking-tighter">
+                <Sparkles size={10} /> Live Preview
+              </div>
+              <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''
+                }`}>
+                {formData.title || "초대장 제목"}
+              </h1>
+              <div className="w-10 h-1 bg-gray-100 mb-6 rounded-full" />
+              <p className={`text-lg opacity-70 mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
+                {formData.description || "초대 문구가 여기에 표시됩니다.\n아직 작성된 내용이 없습니다."}
+              </p>
+              <div className="space-y-4 border-t border-gray-50 pt-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
+                    <Calendar size={18} />
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
-                      <MapPin size={18} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400">Location</p>
-                      <p className="font-bold text-sm">{formData.location || "장소 미정"}</p>
-                    </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-gray-400">Date & Time</p>
+                    <p className="font-bold text-sm">
+                      {formData.event_date ? new Date(formData.event_date).toLocaleString() : "일시 미정"}
+                      {formData.event_end_date && (
+                        <span className="text-gray-400"> ~ {new Date(formData.event_end_date).toLocaleString()}</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-gray-400">Location</p>
+                    <p className="font-bold text-sm">{formData.location || "장소 미정"}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="mt-8 text-white/30 text-[10px] font-black uppercase tracking-[0.2em] z-10">Wayo Pro Creator Studio</div>
         </div>
-      )}
 
-      {/* Success Modal */}
-      <AnimatePresence>
-        {showSuccessModal && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl"
-            >
-              <div className="p-10 text-center">
-                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-[#E74C3C]">
-                  <Sparkles size={40} />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-3">초대장 완성!</h3>
-                <p className="text-gray-500 font-medium leading-relaxed mb-8">
-                  멋진 초대장이 만들어졌습니다.<br />
-                  {localStorage.getItem("authToken")
-                    ? "고급 편집기 기능을 준비 중입니다.\n지금은 기본 초대장을 확인할 수 있어요!"
-                    : "로그인하시면 초대장을\n영구적으로 관리할 수 있습니다."
-                  }
-                </p>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => router.push(`/invitations/${createdId}`)}
-                    className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
-                  >
-                    초대장 확인하기
-                  </button>
-                  <button
-                    onClick={() => setShowSuccessModal(false)}
-                    className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
-                  >
-                    닫기
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+        <div className="mt-8 text-white/30 text-[10px] font-black uppercase tracking-[0.2em] z-10">Wayo Pro Creator Studio</div>
+      </div>
+    )
+  }
+
+  {/* Success Modal */ }
+  <AnimatePresence>
+    {showSuccessModal && (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          className="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl"
+        >
+          <div className="p-10 text-center">
+            <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-[#E74C3C]">
+              <Sparkles size={40} />
+            </div>
+            <h3 className="text-2xl font-black text-gray-900 mb-3">초대장 완성!</h3>
+            <p className="text-gray-500 font-medium leading-relaxed mb-8">
+              멋진 초대장이 만들어졌습니다.<br />
+              {localStorage.getItem("authToken")
+                ? "고급 편집기 기능을 준비 중입니다.\n지금은 기본 초대장을 확인할 수 있어요!"
+                : "로그인하시면 초대장을\n영구적으로 관리할 수 있습니다."
+              }
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => router.push(`/invitations/${createdId}`)}
+                className="w-full py-4 bg-[#E74C3C] text-white rounded-2xl font-bold text-lg hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-100"
+              >
+                초대장 확인하기
+              </button>
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full py-4 bg-gray-50 text-gray-500 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
+              >
+                닫기
+              </button>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
 
-      {/* Global Style */}
-      <style jsx global>{`
+  {/* Global Style */ }
+  <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }
         @keyframes bounce-slow { 0%, 100% { transform: translateY(-5%); } 50% { transform: translateY(5%); } }
         .animate-bounce-slow { animation: bounce-slow 3s infinite ease-in-out; }
       `}</style>
-    </div>
+    </div >
   );
 }
