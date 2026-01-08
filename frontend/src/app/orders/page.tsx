@@ -50,7 +50,7 @@ export default function OrdersPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/orders`, {
         headers: {
-          "Authorization": token
+          "Authorization": `Bearer ${token}`
         }
       });
 
@@ -95,9 +95,9 @@ export default function OrdersPage() {
                     </p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                      order.status === 'shipping' ? 'bg-blue-100 text-blue-700' :
-                        order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                          'bg-gray-100 text-gray-700'
+                    order.status === 'shipping' ? 'bg-blue-100 text-blue-700' :
+                      order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                        'bg-gray-100 text-gray-700'
                     }`}>
                     {statusText[order.status] || order.status}
                   </span>

@@ -31,7 +31,7 @@ export default function NewPostPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           post: {
@@ -83,8 +83,8 @@ export default function NewPostPage() {
                 type="button"
                 onClick={() => setCategory(cat)}
                 className={`px-5 py-2 rounded-2xl text-xs font-black transition-all ${category === cat
-                    ? "bg-gray-900 text-white shadow-lg"
-                    : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                  ? "bg-gray-900 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                   }`}
               >
                 #{cat.replace(" ", "")}

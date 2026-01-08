@@ -145,7 +145,7 @@ export default function CreateInvitationPage() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations`, {
         method: "POST",
         headers: {
-          "Authorization": localStorage.getItem("authToken") || ""
+          "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
         },
         body: formDataToSend
       });

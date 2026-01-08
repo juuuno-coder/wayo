@@ -25,7 +25,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
         const fetchInvitation = async () => {
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`, {
-                    headers: { "Authorization": localStorage.getItem("authToken") || "" }
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` }
                 });
                 if (res.ok) {
                     const data = await res.json();
@@ -62,7 +62,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": localStorage.getItem("authToken") || ""
+                    "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
                 },
                 body: JSON.stringify(payload)
             });

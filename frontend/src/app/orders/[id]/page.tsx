@@ -57,7 +57,7 @@ export default function OrderDetailPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/orders/${id}`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -100,10 +100,10 @@ export default function OrderDetailPage() {
         <div className="flex items-center gap-3 mb-4">
           <div
             className={`w-12 h-12 rounded-full flex items-center justify-center ${order.status === "delivered"
-                ? "bg-green-100"
-                : order.status === "shipping"
-                  ? "bg-blue-100"
-                  : "bg-gray-100"
+              ? "bg-green-100"
+              : order.status === "shipping"
+                ? "bg-blue-100"
+                : "bg-gray-100"
               }`}
           >
             {order.status === "shipping" || order.status === "delivered" ? (

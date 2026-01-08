@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://wayo.fly.dev";
                 const response = await fetch(`${apiUrl}/users/me`, {
                     headers: {
-                        'Authorization': savedToken,
+                        'Authorization': savedToken.startsWith('Bearer ') ? savedToken : `Bearer ${savedToken}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -148,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await fetch(`${apiUrl}/users/me`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': token,
+                    'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ user: { nickname: newNickname } })

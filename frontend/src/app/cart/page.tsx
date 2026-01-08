@@ -37,7 +37,7 @@ export default function CartPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/cart_items`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -64,7 +64,7 @@ export default function CartPage() {
         {
           method: "PATCH",
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ quantity: newQuantity }),
@@ -93,7 +93,7 @@ export default function CartPage() {
         {
           method: "DELETE",
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -123,7 +123,7 @@ export default function CartPage() {
       const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/orders`, {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -168,7 +168,7 @@ export default function CartPage() {
             const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/payments/verify`, {
               method: "POST",
               headers: {
-                Authorization: token,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({

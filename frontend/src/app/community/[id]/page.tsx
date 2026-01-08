@@ -80,7 +80,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           comment: {

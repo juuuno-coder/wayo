@@ -53,7 +53,7 @@ export default function SendInvitationModal({ isOpen, onClose, invitationId }: S
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+                        "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
                     },
                     body: JSON.stringify({
                         guest: {
