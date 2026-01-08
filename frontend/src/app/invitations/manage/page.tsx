@@ -27,7 +27,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function ManageInvitationsPage() {
     const router = useRouter();
-    const { isLoggedIn, token, isLoading } = useAuth();
+    const { isLoggedIn, user, token, isLoading } = useAuth();
     const [invitations, setInvitations] = useState<any[]>([]);
     const [receivedInvitations, setReceivedInvitations] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
