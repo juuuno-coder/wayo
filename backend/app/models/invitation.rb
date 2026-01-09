@@ -10,4 +10,20 @@ class Invitation < ApplicationRecord
   validates :status, presence: true
 
   enum :status, { draft: 'draft', published: 'published', sending: 'sending', completed: 'completed' }, default: 'draft'
+
+  after_save_commit :broadcast_to_user
+  after_destroy_commit :broadcast_to_user
+
+  private
+
+  def broadcast_to_user
+    return unless user_id
+    ActionCable.server.broadcast(
+      "invitation_user_#{user_id}",
+      {
+        type: 'INVITATION_UPDATED',
+        invitation: self.as_json(include: :invitation_guests)
+      }
+    )
+  end
 end

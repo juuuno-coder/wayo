@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   MapPin,
@@ -52,6 +52,9 @@ const themes: Record<string, { name: string; bg: string; text: string; accent: s
 
 export default function CreateInvitationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('id');
+
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     title: "",
@@ -75,6 +78,8 @@ export default function CreateInvitationPage() {
   const [ticketTypes, setTicketTypes] = useState<any[]>([]);
   const [isPC, setIsPC] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoadingDraft, setIsLoadingDraft] = useState(false);
 
   // Separate date/time state
   const [eventDateOnly, setEventDateOnly] = useState("");
@@ -86,6 +91,66 @@ export default function CreateInvitationPage() {
   const [draftId, setDraftId] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // Load existing invitation if editing
+  useEffect(() => {
+    if (editId) {
+      const fetchExistingInvitation = async () => {
+        setIsLoadingDraft(true);
+        try {
+          const token = localStorage.getItem('authToken');
+          const res = await fetch(`${API_BASE_URL}/invitations/${editId}`, {
+            headers: token ? { "Authorization": `Bearer ${token}` } : {}
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            setIsEditMode(true);
+            setDraftId(Number(editId));
+            setCreatedId(Number(editId));
+
+            // Populate form with existing data
+            setFormData({
+              title: data.title || "",
+              description: data.description || "",
+              sender_name: data.sender_name || "",
+              event_date: data.event_date || "",
+              event_end_date: data.event_end_date || "",
+              location: data.location || "",
+              theme_color: data.theme_color || "classic",
+              font_style: data.font_style || "sans",
+              bgm: data.bgm || "none",
+              text_effect: data.text_effect || "none",
+              default_layout: data.default_layout || "standard"
+            });
+
+            // Parse date/time from event_date
+            if (data.event_date) {
+              const dateObj = new Date(data.event_date);
+              setEventDateOnly(dateObj.toISOString().split('T')[0]);
+              setStartTime(dateObj.toTimeString().slice(0, 5));
+            }
+
+            if (data.event_end_date) {
+              const endDateObj = new Date(data.event_end_date);
+              setEndTime(endDateObj.toTimeString().slice(0, 5));
+              setShowEndTime(true);
+            }
+
+            // Set preview URLs from existing images
+            if (data.image_urls && data.image_urls.length > 0) {
+              setPreviewUrls(data.image_urls);
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load invitation:", e);
+        } finally {
+          setIsLoadingDraft(false);
+        }
+      };
+      fetchExistingInvitation();
+    }
+  }, [editId]);
 
   useEffect(() => {
     const checkPC = () => setIsPC(window.innerWidth >= 1024);
@@ -261,15 +326,32 @@ export default function CreateInvitationPage() {
 
   const selectedTheme = themes[formData.theme_color] || themes.classic;
 
+  // Show loading spinner while fetching existing invitation
+  if (isLoadingDraft) {
+    return (
+      <div className="h-screen bg-[#FDFBF7] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 border-4 border-gray-200 border-t-[#E74C3C] rounded-full mb-4 mx-auto"></div>
+          <p className="text-gray-500 font-medium">초대장 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`h-screen bg-[#FDFBF7] flex flex-col lg:flex-row ${inter.className} overflow-hidden`}>
       {/* Left: Editor Area */}
       <div className={`flex flex-col bg-white border-r border-gray-100 z-50 shadow-xl transition-all h-screen ${isPC ? 'w-[450px]' : 'w-full'}`}>
         <div className="shrink-0 bg-white z-50">
           <header className="px-4 py-3 flex items-center h-14 justify-between">
-            <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
-              <ArrowLeft size={24} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+                <ArrowLeft size={24} />
+              </button>
+              {isEditMode && (
+                <span className="px-2 py-1 bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg">수정 중</span>
+              )}
+            </div>
             <div className="flex items-center gap-3">
               {isSaving ? (
                 <span className="text-xs font-bold text-blue-500 animate-pulse">저장 중...</span>

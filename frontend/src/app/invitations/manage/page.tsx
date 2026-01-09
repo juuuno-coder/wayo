@@ -9,10 +9,16 @@ import {
     Calendar,
     Sparkles,
     Search,
-    ChevronLeft
+    ChevronLeft,
+    Trash2,
+    MoreVertical,
+    Edit,
+    Share2,
+    ExternalLink
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useActionCable } from "@/hooks/useActionCable";
 import GuestListModal from "@/components/GuestListModal";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
@@ -36,6 +42,55 @@ export default function ManageInvitationsPage() {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [selectedInvitation, setSelectedInvitation] = useState<any | null>(null);
     const [isGuestListOpen, setIsGuestListOpen] = useState(false);
+
+    // Delete modal state
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [invitationToDelete, setInvitationToDelete] = useState<any | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    // Action menu state (for mobile/touch)
+    const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+
+    const handleDelete = async (invitation: any) => {
+        if (!token) return;
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/invitations/${invitation.id}`, {
+                method: 'DELETE',
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setInvitations(prev => prev.filter(inv => inv.id !== invitation.id));
+                setIsDeleteModalOpen(false);
+                setInvitationToDelete(null);
+            } else {
+                alert('삭제에 실패했습니다. 다시 시도해주세요.');
+            }
+        } catch (error) {
+            console.error('Delete failed:', error);
+            alert('삭제 중 오류가 발생했습니다.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleShare = async (invitation: any) => {
+        const shareUrl = `${window.location.origin}/invitations/${invitation.id}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: invitation.title,
+                    text: `${invitation.sender_name || ''}님의 초대장입니다.`,
+                    url: shareUrl
+                });
+            } catch (e) {
+                console.log('Share cancelled');
+            }
+        } else {
+            navigator.clipboard.writeText(shareUrl);
+            alert('링크가 클립보드에 복사되었습니다!');
+        }
+    };
 
     const fetchMyInvitations = useCallback(async () => {
         try {
@@ -103,18 +158,35 @@ export default function ManageInvitationsPage() {
         }
     }, [token]);
 
+    const handleRealtimeMessage = useCallback((data: any) => {
+        if (data.type === 'INVITATION_UPDATED') {
+            const updatedInvite = data.invitation;
+            const inviteWithGuests = {
+                ...updatedInvite,
+                guests: updatedInvite.invitation_guests || []
+            };
+
+            setInvitations(prev => {
+                const index = prev.findIndex(inv => inv.id === inviteWithGuests.id);
+                if (index !== -1) {
+                    const next = [...prev];
+                    next[index] = { ...next[index], ...inviteWithGuests };
+                    return next;
+                } else {
+                    return [inviteWithGuests, ...prev];
+                }
+            });
+        }
+    }, []);
+
+    useActionCable(token, handleRealtimeMessage);
+
     useEffect(() => {
         if (isLoading) return;
         fetchMyInvitations();
         fetchReceivedInvitations();
 
-        // Poll every 1 second for real-time updates
-        const interval = setInterval(() => {
-            fetchMyInvitations();
-            fetchReceivedInvitations();
-        }, 1000);
-
-        // Also refetch on window focus
+        // Also refetch on window focus for extra reliability
         const onFocus = () => {
             fetchMyInvitations();
             fetchReceivedInvitations();
@@ -122,7 +194,6 @@ export default function ManageInvitationsPage() {
         window.addEventListener('focus', onFocus);
 
         return () => {
-            clearInterval(interval);
             window.removeEventListener('focus', onFocus);
         };
     }, [token, isLoading, fetchMyInvitations, fetchReceivedInvitations]);
@@ -333,6 +404,73 @@ export default function ManageInvitationsPage() {
                                     </div>
                                 )}
 
+                                {/* Action Menu Button (Sent Tab Only) */}
+                                {activeTab === 'sent' && (
+                                    <div className="absolute top-3 right-3 z-20">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActiveMenuId(activeMenuId === invite.id ? null : invite.id);
+                                            }}
+                                            className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors"
+                                        >
+                                            <MoreVertical size={16} className="text-gray-600" />
+                                        </button>
+
+                                        {/* Dropdown Menu */}
+                                        {activeMenuId === invite.id && (
+                                            <div className="absolute top-10 right-0 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 min-w-[160px] animate-in fade-in slide-in-from-top-2 duration-200">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.push(`/invitations/create?id=${invite.id}`);
+                                                        setActiveMenuId(null);
+                                                    }}
+                                                    className="w-full px-4 py-2.5 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                                                >
+                                                    <Edit size={16} className="text-gray-400" />
+                                                    수정하기
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.push(`/invitations/${invite.id}`);
+                                                        setActiveMenuId(null);
+                                                    }}
+                                                    className="w-full px-4 py-2.5 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                                                >
+                                                    <ExternalLink size={16} className="text-gray-400" />
+                                                    초대장 보기
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleShare(invite);
+                                                        setActiveMenuId(null);
+                                                    }}
+                                                    className="w-full px-4 py-2.5 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                                                >
+                                                    <Share2 size={16} className="text-gray-400" />
+                                                    공유하기
+                                                </button>
+                                                <div className="h-px bg-gray-100 my-1" />
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setInvitationToDelete(invite);
+                                                        setIsDeleteModalOpen(true);
+                                                        setActiveMenuId(null);
+                                                    }}
+                                                    className="w-full px-4 py-2.5 text-left text-sm font-medium text-red-500 hover:bg-red-50 flex items-center gap-3"
+                                                >
+                                                    <Trash2 size={16} />
+                                                    삭제하기
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Image Section */}
                                 <div className="aspect-[4/3] bg-gray-100 relative">
                                     {(invite.image_urls && invite.image_urls.length > 0) ? (
@@ -451,16 +589,51 @@ export default function ManageInvitationsPage() {
                 onClose={() => setIsAuthModalOpen(false)}
             />
 
+            {/* Delete Confirmation Modal */}
+            {isDeleteModalOpen && invitationToDelete && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-8 text-center">
+                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                                <Trash2 size={28} className="text-red-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">초대장을 삭제할까요?</h3>
+                            <p className="text-gray-500 text-sm mb-1">"{invitationToDelete.title}"</p>
+                            <p className="text-gray-400 text-xs mb-6">이 작업은 되돌릴 수 없습니다.</p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        setIsDeleteModalOpen(false);
+                                        setInvitationToDelete(null);
+                                    }}
+                                    className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors"
+                                    disabled={isDeleting}
+                                >
+                                    취소
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(invitationToDelete)}
+                                    className="flex-1 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-colors disabled:opacity-50"
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? '삭제 중...' : '삭제'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Debug Panel for User Reassurance */}
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 text-white p-2 text-[10px] font-mono opacity-70 hover:opacity-100 transition-opacity z-[100] flex justify-between px-6 pointer-events-none sm:pointer-events-auto">
                 <div className="flex gap-4">
-                    <span>STATUS: {loading || isLoading ? "SYNCING..." : "LIVE"}</span>
+                    <span>WEB_SOCKET_STATUS: {token ? "ACTIONCABLE_LIVE" : "GUEST_POLLING"}</span>
                     <span>ITEMS: {invitations.length} (Sent) / {receivedInvitations.length} (Received)</span>
                     <span>FILTER: {activeFilter}</span>
                 </div>
                 <div>
                     <span>TOKEN: {token ? "OK" : "NONE"}</span>
-                    <span className="ml-4 text-yellow-400">AUTO-REFRESH: ON (1s)</span>
+                    <span className="ml-4 text-green-400">REAL-TIME: READY</span>
                 </div>
             </div>
         </div>
