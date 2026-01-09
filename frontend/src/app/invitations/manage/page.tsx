@@ -14,7 +14,10 @@ import {
     MoreVertical,
     Edit,
     Share2,
-    ExternalLink
+    ExternalLink,
+    MessageSquare,
+    MapPin,
+    ShoppingBag
 } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
@@ -319,6 +322,76 @@ export default function ManageInvitationsPage() {
                                 </button>
                             )}
                         </div>
+
+                        {/* Alternative Content Options */}
+                        {activeTab === 'sent' && (
+                            <div>
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="h-px bg-gray-200 flex-1"></div>
+                                    <span className="text-sm font-bold text-gray-400">초대장이 아니더라도 이런 활동을 해보세요</span>
+                                    <div className="h-px bg-gray-200 flex-1"></div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {/* Community Post Card */}
+                                    <motion.div
+                                        whileHover={{ scale: 1.02, y: -4 }}
+                                        onClick={() => {
+                                            if (!isLoggedIn) {
+                                                setIsAuthModalOpen(true);
+                                            } else {
+                                                router.push('/community/new');
+                                            }
+                                        }}
+                                        className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 cursor-pointer border border-blue-200 hover:border-blue-300 transition-all group"
+                                    >
+                                        <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                                            <MessageSquare size={24} className="text-white" />
+                                        </div>
+                                        <h4 className="text-lg font-bold text-gray-900 mb-2">커뮤니티 게시글 작성</h4>
+                                        <p className="text-sm text-gray-600 leading-relaxed">
+                                            일상을 공유하고 다른 사용자와 소통해보세요
+                                        </p>
+                                    </motion.div>
+
+                                    {/* Event Suggestion Card */}
+                                    <motion.div
+                                        whileHover={{ scale: 1.02, y: -4 }}
+                                        onClick={() => {
+                                            if (!isLoggedIn) {
+                                                setIsAuthModalOpen(true);
+                                            } else {
+                                                router.push('/reports/new');
+                                            }
+                                        }}
+                                        className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 cursor-pointer border border-purple-200 hover:border-purple-300 transition-all group"
+                                    >
+                                        <div className="w-14 h-14 bg-purple-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                                            <MapPin size={24} className="text-white" />
+                                        </div>
+                                        <h4 className="text-lg font-bold text-gray-900 mb-2">이벤트 제안하기</h4>
+                                        <p className="text-sm text-gray-600 leading-relaxed">
+                                            새로운 이벤트나 장소를 추천해주세요
+                                        </p>
+                                    </motion.div>
+
+                                    {/* Shopping Items Card */}
+                                    <motion.div
+                                        whileHover={{ scale: 1.02, y: -4 }}
+                                        onClick={() => router.push('/items')}
+                                        className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 cursor-pointer border border-green-200 hover:border-green-300 transition-all group"
+                                    >
+                                        <div className="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                                            <ShoppingBag size={24} className="text-white" />
+                                        </div>
+                                        <h4 className="text-lg font-bold text-gray-900 mb-2">상품 둘러보기</h4>
+                                        <p className="text-sm text-gray-600 leading-relaxed">
+                                            특별한 날을 위한 상품을 찾아보세요
+                                        </p>
+                                    </motion.div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Sample Preview Section */}
                         {activeTab === 'sent' && (
