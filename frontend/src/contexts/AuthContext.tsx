@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load state from localStorage on init
     useEffect(() => {
         const initializeAuth = async () => {
-            const savedToken = localStorage.getItem("authToken");
+            const savedToken = localStorage.getItem("authToken")?.replace(/^Bearer\s+/i, "");
             if (!savedToken) {
                 setIsLoading(false);
                 return;
@@ -163,9 +163,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const login = (newToken: string, newUser: User) => {
-        localStorage.setItem("authToken", newToken);
+        const cleanToken = newToken.replace(/^Bearer\s+/i, "");
+        localStorage.setItem("authToken", cleanToken);
         localStorage.setItem("userData", JSON.stringify(newUser));
-        setToken(newToken);
+        setToken(cleanToken);
         setUser(newUser);
         setIsLoggedIn(true);
         setIsLoading(false); // Ensure loading state is cleared after manual or URL login

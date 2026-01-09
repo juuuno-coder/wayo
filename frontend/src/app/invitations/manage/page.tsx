@@ -57,7 +57,7 @@ export default function ManageInvitationsPage() {
         try {
             const res = await fetch(`${API_BASE_URL}/invitations/${invitation.id}`, {
                 method: 'DELETE',
-                headers: { "Authorization": `Bearer ${token}` }
+                headers: { "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}` }
             });
             if (res.ok) {
                 setInvitations(prev => prev.filter(inv => inv.id !== invitation.id));
@@ -96,7 +96,7 @@ export default function ManageInvitationsPage() {
         try {
             if (token) {
                 const res = await fetch(`${API_BASE_URL}/invitations?t=${Date.now()}`, {
-                    headers: { "Authorization": `Bearer ${token}` },
+                    headers: { "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}` },
                     cache: 'no-store',
                     next: { revalidate: 0 }
                 });
@@ -146,7 +146,7 @@ export default function ManageInvitationsPage() {
         try {
             if (!token) return;
             const res = await fetch(`${API_BASE_URL}/invitations/received?t=${Date.now()}`, {
-                headers: { "Authorization": `Bearer ${token}` },
+                headers: { "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}` },
                 cache: 'no-store'
             });
             if (res.ok) {

@@ -16,18 +16,29 @@ export default function GabojagoLogin() {
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
+        const tokenParam = params.get("token");
         const email = params.get("email");
         const id = params.get("id");
+        const nickname = params.get("nickname");
 
-        if (token && email && id) {
-            localStorage.setItem("authToken", token);
+        if (tokenParam && email && id) {
+            const cleanToken = tokenParam.replace(/^Bearer\s+/i, "");
+            localStorage.setItem("authToken", cleanToken);
             localStorage.setItem("userEmail", email);
             localStorage.setItem("userId", id);
+
+            const userObj = {
+                id: String(id),
+                email: email,
+                nickname: nickname || email.split('@')[0],
+            };
+
+            login(cleanToken, userObj);
+
             // Clean URL and redirect to home
             router.replace("/");
         }
-    }, [router]);
+    }, [router, login]);
 
     const handleGoogleLogin = () => {
         const backendUrl = API_BASE_URL;
@@ -64,7 +75,8 @@ export default function GabojagoLogin() {
 
             if (response.ok) {
                 // JWT 토큰 저장 (Authorization 헤더)
-                const token = response.headers.get("Authorization");
+                const authHeader = response.headers.get("Authorization");
+                const token = authHeader?.replace(/^Bearer\s+/i, "");
                 if (token) {
                     localStorage.setItem("authToken", token);
                 }

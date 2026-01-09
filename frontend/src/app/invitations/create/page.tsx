@@ -100,7 +100,7 @@ export default function CreateInvitationPage() {
         try {
           const token = localStorage.getItem('authToken');
           const res = await fetch(`${API_BASE_URL}/invitations/${editId}`, {
-            headers: token ? { "Authorization": `Bearer ${token}` } : {}
+            headers: token ? { "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}` } : {}
           });
 
           if (res.ok) {
@@ -194,7 +194,7 @@ export default function CreateInvitationPage() {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
           },
           body: JSON.stringify({ invitation: saveData })
         });
@@ -208,7 +208,7 @@ export default function CreateInvitationPage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
           },
           body: JSON.stringify({ invitation: saveData })
         });
@@ -283,12 +283,15 @@ export default function CreateInvitationPage() {
       images.forEach(img => data.append("invitation[images][]", img));
 
       let res;
+      const authToken = localStorage.getItem("authToken") || "";
+      const authHeader = authToken.startsWith('Bearer ') ? authToken : `Bearer ${authToken}`;
+
       if (draftId) {
         // Update existing draft to final
         res = await fetch(`${API_BASE_URL}/invitations/${draftId}`, {
           method: "PATCH",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+            "Authorization": authHeader
           },
           body: data
         });
@@ -297,7 +300,7 @@ export default function CreateInvitationPage() {
         res = await fetch(`${API_BASE_URL}/invitations`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+            "Authorization": authHeader
           },
           body: data
         });

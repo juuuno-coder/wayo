@@ -114,7 +114,9 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     try {
       const res = await fetch(`${API_BASE_URL}/invitations/${id}`, {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+          "Authorization": (localStorage.getItem("authToken") || "").startsWith('Bearer ')
+            ? localStorage.getItem("authToken")!
+            : `Bearer ${localStorage.getItem("authToken")}`
         }
       });
       if (res.ok) {
@@ -201,7 +203,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
   };
 
   const handleSaveInvitation = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("authToken");
 
     // If not logged in, show signup modal
     if (!token) {
@@ -216,7 +218,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
           }
         });
 
@@ -288,7 +290,9 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+          "Authorization": (localStorage.getItem("authToken") || "").startsWith('Bearer ')
+            ? localStorage.getItem("authToken")!
+            : `Bearer ${localStorage.getItem("authToken")}`
         },
         body: JSON.stringify({
           guest: {

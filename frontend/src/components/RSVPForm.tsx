@@ -38,7 +38,7 @@ export default function RSVPForm({
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        Authorization: (token || "").startsWith('Bearer ') ? token! : `Bearer ${token}`,
                     },
                     body: JSON.stringify({ status, message }),
                 }

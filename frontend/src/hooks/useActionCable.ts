@@ -29,7 +29,8 @@ export const useActionCable = (token: string | null, onMessage: (data: any) => v
         console.log('[ActionCable] Connecting to', WEBSOCKET_URL);
 
         // Create consumer with token in query params
-        const url = `${WEBSOCKET_URL}?token=${token}`;
+        const cleanToken = token.startsWith('Bearer ') ? token.substring(7) : token;
+        const url = `${WEBSOCKET_URL}?token=${cleanToken}`;
         consumerRef.current = createConsumer(url);
 
         subscriptionRef.current = consumerRef.current.subscriptions.create(

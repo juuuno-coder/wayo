@@ -68,7 +68,7 @@ export default function ItemDetailPage() {
       const res = await fetch(`${API_BASE_URL}/items/${item?.id}/like`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -94,7 +94,7 @@ export default function ItemDetailPage() {
       const res = await fetch(`${API_BASE_URL}/cart_items`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -142,7 +142,7 @@ export default function ItemDetailPage() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

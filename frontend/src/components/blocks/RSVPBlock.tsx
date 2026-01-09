@@ -39,7 +39,9 @@ export default function RSVPBlock({ block, invitationId }: RSVPBlockProps) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+                    'Authorization': (localStorage.getItem('authToken') || "").startsWith('Bearer ')
+                        ? localStorage.getItem('authToken')!
+                        : `Bearer ${localStorage.getItem('authToken') || ''}`
                 },
                 body: JSON.stringify({
                     guest: {

@@ -7,9 +7,9 @@ const getHeaders = () => {
     "Content-Type": "application/json",
   };
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token"); // Assuming token is stored as 'token'
+    const token = localStorage.getItem("authToken");
     if (token) {
-      headers["Authorization"] = `Bearer ${token}`; // Adjust if needed (e.g., just token)
+      headers["Authorization"] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     }
   }
   return headers;
