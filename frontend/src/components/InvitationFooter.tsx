@@ -68,12 +68,31 @@ export default function InvitationFooter({
                     </button>
                 </div>
             ) : (
-                <button
-                    onClick={onAddToCalendar}
-                    className="w-full py-4 bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
-                >
-                    <CalendarPlus size={20} /> 가보자고 캘린더에 일정 등록
-                </button>
+                <>
+                    <button
+                        onClick={onAddToCalendar}
+                        className="w-full py-4 bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200 mb-4"
+                    >
+                        <CalendarPlus size={20} /> 가보자고 캘린더에 일정 등록
+                    </button>
+
+                    {/* Wayo Promotional Banner */}
+                    <div
+                        onClick={() => router.push('/')}
+                        className="w-full bg-gradient-to-r from-[#E74C3C] to-[#c0392b] rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-all group"
+                    >
+                        <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                                <p className="text-white/80 text-xs font-bold mb-1">초대장을 만들고 싶으신가요?</p>
+                                <h3 className="text-white text-xl font-black mb-2">와요~ 🎉</h3>
+                                <p className="text-white/90 text-sm">무료로 나만의 초대장을 만들어보세요</p>
+                            </div>
+                            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                                <span className="text-2xl">→</span>
+                            </div>
+                        </div>
+                    </div>
+                </>
             )}
 
             {/* RSVP Form Section */}

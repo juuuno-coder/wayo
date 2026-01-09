@@ -23,6 +23,7 @@ class InvitationsController < ApplicationController
     if current_user
       @invitations = Invitation.joins(:invitation_guests)
                                .where(invitation_guests: { user_id: current_user.id })
+                               .where.not(user_id: current_user.id) # Exclude invitations I created
                                .with_attached_images
                                .distinct
     else
