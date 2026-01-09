@@ -91,10 +91,12 @@ export default function ProfilePage() {
             <span className="font-bold text-gray-700">알림 설정</span>
             <ChevronRight size={20} className="text-gray-300 group-hover:text-gray-500" />
           </button>
-          <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors text-left group">
-            <span className="font-bold text-gray-700">고객센터</span>
-            <ChevronRight size={20} className="text-gray-300 group-hover:text-gray-500" />
-          </button>
+          <Link href="/profile/change-password">
+            <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-colors text-left group">
+              <span className="font-bold text-gray-700">비밀번호 변경</span>
+              <ChevronRight size={20} className="text-gray-300 group-hover:text-gray-500" />
+            </button>
+          </Link>
           <div className="h-px bg-gray-100 my-2" />
           <button
             onClick={handleLogout}
@@ -118,8 +120,8 @@ export default function ProfilePage() {
 function MenuCard({ icon, label, desc, highlight = false }: { icon: React.ReactNode; label: string; desc: string; highlight?: boolean }) {
   return (
     <div className={`w-full p-6 rounded-3xl border transition-all hover:scale-[1.02] cursor-pointer h-full flex flex-col justify-between group ${highlight
-        ? 'bg-white border-red-100 shadow-sm hover:shadow-md hover:border-[#E74C3C]'
-        : 'bg-white border-gray-100 hover:border-gray-300 shadow-sm'
+      ? 'bg-white border-red-100 shadow-sm hover:shadow-md hover:border-[#E74C3C]'
+      : 'bg-white border-gray-100 hover:border-gray-300 shadow-sm'
       }`}>
       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-colors ${highlight ? 'bg-red-50 text-[#E74C3C] group-hover:bg-[#E74C3C] group-hover:text-white' : 'bg-gray-50 text-gray-600 group-hover:bg-gray-900 group-hover:text-white'
         }`}>

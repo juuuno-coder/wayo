@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     collection do
       get :search
       get :me
+      post :update_password
     end
   end
   
