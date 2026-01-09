@@ -61,9 +61,18 @@ class InvitationsController < ApplicationController
 
   # POST /invitations
   def create
+    Rails.logger.info "DEBUG: Creating invitation with current_user: #{current_user&.id}"
     Rails.logger.info "DEBUG: invitation_params: #{invitation_params.inspect}"
+    
     @invitation = Invitation.new(invitation_params)
-    @invitation.user = current_user if user_signed_in?
+    
+    # JWT 인증된 사용자가 있으면 자동 할당
+    if current_user.present?
+      @invitation.user = current_user
+      Rails.logger.info "DEBUG: Assigned user_id: #{current_user.id}"
+    else
+      Rails.logger.warn "DEBUG: No current_user found, user_id will be null"
+    end
 
     # Explicitly attach images if present to ensure they are picked up
     if params[:invitation] && params[:invitation][:images].present?
@@ -71,6 +80,7 @@ class InvitationsController < ApplicationController
     end
 
     if @invitation.save
+      Rails.logger.info "DEBUG: Invitation saved successfully with user_id: #{@invitation.user_id}"
       render json: invitation_as_json(@invitation), status: :created
     else
       Rails.logger.error "DEBUG: invitation errors: #{@invitation.errors.full_messages}"
@@ -127,7 +137,20 @@ class InvitationsController < ApplicationController
 
   # PATCH/PUT /invitations/1
   def update
+    # 권한 검증: 본인의 초대장만 수정 가능
+    if @invitation.user_id.present? && current_user.present? && @invitation.user_id != current_user.id
+      render json: { error: 'Unauthorized' }, status: :forbidden
+      return
+    end
+
+    # user_id가 없고 current_user가 있으면 할당 (draft를 publish할 때)
+    if @invitation.user_id.nil? && current_user.present?
+      @invitation.user = current_user
+      Rails.logger.info "DEBUG: Assigned user_id on update: #{current_user.id}"
+    end
+
     if @invitation.update(invitation_params)
+      Rails.logger.info "DEBUG: Invitation updated successfully. Status: #{@invitation.status}"
       render json: invitation_as_json(@invitation)
     else
       render json: @invitation.errors, status: :unprocessable_content
@@ -136,7 +159,15 @@ class InvitationsController < ApplicationController
 
   # DELETE /invitations/1
   def destroy
+    # 권한 검증: 본인의 초대장만 삭제 가능
+    if @invitation.user_id.present? && current_user.present? && @invitation.user_id != current_user.id
+      render json: { error: 'Unauthorized' }, status: :forbidden
+      return
+    end
+
     @invitation.destroy!
+    Rails.logger.info "DEBUG: Invitation #{@invitation.id} deleted successfully"
+    render json: { message: 'Invitation deleted successfully' }, status: :ok
   end
 
   private

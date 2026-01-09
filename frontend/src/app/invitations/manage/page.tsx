@@ -62,15 +62,21 @@ export default function ManageInvitationsPage() {
                 headers: { "Authorization": token.startsWith('Bearer ') ? token : `Bearer ${token}` }
             });
             if (res.ok) {
-                setInvitations(prev => prev.filter(inv => inv.id !== invitation.id));
+                // \uc11c\ubc84\uc5d0\uc11c \ucd5c\uc2e0 \ubaa9\ub85d \ub2e4\uc2dc \uac00\uc838\uc624\uae30
+                await fetchMyInvitations();
                 setIsDeleteModalOpen(false);
                 setInvitationToDelete(null);
             } else {
-                alert('삭제에 실패했습니다. 다시 시도해주세요.');
+                const error = await res.json();
+                if (res.status === 403) {
+                    alert('\uad8c\ud55c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \ubcf8\uc778\uc758 \ucd08\ub300\uc7a5\ub9cc \uc0ad\uc81c\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.');
+                } else {
+                    alert('\uc0ad\uc81c\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.');
+                }
             }
         } catch (error) {
             console.error('Delete failed:', error);
-            alert('삭제 중 오류가 발생했습니다.');
+            alert('\uc0ad\uc81c \uc911 \uc624\ub958\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.');
         } finally {
             setIsDeleting(false);
         }
