@@ -20,6 +20,7 @@ import AuthModal from "@/components/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useActionCable } from "@/hooks/useActionCable";
 import GuestListModal from "@/components/GuestListModal";
+import InvitationActionModal from "@/components/InvitationActionModal";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
 import { API_BASE_URL } from "@/config";
@@ -42,6 +43,7 @@ export default function ManageInvitationsPage() {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [selectedInvitation, setSelectedInvitation] = useState<any | null>(null);
     const [isGuestListOpen, setIsGuestListOpen] = useState(false);
+    const [isActionModalOpen, setIsActionModalOpen] = useState(false);
 
     // Delete modal state
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -391,7 +393,7 @@ export default function ManageInvitationsPage() {
                                             router.push(`/invitations/create?id=${invite.id}`); // Edit draft
                                         } else {
                                             setSelectedInvitation(invite);
-                                            setIsGuestListOpen(true);
+                                            setIsActionModalOpen(true); // Open action modal
                                         }
                                     } else {
                                         router.push(`/invitations/${invite.id}`);
@@ -623,6 +625,30 @@ export default function ManageInvitationsPage() {
                     </div>
                 </div>
             )}
+
+            {/* Invitation Action Modal */}
+            <InvitationActionModal
+                isOpen={isActionModalOpen}
+                onClose={() => {
+                    setIsActionModalOpen(false);
+                    setSelectedInvitation(null);
+                }}
+                invitation={selectedInvitation}
+                onEdit={() => {
+                    if (selectedInvitation) {
+                        router.push(`/invitations/create?id=${selectedInvitation.id}`);
+                    }
+                }}
+                onViewGuests={() => {
+                    setIsActionModalOpen(false);
+                    setIsGuestListOpen(true);
+                }}
+                onViewInvitation={() => {
+                    if (selectedInvitation) {
+                        router.push(`/invitations/${selectedInvitation.id}`);
+                    }
+                }}
+            />
 
             {/* Debug Panel for User Reassurance */}
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 text-white p-2 text-[10px] font-mono opacity-70 hover:opacity-100 transition-opacity z-[100] flex justify-between px-6 pointer-events-none sm:pointer-events-auto">
