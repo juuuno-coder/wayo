@@ -28,6 +28,8 @@ class User < ApplicationRecord
   has_many :reviews
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :invitations, dependent: :destroy
+  has_many :invitation_guests, dependent: :destroy
 
   # Simple revocation strategy for MVP (Null). 
   # For real production, use JTIMatcher or Denylist.
