@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Heart, MapPin, Calendar, ShoppingBag, Ticket, ChevronRight } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 import Link from "next/link";
 import { Event, Item } from "@/types";
 
@@ -28,7 +29,7 @@ export default function LikesPage() {
 
   const fetchLikes = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/likes`, {
+      const res = await fetch(`${API_BASE_URL}/likes`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

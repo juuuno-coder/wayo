@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { API_BASE_URL } from "@/config";
 
 export default function GabojagoLogin() {
     const [email, setEmail] = useState("");
@@ -29,7 +30,7 @@ export default function GabojagoLogin() {
     }, [router]);
 
     const handleGoogleLogin = () => {
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";
+        const backendUrl = API_BASE_URL;
         const origin = window.location.origin;
         window.location.href = `${backendUrl}/users/auth/google_oauth2?origin=${encodeURIComponent(origin)}`;
     };
@@ -48,7 +49,7 @@ export default function GabojagoLogin() {
         });
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/users/sign_in`, {
+            const response = await fetch(`${API_BASE_URL}/users/sign_in`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -91,7 +92,7 @@ export default function GabojagoLogin() {
                 if (pendingInvitations) {
                     try {
                         const parsedInvitations = JSON.parse(pendingInvitations);
-                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/sync`, {
+                        await fetch(`${API_BASE_URL}/invitations/sync`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 
 interface Bid {
   id: number;
@@ -23,7 +24,7 @@ export default function BidsPage() {
   const fetchBids = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/bids`);
+      const res = await fetch(`${API_BASE_URL}/bids`);
       if (res.ok) {
         setBids(await res.json());
       } else {

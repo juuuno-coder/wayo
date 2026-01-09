@@ -7,6 +7,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useEditorStore } from '@/store/useEditorStore';
 import { BlockType } from '@/types/block';
 import { ArrowLeft, Plus, Save, Monitor, Smartphone, BookOpen } from 'lucide-react';
+import { API_BASE_URL } from "@/config";
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Component Imports (To be implemented or defined inline for now)
@@ -24,7 +25,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
     useEffect(() => {
         const fetchInvitation = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`, {
+                const res = await fetch(`${API_BASE_URL}/invitations/${id}`, {
                     headers: { "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` }
                 });
                 if (res.ok) {
@@ -58,7 +59,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                 }
             };
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/invitations/${id}`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",

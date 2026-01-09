@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 import Link from "next/link";
 
 interface CartItem {
@@ -35,7 +36,7 @@ export default function CartPage() {
 
   const fetchCart = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/cart_items`, {
+      const res = await fetch(`${API_BASE_URL}/cart_items`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,7 +61,7 @@ export default function CartPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/cart_items/${cartItemId}`,
+        `${API_BASE_URL}/cart_items/${cartItemId}`,
         {
           method: "PATCH",
           headers: {
@@ -89,7 +90,7 @@ export default function CartPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/cart_items/${cartItemId}`,
+        `${API_BASE_URL}/cart_items/${cartItemId}`,
         {
           method: "DELETE",
           headers: {
@@ -120,7 +121,7 @@ export default function CartPage() {
 
     try {
       // 1. 주문 생성 API
-      const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/orders`, {
+      const orderRes = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -165,7 +166,7 @@ export default function CartPage() {
         if (rsp.success) {
           // 3. 결제 성공 시 서버 검증 및 저장
           try {
-            const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/payments/verify`, {
+            const verifyRes = await fetch(`${API_BASE_URL}/payments/verify`, {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${token}`,

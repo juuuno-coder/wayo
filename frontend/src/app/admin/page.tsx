@@ -26,6 +26,7 @@ import {
   Trash2
 } from "lucide-react";
 import Image from "next/image";
+import { API_BASE_URL } from "@/config";
 
 interface CrawledEvent {
   id: number;
@@ -82,7 +83,7 @@ export default function AdminPage() {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events?status=${currentTab}`);
+      const res = await fetch(`${API_BASE_URL}/admin/events?status=${currentTab}`);
       if (res.ok) {
         setEvents(await res.json());
       }
@@ -95,7 +96,7 @@ export default function AdminPage() {
 
   const handleAction = async (id: number, action: "approve" | "reject") => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events/${id}/${action}`, {
+      const res = await fetch(`${API_BASE_URL}/admin/events/${id}/${action}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" }
       });
@@ -112,7 +113,7 @@ export default function AdminPage() {
     if (ids.length === 0) return;
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events/bulk_approve`, {
+      const res = await fetch(`${API_BASE_URL}/admin/events/bulk_approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids })
@@ -128,7 +129,7 @@ export default function AdminPage() {
   const handleFetch = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events/fetch`, { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/admin/events/fetch`, { method: "POST" });
       if (res.ok) {
         alert("데이터 수집이 시작되었습니다. 잠시 후 새로고침 해주세요.");
         fetchEvents();
@@ -142,7 +143,7 @@ export default function AdminPage() {
 
   const handleNormalize = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events/normalize`, { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/admin/events/normalize`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
         alert(data.message);
@@ -155,7 +156,7 @@ export default function AdminPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/admin/events/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -170,7 +171,7 @@ export default function AdminPage() {
 
   const handleUpdate = async (event: CrawledEvent) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/admin/events/${event.id}`, {
+      const res = await fetch(`${API_BASE_URL}/admin/events/${event.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ event })

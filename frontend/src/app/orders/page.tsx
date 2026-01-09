@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Package, ChevronRight } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 import Link from "next/link";
 
 interface OrderItem {
@@ -48,7 +49,7 @@ export default function OrdersPage() {
 
   const fetchOrders = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/orders`, {
+      const res = await fetch(`${API_BASE_URL}/orders`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }

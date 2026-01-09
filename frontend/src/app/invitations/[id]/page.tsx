@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
+import { API_BASE_URL } from '@/config';
 import InvitationDetailPageClient from './InvitationDetailPageClient';
 
 async function getInvitation(id: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/invitations/${id}`, {
         cache: 'no-store'
     });
     if (!res.ok) return null;

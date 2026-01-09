@@ -10,6 +10,7 @@ import {
   Camera,
   MessageSquare
 } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 
 function EventReportForm() {
   const router = useRouter();
@@ -28,7 +29,7 @@ function EventReportForm() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/event_reports`, {
+      const response = await fetch(`${API_BASE_URL}/event_reports`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,8 +147,8 @@ function EventReportForm() {
           onClick={handleSubmit}
           disabled={!formData.title}
           className={`w-full py-4 rounded-2xl font-bold text-white shadow-xl transition-all flex items-center justify-center gap-2 ${isPast
-              ? "bg-purple-500 hover:bg-purple-600 shadow-purple-200"
-              : "bg-blue-500 hover:bg-blue-600 shadow-blue-200"
+            ? "bg-purple-500 hover:bg-purple-600 shadow-purple-200"
+            : "bg-blue-500 hover:bg-blue-600 shadow-blue-200"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           <Send size={20} />

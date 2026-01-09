@@ -6,6 +6,7 @@ import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import AuthModal from "@/components/AuthModal";
+import { API_BASE_URL } from "@/config";
 
 interface Review {
   id: number;
@@ -43,7 +44,7 @@ export default function ItemDetailPage() {
 
   const fetchItem = async (id: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/items/${id}`);
+      const res = await fetch(`${API_BASE_URL}/items/${id}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setItem(data);
@@ -64,7 +65,7 @@ export default function ItemDetailPage() {
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/items/${item?.id}/like`, {
+      const res = await fetch(`${API_BASE_URL}/items/${item?.id}/like`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -90,7 +91,7 @@ export default function ItemDetailPage() {
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/cart_items`, {
+      const res = await fetch(`${API_BASE_URL}/cart_items`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -137,7 +138,7 @@ export default function ItemDetailPage() {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/items/${item?.id}/reviews`,
+        `${API_BASE_URL}/items/${item?.id}/reviews`,
         {
           method: "POST",
           headers: {

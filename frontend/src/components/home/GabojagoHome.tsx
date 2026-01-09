@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 import {
     ChevronRight,
     Search,
@@ -213,7 +214,7 @@ export default function GabojagoHome() {
     const fetchAllEvents = useCallback(async () => {
         setLoading(true);
         try {
-            let url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/events?sort=${sortBy}`;
+            let url = `${API_BASE_URL}/events?sort=${sortBy}`;
 
             if (selectedCategories.length > 0) {
                 url += `&category=${selectedCategories.join(',')}`;
@@ -230,7 +231,7 @@ export default function GabojagoHome() {
             if (selectedCategories.length === 0 && selectedRegions.length === 0) {
                 const sections = ["festival", "exhibition", "art", "concert"];
                 const results = await Promise.all(
-                    sections.map(cat => fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/events?category=${cat}&limit=10`).then(r => r.json()))
+                    sections.map(cat => fetch(`${API_BASE_URL}/events?category=${cat}&limit=10`).then(r => r.json()))
                 );
                 setFestivalEvents(results[0]);
                 setExhibitionEvents(results[1]);

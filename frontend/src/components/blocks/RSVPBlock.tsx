@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
+import { API_BASE_URL } from '@/config';
 
 interface RSVPBlockProps {
     block: {
@@ -34,7 +35,7 @@ export default function RSVPBlock({ block, invitationId }: RSVPBlockProps) {
 
         setIsSubmitting(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3401'}/invitations/${invitationId}/guests`, {
+            const response = await fetch(`${API_BASE_URL}/invitations/${invitationId}/guests`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

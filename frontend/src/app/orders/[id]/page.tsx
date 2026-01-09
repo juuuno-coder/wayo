@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { MoveLeft, Package, Truck, MapPin } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -55,7 +56,7 @@ export default function OrderDetailPage() {
 
   const fetchOrder = async (token: string, id: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/orders/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

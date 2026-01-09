@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 
 interface UserInfo {
   id: number;
@@ -53,7 +54,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
   const fetchPost = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/posts/${id}`);
+      const res = await fetch(`${API_BASE_URL}/posts/${id}`);
       if (res.ok) {
         setPost(await res.json());
       }
@@ -76,7 +77,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/posts/${id}/comments`, {
+      const res = await fetch(`${API_BASE_URL}/posts/${id}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, Image as ImageIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function NewPostPage() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/posts`, {
+      const res = await fetch(`${API_BASE_URL}/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

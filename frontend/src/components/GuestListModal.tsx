@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Users, Check, Clock, XCircle, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_BASE_URL } from "@/config";
 
 interface Guest {
     id: number;
@@ -42,7 +43,7 @@ export default function GuestListModal({
         try {
             setLoading(true);
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/invitations/${invitationId}/guests`
+                `${API_BASE_URL}/invitations/${invitationId}/guests`
             );
             if (res.ok) {
                 const data = await res.json();
@@ -142,8 +143,8 @@ export default function GuestListModal({
                                 <button
                                     onClick={() => setFilter("all")}
                                     className={`flex-1 p-3 rounded-xl border-2 transition-all ${filter === "all"
-                                            ? "border-blue-500 bg-blue-50"
-                                            : "border-gray-100 hover:border-gray-200"
+                                        ? "border-blue-500 bg-blue-50"
+                                        : "border-gray-100 hover:border-gray-200"
                                         }`}
                                 >
                                     <p className="text-xs font-bold text-gray-500 mb-1">전체</p>
@@ -152,8 +153,8 @@ export default function GuestListModal({
                                 <button
                                     onClick={() => setFilter("accepted")}
                                     className={`flex-1 p-3 rounded-xl border-2 transition-all ${filter === "accepted"
-                                            ? "border-green-500 bg-green-50"
-                                            : "border-gray-100 hover:border-gray-200"
+                                        ? "border-green-500 bg-green-50"
+                                        : "border-gray-100 hover:border-gray-200"
                                         }`}
                                 >
                                     <p className="text-xs font-bold text-green-600 mb-1">참석</p>
@@ -162,8 +163,8 @@ export default function GuestListModal({
                                 <button
                                     onClick={() => setFilter("pending")}
                                     className={`flex-1 p-3 rounded-xl border-2 transition-all ${filter === "pending"
-                                            ? "border-gray-500 bg-gray-50"
-                                            : "border-gray-100 hover:border-gray-200"
+                                        ? "border-gray-500 bg-gray-50"
+                                        : "border-gray-100 hover:border-gray-200"
                                         }`}
                                 >
                                     <p className="text-xs font-bold text-gray-500 mb-1">미정</p>
@@ -172,8 +173,8 @@ export default function GuestListModal({
                                 <button
                                     onClick={() => setFilter("declined")}
                                     className={`flex-1 p-3 rounded-xl border-2 transition-all ${filter === "declined"
-                                            ? "border-red-500 bg-red-50"
-                                            : "border-gray-100 hover:border-gray-200"
+                                        ? "border-red-500 bg-red-50"
+                                        : "border-gray-100 hover:border-gray-200"
                                         }`}
                                 >
                                     <p className="text-xs font-bold text-red-500 mb-1">불참</p>

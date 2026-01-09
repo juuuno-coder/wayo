@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 import AuthModal from "@/components/AuthModal";
 
 export default function GabojagoSignup() {
@@ -29,7 +30,7 @@ export default function GabojagoSignup() {
     }, [router]);
 
     const handleGoogleLogin = () => {
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401";
+        const backendUrl = API_BASE_URL;
         const origin = window.location.origin;
         window.location.href = `${backendUrl}/users/auth/google_oauth2?origin=${encodeURIComponent(origin)}`;
     };
@@ -42,7 +43,7 @@ export default function GabojagoSignup() {
         }
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3401"}/users`, {
+            const response = await fetch(`${API_BASE_URL}/users`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
