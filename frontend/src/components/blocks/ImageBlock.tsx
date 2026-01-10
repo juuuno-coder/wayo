@@ -20,7 +20,7 @@ export default function ImageBlock({ data }: ImageBlockProps) {
         <div className="my-8">
             {data.url ? (
                 <div className="relative aspect-4/3 overflow-hidden rounded-xl shadow-sm mx-4">
-                    <NextImage src={data.url} alt={data.caption || 'Image'} fill className="object-cover" />
+                    <NextImage src={data.url} alt={data.caption || 'Image'} fill unoptimized className="object-cover" />
                 </div>
             ) : (
                 <div className="h-48 bg-gray-100 flex items-center justify-center text-gray-400 mx-4 rounded-xl">

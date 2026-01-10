@@ -24,7 +24,7 @@ export default function HeroBlock({ data }: HeroBlockProps) {
         <div className="relative h-[500px] flex items-center justify-center overflow-hidden bg-gray-50">
             {data.image ? (
                 <>
-                    <NextImage src={data.image} alt="Hero" fill className="object-cover" />
+                    <NextImage src={data.image} alt="Hero" fill unoptimized className="object-cover" />
                     <div className="absolute inset-0 bg-black/20" /> {/* Overlay for readability */}
                 </>
             ) : (

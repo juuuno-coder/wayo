@@ -105,7 +105,7 @@ export default function InvitationRSVPForm({ invitationId, onSuccess, className 
             <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full py-4 bg-gray-900 hover:bg-black text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-[var(--primary-color,#111827)] hover:opacity-90 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
                 {loading ? (
                     <>

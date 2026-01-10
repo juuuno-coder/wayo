@@ -58,6 +58,14 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "wayo.fly.dev" }
   config.action_controller.default_url_options = { host: "wayo.fly.dev" }
 
+  # Action Cable allowed origins for cross-domain support
+  config.action_cable.allowed_request_origins = [
+    "https://wayo.co.kr",
+    "https://www.wayo.co.kr",
+    "https://wayo.fly.dev",
+    /https:\/\/.*\.vercel\.app/
+  ]
+
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
   #   user_name: Rails.application.credentials.dig(:smtp, :user_name),

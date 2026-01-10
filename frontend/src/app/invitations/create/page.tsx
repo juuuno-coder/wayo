@@ -34,20 +34,29 @@ const steps = [
   { icon: "📅", title: "언제\n만나면 좋을까요?", subtitle: "정확한 날짜와 시간을 알려주세요." },
   { icon: "📍", title: "어디서\n모일까요?", subtitle: "찾아오기 쉬운 장소 이름을 알려주세요." },
   { icon: "📸", title: "함께 나눈\n추억이 있나요?", subtitle: "사진을 올리면 더 특별한 초대장이 돼요." },
-  { icon: "🎨", title: "나만의 색으로\n물들여보세요", subtitle: "분위기에 어울리는 테마를 골라보세요." },
-  { icon: "🎫", title: "입장 티켓을\n발행해볼까요?", subtitle: "다양한 디자인의 티켓을 선택해보세요." },
-  { icon: "✨", title: "특별한 효과를\n더해볼까요?", subtitle: "초대장을 더 돋보이게 하는 효과예요." },
+  { icon: "🎨", title: "어울리는\n테마를 골라보세요", subtitle: "초대장의 전반적인 분위기를 결정해요." },
+  { icon: "🌈", title: "나만의 색으로\n물들여보세요", subtitle: "강조색과 배경색을 직접 정할 수 있어요." },
+  { icon: "🎵", title: "분위기에 맞는\n음악을 골라보세요", subtitle: "초대장을 열었을 때 흐를 배경음악이에요." },
   { icon: "💌", title: "진심을 담은\n초대 문구", subtitle: "초대하고 싶은 분들께 마음을 전해주세요." },
   { icon: "✨", title: "거의 다 됐어요!\n마지막으로 확인해주세요", subtitle: "수정이 필요하면 이전을 눌러주세요." }
 ];
 
-const themes: Record<string, { name: string; bg: string; text: string; accent: string }> = {
-  classic: { name: '클래식', bg: 'bg-white', text: 'text-gray-900', accent: 'border-gray-200' },
-  vibrant: { name: '비비드', bg: 'bg-red-50', text: 'text-red-900', accent: 'border-red-200' },
-  dark: { name: '다크', bg: 'bg-gray-900', text: 'text-white', accent: 'border-gray-800' },
-  pastel: { name: '파스텔', bg: 'bg-blue-50', text: 'text-blue-900', accent: 'border-blue-200' },
-  business: { name: '비즈니스', bg: 'bg-gray-100', text: 'text-gray-800', accent: 'border-gray-300' },
-  nature: { name: '네이처', bg: 'bg-green-100', text: 'text-green-800', accent: 'border-green-300' },
+const themes: Record<string, { name: string; bg: string; text: string; accent: string; primary: string }> = {
+  classic: { name: '클래식', bg: 'bg-white', text: 'text-gray-900', accent: 'border-gray-200', primary: '#2C3E50' },
+  vibrant: { name: '비비드', bg: 'bg-red-50', text: 'text-red-900', accent: 'border-red-200', primary: '#E74C3C' },
+  dark: { name: '다크', bg: 'bg-gray-900', text: 'text-white', accent: 'border-gray-800', primary: '#6366F1' },
+  pastel: { name: '파스텔', bg: 'bg-blue-50', text: 'text-blue-900', accent: 'border-blue-200', primary: '#3B82F6' },
+  business: { name: '비즈니스', bg: 'bg-gray-100', text: 'text-gray-800', accent: 'border-gray-300', primary: '#1F2937' },
+  nature: { name: '네이처', bg: 'bg-green-50', text: 'text-green-900', accent: 'border-green-200', primary: '#10B981' },
+};
+
+const bgmOptions = {
+  none: { name: '음악 없음', icon: '🔇' },
+  romantic: { name: '로맨틱 피아노', icon: '🎹' },
+  cheerful: { name: '경쾌한 우쿨렐레', icon: '🎸' },
+  elegant: { name: '우아한 선율', icon: '🎻' },
+  calm: { name: '잔잔한 분위기', icon: '🌊' },
+  festive: { name: '신나는 파티', icon: '🎉' }
 };
 
 export default function CreateInvitationPage() {
@@ -67,6 +76,12 @@ export default function CreateInvitationPage() {
     font_style: "sans",
     bgm: "none",
     text_effect: "none",
+    primary_color: "",
+    secondary_color: "",
+    text_color: "",
+    background_color: "",
+    bgm_volume: 50,
+    auto_play_bgm: false,
     default_layout: "standard"
   });
 
@@ -121,6 +136,12 @@ export default function CreateInvitationPage() {
               font_style: data.font_style || "sans",
               bgm: data.bgm || "none",
               text_effect: data.text_effect || "none",
+              primary_color: data.primary_color || "",
+              secondary_color: data.secondary_color || "",
+              text_color: data.text_color || "",
+              background_color: data.background_color || "",
+              bgm_volume: data.bgm_volume || 50,
+              auto_play_bgm: data.auto_play_bgm || false,
               default_layout: data.default_layout || "standard"
             });
 
@@ -277,7 +298,9 @@ export default function CreateInvitationPage() {
     try {
       const data = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (value) data.append(`invitation[${key}]`, value);
+        if (value !== undefined && value !== null && value !== "") {
+          data.append(`invitation[${key}]`, String(value));
+        }
       });
       data.append('invitation[status]', 'published'); // Mark as published
       images.forEach(img => data.append("invitation[images][]", img));
@@ -536,8 +559,13 @@ export default function CreateInvitationPage() {
                 {Object.entries(themes).map(([key, theme]) => (
                   <button
                     key={key}
-                    onClick={() => setFormData({ ...formData, theme_color: key })}
-                    className={`p-4 rounded-2xl border-2 transition-all ${formData.theme_color === key ? 'border-[#E74C3C] bg-white' : 'border-gray-50 bg-gray-50'}`}
+                    onClick={() => setFormData({
+                      ...formData,
+                      theme_color: key,
+                      primary_color: theme.primary,
+                      background_color: theme.bg === 'bg-white' ? '#FFFFFF' : theme.bg === 'bg-gray-900' ? '#111827' : '#FFFFFF'
+                    })}
+                    className={`p-4 rounded-2xl border-2 transition-all ${formData.theme_color === key ? 'border-[#E74C3C] bg-white shadow-md' : 'border-gray-50 bg-gray-50'}`}
                   >
                     <div className={`w-full h-12 rounded-lg mb-2 ${theme.bg} ${theme.accent} border`} />
                     <span className="text-xs font-bold text-gray-900">{theme.name}</span>
@@ -548,34 +576,85 @@ export default function CreateInvitationPage() {
 
 
             {currentStep === 6 && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                  <Ticket size={40} className="text-white" />
+              <div className="space-y-6">
+                <div className="p-6 bg-gray-50 rounded-[2rem] space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">강조 색상 (Primary)</label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="color"
+                        value={formData.primary_color || themes[formData.theme_color]?.primary || "#E74C3C"}
+                        onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
+                        className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={formData.primary_color || themes[formData.theme_color]?.primary || "#E74C3C"}
+                        onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
+                        className="flex-1 bg-white border-none rounded-xl p-3 text-sm font-bold text-gray-900 shadow-sm focus:ring-2 focus:ring-[#E74C3C] outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">배경 색상 (Background)</label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="color"
+                        value={formData.background_color || "#FFFFFF"}
+                        onChange={(e) => setFormData({ ...formData, background_color: e.target.value })}
+                        className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={formData.background_color || "#FFFFFF"}
+                        onChange={(e) => setFormData({ ...formData, background_color: e.target.value })}
+                        className="flex-1 bg-white border-none rounded-xl p-3 text-sm font-bold text-gray-900 shadow-sm focus:ring-2 focus:ring-[#E74C3C] outline-none"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">프리미엄 기능</h3>
-                <p className="text-gray-500 text-base leading-relaxed mb-6">
-                  입장 티켓 발행 기능은<br />
-                  곧 만나보실 수 있어요!
-                </p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <Sparkles size={14} /> Coming Soon
+
+                <div className="grid grid-cols-5 gap-2 px-2">
+                  {['#E74C3C', '#3B82F6', '#10B981', '#F59E0B', '#6366F1', '#EC4899', '#8B5CF6', '#14B8A6', '#F97316', '#1F2937'].map(color => (
+                    <button
+                      key={color}
+                      onClick={() => setFormData({ ...formData, primary_color: color })}
+                      className="aspect-square rounded-full shadow-sm border-2 border-white hover:scale-110 transition-transform"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
                 </div>
               </div>
             )}
 
             {currentStep === 7 && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                  <Sparkles size={40} className="text-white" />
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-3">
+                  {Object.entries(bgmOptions).map(([key, bgm]) => (
+                    <button
+                      key={key}
+                      onClick={() => setFormData({ ...formData, bgm: key })}
+                      className={`p-5 rounded-2xl border-2 transition-all text-left flex items-center justify-between group ${formData.bgm === key
+                        ? 'border-[#E74C3C] bg-red-50'
+                        : 'border-gray-100 hover:border-gray-200 bg-white shadow-sm'
+                        }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="text-2xl">{bgm.icon}</span>
+                        <div>
+                          <p className={`font-bold ${formData.bgm === key ? 'text-red-900' : 'text-gray-900'}`}>
+                            {bgm.name}
+                          </p>
+                        </div>
+                      </div>
+                      {formData.bgm === key && <CheckCircle2 className="text-[#E74C3C]" />}
+                    </button>
+                  ))}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">프리미엄 기능</h3>
-                <p className="text-gray-500 text-base leading-relaxed mb-6">
-                  특별한 효과 기능은<br />
-                  곧 만나보실 수 있어요!
+                <p className="text-xs text-center text-gray-400 mt-4">
+                  저작권 걱정 없는 무료 음원이 제공됩니다.
                 </p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <Sparkles size={14} /> Coming Soon
-                </div>
               </div>
             )}
             {currentStep === 8 && (
@@ -675,7 +754,10 @@ export default function CreateInvitationPage() {
         <div className="flex-1 bg-[#1a1a1a] flex flex-col items-center justify-center p-12 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-red-500/10 blur-[150px] rounded-full" />
           <div className="relative w-full max-w-[380px] h-[780px] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] border-[12px] border-[#333] z-10 scale-[0.9] xl:scale-100 transition-transform">
-            <div className="absolute inset-0 bg-white overflow-y-auto no-scrollbar">
+            <div
+              className={`absolute inset-0 overflow-y-auto no-scrollbar transition-colors duration-500 ${!formData.background_color ? selectedTheme.bg : ''}`}
+              style={{ backgroundColor: formData.background_color || undefined }}
+            >
               <div className="relative w-full">
                 {previewUrls.length > 0 ? (
                   <img src={previewUrls[0]} alt="Preview" className="w-full h-auto object-contain" />
@@ -687,14 +769,14 @@ export default function CreateInvitationPage() {
                 )}
               </div>
               <div className="p-8 pb-20">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#E74C3C] rounded-lg text-[10px] font-black uppercase mb-4 tracking-tighter">
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase mb-4 tracking-tighter ${formData.theme_color === 'dark' ? 'bg-white/10 text-white/60' : 'bg-red-50 text-[#E74C3C]'}`}>
                   <Sparkles size={10} /> Live Preview
                 </div>
-                <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep text-gray-900 ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : ''}`}>
+                <h1 className={`text-3xl font-bold mb-4 leading-tight break-keep ${formData.font_style === 'serif' ? 'font-serif' : ''} ${formData.text_effect === 'gold' ? 'text-yellow-600' : formData.text_effect === 'silver' ? 'text-gray-400' : !formData.background_color ? selectedTheme.text : 'text-gray-900'}`}>
                   {formData.title || "초대장 제목"}
                 </h1>
-                <div className="w-10 h-1 bg-gray-100 mb-6 rounded-full" />
-                <p className={`text-lg text-gray-700 font-medium mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''}`}>
+                <div className={`w-10 h-1 mb-6 rounded-full ${formData.theme_color === 'dark' ? 'bg-white/10' : 'bg-gray-100'}`} />
+                <p className={`text-lg font-medium mb-10 whitespace-pre-wrap leading-relaxed ${formData.font_style === 'serif' ? 'font-serif' : ''} ${!formData.background_color ? selectedTheme.text : 'text-gray-700'}`}>
                   {formData.description || "초대 문구가 여기에 표시됩니다.\n아직 작성된 내용이 없습니다."}
                 </p>
                 <div className="space-y-4 border-t border-gray-100 pt-8">

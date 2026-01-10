@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     member do
       post :track_view
       get :stats
+      post :upload_image
     end
     resources :guests, controller: 'invitation_guests', only: [:index, :create, :show] do
       member do

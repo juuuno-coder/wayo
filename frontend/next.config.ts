@@ -16,6 +16,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.mcst.go.kr",
       },
+      {
+        protocol: "https",
+        hostname: "wayo.fly.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "www.wayo.co.kr",
+      },
+      {
+        protocol: "https",
+        hostname: "wayo.co.kr",
+      },
     ],
   },
 };

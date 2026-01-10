@@ -170,6 +170,23 @@ class InvitationsController < ApplicationController
     render json: { message: 'Invitation deleted successfully' }, status: :ok
   end
 
+  # POST /invitations/:id/upload_image
+  def upload_image
+    if params[:file].present?
+      # Attach image to the invitation's images collection
+      # This ensures it's persisted and associated with the invitation
+      @invitation.images.attach(params[:file])
+      blob = @invitation.images.last.blob
+      
+      render json: { 
+        url: url_for(blob),
+        id: blob.id
+      }, status: :ok
+    else
+      render json: { error: 'No file provided' }, status: :unprocessable_content
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_invitation
@@ -184,11 +201,23 @@ class InvitationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def invitation_params
-      params.fetch(:invitation, {}).permit(
+      permitted = params.fetch(:invitation, {}).permit(
         :title, :description, :sender_name, :event_date, :event_end_date, :location, :cover_image_url, 
         :theme_color, :theme_ribbon, :user_id, :event_id, :font_style, 
-        :bgm, :text_effect, :ticket_type_id, :default_layout, :status, images: [],
-        content_blocks: [:id, :type, data: {}]
+        :bgm, :text_effect, :ticket_type_id, :default_layout, :status,
+        :primary_color, :secondary_color, :text_color, :background_color,
+        :bgm_volume, :auto_play_bgm, images: []
       )
+      
+      # Handle content_blocks separately to allow arbitrary nested JSON data
+      if params[:invitation] && params[:invitation][:content_blocks]
+        permitted[:content_blocks] = params[:invitation][:content_blocks].map do |block|
+          block.permit(:id, :type, :data).tap do |b|
+            b[:data] = block[:data].permit! if block[:data]
+          end
+        end
+      end
+      
+      permitted
     end
 end

@@ -49,6 +49,7 @@ export default function GalleryBlock({ block }: GalleryBlockProps) {
                                             src={image.url}
                                             alt={image.caption || `Gallery image ${index + 1}`}
                                             fill
+                                            unoptimized
                                             className="object-cover"
                                         />
                                     </div>
@@ -79,6 +80,7 @@ export default function GalleryBlock({ block }: GalleryBlockProps) {
                                     src={image.url}
                                     alt={image.caption || `Gallery image ${index + 1}`}
                                     fill
+                                    unoptimized
                                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                             </div>
@@ -107,6 +109,7 @@ export default function GalleryBlock({ block }: GalleryBlockProps) {
                             src={images[lightboxIndex].url}
                             alt={images[lightboxIndex].caption || 'Gallery image'}
                             fill
+                            unoptimized
                             className="object-contain"
                         />
                     </div>

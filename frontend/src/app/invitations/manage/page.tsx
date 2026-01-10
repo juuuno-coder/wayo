@@ -482,9 +482,9 @@ export default function ManageInvitationsPage() {
                                 {/* Image Section */}
                                 <div className="aspect-[4/3] bg-gray-100 relative">
                                     {(invite.image_urls && invite.image_urls.length > 0) ? (
-                                        <NextImage src={invite.image_urls[0]} alt={invite.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        <NextImage src={invite.image_urls[0]} alt={invite.title} fill unoptimized className="object-cover group-hover:scale-105 transition-transform duration-500" />
                                     ) : invite.cover_image_url ? (
-                                        <NextImage src={invite.cover_image_url} alt={invite.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" />
+                                        <NextImage src={invite.cover_image_url} alt={invite.title} fill unoptimized className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-300">
                                             <Sparkles size={32} />

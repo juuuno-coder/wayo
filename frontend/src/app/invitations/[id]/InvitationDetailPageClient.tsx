@@ -25,12 +25,22 @@ import InvitationFooter from "@/components/InvitationFooter";
 import { ThemeContext } from "@/contexts/ThemeContext";
 import { API_BASE_URL } from "@/config";
 
-const themes: Record<string, { bg: string, text: string, button: string, accent: string }> = {
-  classic: { bg: 'bg-[#2C3E50]', text: 'text-white', button: 'bg-[#E0F7FA] text-[#2C3E50]', accent: 'bg-white/10' },
-  romance: { bg: 'bg-pink-50', text: 'text-pink-900', button: 'bg-pink-500 text-white', accent: 'bg-pink-200/50' },
-  party: { bg: 'bg-purple-900', text: 'text-purple-100', button: 'bg-yellow-400 text-purple-900', accent: 'bg-purple-800' },
-  nature: { bg: 'bg-emerald-50', text: 'text-emerald-900', button: 'bg-emerald-600 text-white', accent: 'bg-emerald-200/50' },
-  business: { bg: 'bg-gray-50', text: 'text-gray-900', button: 'bg-black text-white', accent: 'bg-gray-200' },
+const themes: Record<string, { bg: string, text: string, button: string, accent: string, primary: string }> = {
+  classic: { bg: 'bg-white', text: 'text-gray-900', button: 'bg-gray-900 text-white', accent: 'bg-gray-100', primary: '#2C3E50' },
+  vibrant: { bg: 'bg-red-50', text: 'text-red-900', button: 'bg-[#E74C3C] text-white', accent: 'bg-red-100', primary: '#E74C3C' },
+  dark: { bg: 'bg-gray-900', text: 'text-white', button: 'bg-indigo-500 text-white', accent: 'bg-gray-800', primary: '#6366F1' },
+  pastel: { bg: 'bg-blue-50', text: 'text-blue-900', button: 'bg-blue-500 text-white', accent: 'bg-blue-100', primary: '#3B82F6' },
+  nature: { bg: 'bg-green-50', text: 'text-green-900', button: 'bg-emerald-600 text-white', accent: 'bg-green-100', primary: '#10B981' },
+  business: { bg: 'bg-gray-100', text: 'text-gray-900', button: 'bg-gray-800 text-white', accent: 'bg-gray-200', primary: '#1F2937' },
+};
+
+const bgmSources: Record<string, string> = {
+  romantic: 'https://cdn.pixabay.com/audio/2022/03/15/audio_1e375e2434.mp3',
+  cheerful: 'https://cdn.pixabay.com/audio/2022/05/27/audio_894fd3588f.mp3',
+  elegant: 'https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3',
+  calm: 'https://cdn.pixabay.com/audio/2023/10/24/audio_3d1ef99824.mp3',
+  festive: 'https://cdn.pixabay.com/audio/2022/01/21/audio_4f610e200c.mp3',
+  none: ''
 };
 
 export default function InvitationDetailPage({ params, initialInvitation }: { params: Promise<{ id: string }>, initialInvitation?: any }) {
@@ -169,13 +179,7 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
     }
   }
 
-  // BGM Resources (Free copyright-free placeholders)
-  const bgmSources = {
-    classic: 'https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3', // Piano
-    jazz: 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3', // Smooth Jazz
-    acoustic: 'https://cdn.pixabay.com/audio/2022/09/02/audio_72502a492a.mp3', // Acoustic
-    none: ''
-  };
+
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -433,7 +437,13 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
 
   // OPENING & CONTENT View
   return (
-    <div className={`min-h-screen transition-colors duration-1000 relative ${stage === 'opening' ? 'bg-black' : 'bg-[#FAFAFA]'}`}>
+    <div
+      className={`min-h-screen transition-colors duration-1000 relative ${stage === 'opening' ? 'bg-black' : (!invitation.background_color ? theme.bg : '')}`}
+      style={{
+        backgroundColor: stage === 'opening' ? undefined : (invitation.background_color || undefined),
+        '--primary-color': invitation.primary_color || theme.primary || '#E74C3C'
+      } as any}
+    >
       <AudioComponent />
       <SignupPromptModal
         isOpen={showSignupModal}
@@ -455,8 +465,8 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
         >
           {isPlaying ? (
             <div className="relative">
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-ping" />
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--primary-color)] rounded-full animate-ping" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
             </div>
           ) : (
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
@@ -511,9 +521,6 @@ export default function InvitationDetailPage({ params, initialInvitation }: { pa
           )}
         </div>
 
-        import BlockRenderer from "@/components/blocks/BlockRenderer";
-        // ... inside the component
-        // ...
 
         {/* Content Body */}
         <div className="bg-white relative -mt-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-10 min-h-[500px] overflow-hidden">
