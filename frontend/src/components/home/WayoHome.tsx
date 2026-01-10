@@ -45,9 +45,9 @@ export default function WayoHome() {
             <nav className="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-white/30 border-b border-[#5D4037]/5">
                 <div className={`text-2xl text-[#E74C3C] tracking-tighter ${blackHanSans.className}`}>WAYO</div>
                 <div className="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest opacity-60">
-                    <a href="#features" className="hover:text-[#E74C3C] transition-colors">Features</a>
-                    <a href="/invitations/manage" className="hover:text-[#E74C3C] transition-colors">My Invitations</a>
-                    <a href="#faq" className="hover:text-[#E74C3C] transition-colors">FAQ</a>
+                    <Link href="/features" className="hover:text-[#E74C3C] transition-colors">Features</Link>
+                    <Link href="/invitations/manage" className="hover:text-[#E74C3C] transition-colors">My Invitations</Link>
+                    <Link href="/faq" className="hover:text-[#E74C3C] transition-colors">FAQ</Link>
                 </div>
                 <div className="flex items-center gap-4">
                     {!isLoggedIn ? (
