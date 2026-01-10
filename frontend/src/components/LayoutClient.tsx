@@ -47,13 +47,15 @@ export default function LayoutClient({
   const isLoginPage = pathname === "/login";
   const isSignupPage = pathname === "/signup";
   const isLikesPage = pathname === "/likes";
+  const isFeaturesPage = pathname === "/features";
+  const isFaqPage = pathname === "/faq";
 
   // Wayo Landing: ONLY root path on Wayo domain shows full PC version
   const isWayoLanding = isWayoDomain && pathname === "/";
 
   // 1. Pages that MUST be full screen on PC
   // For Wayo, we want most pages to be native web experiences except the initial landing.
-  const isFullScreenPage = isAdminPage || isWayoLanding || isProfilePage || isLoginPage || isSignupPage || isLikesPage || isInvitationRoute;
+  const isFullScreenPage = isAdminPage || isWayoLanding || isProfilePage || isLoginPage || isSignupPage || isLikesPage || isInvitationRoute || isFeaturesPage || isFaqPage;
 
   if (isFullScreenPage) {
     return (

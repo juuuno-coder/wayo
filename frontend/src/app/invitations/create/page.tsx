@@ -24,9 +24,10 @@ import NextImage from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { API_BASE_URL } from "@/config";
 import PCInvitationView from "@/components/PCInvitationView";
-import { Inter } from "next/font/google";
+import { Inter, Black_Han_Sans } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
+const blackHanSans = Black_Han_Sans({ weight: "400", subsets: ["latin"] });
 
 const steps = [
   { icon: "📐", title: "어떤 형태로\n만드시겠어요?", subtitle: "초대장의 기본 구조를 먼저 선택해주세요." },
@@ -368,17 +369,36 @@ export default function CreateInvitationPage() {
     <div className={`h-screen bg-[#FDFBF7] flex flex-col lg:flex-row ${inter.className} overflow-hidden`}>
       {/* Left: Editor Area */}
       <div className={`flex flex-col bg-white border-r border-gray-100 z-50 shadow-xl transition-all h-screen ${isPC ? 'w-[450px]' : 'w-full'}`}>
-        <div className="shrink-0 bg-white z-50">
-          <header className="px-4 py-3 flex items-center h-14 justify-between">
-            <div className="flex items-center gap-2">
-              <button onClick={() => router.back()} className="text-gray-800 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+        <div className="shrink-0 bg-white z-50 border-b border-gray-100">
+          <header className="px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => router.back()}
+                className="text-gray-600 p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
                 <ArrowLeft size={24} />
               </button>
-              {isEditMode && (
-                <span className="px-2 py-1 bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg">수정 중</span>
-              )}
+              <button
+                onClick={() => router.push('/')}
+                className={`text-xl text-[#E74C3C] font-black tracking-tighter hover:opacity-80 transition-opacity ${blackHanSans.className}`}
+              >
+                WAYO
+              </button>
+              <div className="w-px h-6 bg-gray-200 mx-2" />
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-gray-900">초대장 만들기</span>
+                {isEditMode && (
+                  <span className="px-2 py-1 bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg">수정 중</span>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full">
+                <span className="text-xs font-bold text-gray-500">단계</span>
+                <span className="text-sm font-black text-[#E74C3C]">{currentStep + 1}</span>
+                <span className="text-xs font-bold text-gray-400">/</span>
+                <span className="text-sm font-bold text-gray-500">{steps.length}</span>
+              </div>
               {isSaving ? (
                 <span className="text-xs font-bold text-blue-500 animate-pulse">저장 중...</span>
               ) : lastSaved ? (
