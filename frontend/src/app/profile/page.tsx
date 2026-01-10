@@ -81,7 +81,7 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">{user?.email?.split('@')[0] || 'Guest'}님</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">{user?.nickname || user?.email?.split('@')[0] || 'Guest'}님</h2>
             <p className="text-gray-400 font-medium">{user?.email}</p>
           </div>
         </div>

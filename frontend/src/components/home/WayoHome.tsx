@@ -71,7 +71,7 @@ export default function WayoHome() {
                                     />
                                 </div>
                                 <span className="text-sm font-bold opacity-60 group-hover:opacity-100 transition-opacity hidden sm:inline-block">
-                                    {user?.email?.split('@')[0]}
+                                    {user?.nickname || user?.email?.split('@')[0]}
                                 </span>
                             </button>
 
@@ -252,7 +252,7 @@ export default function WayoHome() {
 
             {/* Welcome Toast */}
             <Toast
-                message={`환영합니다, ${user?.email?.split('@')[0]}님! 🎉`}
+                message={`환영합니다, ${user?.nickname || user?.email?.split('@')[0]}님! 🎉`}
                 type="success"
                 isVisible={showWelcome}
                 onClose={clearWelcome}
