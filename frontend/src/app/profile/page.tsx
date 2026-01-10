@@ -9,7 +9,9 @@ import {
   Package,
   Heart,
   Sparkles,
-  User as UserIcon
+  User as UserIcon,
+  ChevronLeft,
+  Home
 } from "lucide-react";
 import Link from "next/link";
 import { Inter } from "next/font/google";
@@ -32,16 +34,35 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className={`min-h-screen bg-[#FDFBF7] py-12 px-6 ${inter.className}`}>
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">마이 페이지</h1>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-[#E74C3C] rounded-full text-xs font-bold uppercase tracking-widest">
-            <Sparkles size={12} /> Wayo Member
+    <div className={`min-h-screen bg-[#FDFBF7] ${inter.className}`}>
+      {/* Sticky Header */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.back()}
+              className="p-2 -ml-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">마이 페이지</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push("/")}
+              className="p-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors"
+              title="홈으로"
+            >
+              <Home size={22} />
+            </button>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-[#E74C3C] rounded-full text-[10px] font-bold uppercase tracking-widest ml-2">
+              <Sparkles size={10} /> Wayo Member
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="max-w-2xl mx-auto py-12 px-6">
         {/* Profile Card */}
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8 flex items-center gap-6">
           <div className="relative">
