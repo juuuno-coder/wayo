@@ -11,7 +11,7 @@ const blackHanSans = Black_Han_Sans({ weight: "400", subsets: ["latin"] });
 interface WayoHeaderProps {
     showBackButton?: boolean;
     title?: string;
-    currentPage?: 'features' | 'faq' | 'manage' | 'profile' | 'create';
+    currentPage?: 'features' | 'faq' | 'manage' | 'profile' | 'create' | 'support';
 }
 
 export default function WayoHeader({ showBackButton = false, title, currentPage }: WayoHeaderProps) {
@@ -60,6 +60,12 @@ export default function WayoHeader({ showBackButton = false, title, currentPage 
                             className={`hover:text-[#E74C3C] transition-colors ${currentPage === 'faq' ? 'text-[#E74C3C]' : ''}`}
                         >
                             FAQ
+                        </Link>
+                        <Link
+                            href="/support"
+                            className={`hover:text-[#E74C3C] transition-colors ${currentPage === 'support' ? 'text-[#E74C3C]' : ''}`}
+                        >
+                            Support
                         </Link>
                     </div>
 
