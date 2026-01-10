@@ -208,47 +208,8 @@ export default function ManageInvitationsPage() {
 
     return (
         <div className={`min-h-screen bg-[#FDFBF7] ${inter.className} pb-20`}>
-            {/* Desktop-like Header */}
-            <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => router.push('/profile')} className="p-2 -ml-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors">
-                            <ChevronLeft size={24} />
-                        </button>
-                        <button
-                            onClick={() => router.push('/')}
-                            className={`text-xl text-[#E74C3C] font-black tracking-tighter hover:opacity-80 transition-opacity ${blackHanSans.className}`}
-                        >
-                            WAYO
-                        </button>
-                        <div className="w-px h-6 bg-gray-200 mx-2" />
-                        <h1 className="text-xl font-bold text-gray-900">내 초대장 관리</h1>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        {isLoggedIn && user ? (
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-[#E74C3C] flex items-center justify-center text-white font-bold text-sm shadow-md">
-                                    {user.nickname?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
-                                </div>
-                                <span className="text-sm font-medium text-gray-700 hidden md:block">{user.nickname || user.email}</span>
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => setIsAuthModalOpen(true)}
-                                className="text-sm font-medium text-gray-600 hover:text-[#E74C3C] transition-colors"
-                            >
-                                로그인
-                            </button>
-                        )}
-                        <button
-                            onClick={() => router.push('/invitations/create')}
-                            className="bg-[#E74C3C] text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-[#c0392b] transition-colors shadow-lg shadow-red-200 flex items-center gap-2"
-                        >
-                            <Sparkles size={16} /> 새 초대장 만들기
-                        </button>
-                    </div>
-                </div>
-            </div>
+            {/* Header */}
+            <WayoHeader showBackButton title="내 초대장 관리" currentPage="manage" />
 
             <div className="max-w-7xl mx-auto px-6 mt-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">

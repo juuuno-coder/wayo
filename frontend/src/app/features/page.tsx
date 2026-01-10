@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import WayoHeader from "@/components/WayoHeader";
 
 const blackHanSans = Black_Han_Sans({ weight: "400", subsets: ["latin"] });
 const inter = Inter({ subsets: ["latin"] });
@@ -103,22 +103,7 @@ export default function FeaturesPage() {
     return (
         <div className={`min-h-screen bg-[#FDFBF7] ${inter.className}`}>
             {/* Navigation */}
-            <nav className="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-white/30 border-b border-[#5D4037]/5">
-                <Link href="/" className={`text-2xl text-[#E74C3C] tracking-tighter ${blackHanSans.className}`}>
-                    WAYO
-                </Link>
-                <div className="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest opacity-60">
-                    <Link href="/features" className="text-[#E74C3C] transition-colors">Features</Link>
-                    <Link href="/invitations/manage" className="hover:text-[#E74C3C] transition-colors">My Invitations</Link>
-                    <Link href="/faq" className="hover:text-[#E74C3C] transition-colors">FAQ</Link>
-                </div>
-                <button
-                    onClick={() => router.push('/invitations/create')}
-                    className="px-6 py-2 bg-[#E74C3C] text-white rounded-full text-sm font-bold hover:bg-[#C0392B] transition-all active:scale-95 shadow-lg shadow-red-200"
-                >
-                    초대장 만들기
-                </button>
-            </nav>
+            <WayoHeader currentPage="features" />
 
             {/* Hero Section */}
             <section className="pt-32 pb-20 px-6">

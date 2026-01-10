@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { Inter, Black_Han_Sans } from "next/font/google";
 import { useAuth } from "@/contexts/AuthContext";
+import WayoHeader from "@/components/WayoHeader";
 
 const inter = Inter({ subsets: ["latin"] });
 const blackHanSans = Black_Han_Sans({ weight: "400", subsets: ["latin"] });
@@ -36,39 +37,8 @@ export default function ProfilePage() {
 
   return (
     <div className={`min-h-screen bg-[#FDFBF7] ${inter.className}`}>
-      {/* Sticky Header */}
-      <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.back()}
-              className="p-2 -ml-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors"
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <button
-              onClick={() => router.push('/')}
-              className={`text-xl text-[#E74C3C] font-black tracking-tighter hover:opacity-80 transition-opacity ${blackHanSans.className}`}
-            >
-              WAYO
-            </button>
-            <div className="w-px h-6 bg-gray-200 mx-2" />
-            <h1 className="text-xl font-bold text-gray-900">마이 페이지</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.push("/")}
-              className="p-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors"
-              title="홈으로"
-            >
-              <Home size={22} />
-            </button>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-[#E74C3C] rounded-full text-[10px] font-bold uppercase tracking-widest ml-2">
-              <Sparkles size={10} /> Wayo Member
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Header */}
+      <WayoHeader showBackButton title="마이 페이지" currentPage="profile" />
 
       <div className="max-w-2xl mx-auto py-12 px-6">
         {/* Profile Card */}
