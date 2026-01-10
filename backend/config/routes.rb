@@ -26,6 +26,18 @@ Rails.application.routes.draw do
     post :verify, on: :collection
   end
   
+  resources :invitations do
+    member do
+      post :upload_image
+    end
+  end
+
+  # FAQ routes
+  resources :faqs, only: [:index]
+  namespace :admin do
+    resources :faqs, only: [:index, :create, :update, :destroy], controller: 'faqs'
+  end
+  
   resources :guests, only: [] do
     member do
       post :claim

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Users, Check, Clock, XCircle, MessageSquare } from "lucide-react";
+import { X, Users, Check, Clock, XCircle, MessageSquare, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { API_BASE_URL } from "@/config";
 
@@ -61,17 +61,6 @@ export default function GuestListModal({
         return guest.status === filter;
     });
 
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case "accepted":
-                return <Check size={16} className="text-green-600" />;
-            case "declined":
-                return <XCircle size={16} className="text-red-500" />;
-            default:
-                return <Clock size={16} className="text-gray-400" />;
-        }
-    };
-
     const getStatusLabel = (status: string) => {
         switch (status) {
             case "accepted":
@@ -83,14 +72,14 @@ export default function GuestListModal({
         }
     };
 
-    const getStatusColor = (status: string) => {
+    const getStatusBadge = (status: string) => {
         switch (status) {
             case "accepted":
-                return "bg-green-50 text-green-700 border-green-200";
+                return <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center gap-1"><Check size={12} />참석</span>;
             case "declined":
-                return "bg-red-50 text-red-600 border-red-200";
+                return <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold flex items-center gap-1"><XCircle size={12} />불참</span>;
             default:
-                return "bg-gray-50 text-gray-600 border-gray-200";
+                return <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold flex items-center gap-1"><Clock size={12} />미정</span>;
         }
     };
 
@@ -113,6 +102,34 @@ export default function GuestListModal({
         declined: guests.filter((g) => g.status === "declined").length,
     };
 
+    const exportToExcel = () => {
+        // Create CSV content
+        const headers = ["이름", "연락처", "상태", "메시지", "응답 시간"];
+        const rows = filteredGuests.map(guest => [
+            guest.name,
+            guest.contact || "-",
+            getStatusLabel(guest.status),
+            guest.message || "-",
+            new Date(guest.updated_at).toLocaleString('ko-KR')
+        ]);
+
+        const csvContent = [
+            headers.join(","),
+            ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+        ].join("\n");
+
+        // Create blob and download
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `${invitationTitle}_게스트목록_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -121,21 +138,30 @@ export default function GuestListModal({
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden"
+                        className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden"
                     >
                         {/* Header */}
                         <div className="p-6 border-b border-gray-100">
                             <div className="flex items-start justify-between mb-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-1">게스트 목록</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-1">참석 확인 관리</h2>
                                     <p className="text-sm text-gray-500">{invitationTitle}</p>
                                 </div>
-                                <button
-                                    onClick={onClose}
-                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                                >
-                                    <X size={24} className="text-gray-400" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={exportToExcel}
+                                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-sm transition-colors shadow-lg shadow-green-200"
+                                    >
+                                        <Download size={16} />
+                                        엑셀 다운로드
+                                    </button>
+                                    <button
+                                        onClick={onClose}
+                                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                    >
+                                        <X size={24} className="text-gray-400" />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Stats */}
@@ -183,8 +209,8 @@ export default function GuestListModal({
                             </div>
                         </div>
 
-                        {/* Guest List */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-3">
+                        {/* Table */}
+                        <div className="flex-1 overflow-auto">
                             {loading ? (
                                 <div className="py-20 text-center text-gray-400">
                                     <Users size={48} className="mx-auto mb-4 opacity-20" />
@@ -200,41 +226,55 @@ export default function GuestListModal({
                                     </p>
                                 </div>
                             ) : (
-                                filteredGuests.map((guest) => (
-                                    <motion.div
-                                        key={guest.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className={`p-4 rounded-2xl border-2 ${getStatusColor(guest.status)}`}
-                                    >
-                                        <div className="flex items-start justify-between mb-2">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-white border-2 border-current flex items-center justify-center font-bold text-lg">
-                                                    {guest.name[0]}
-                                                </div>
-                                                <div>
-                                                    <p className="font-bold text-lg">{guest.name}</p>
-                                                    {guest.contact && (
-                                                        <p className="text-xs opacity-60">{guest.contact}</p>
+                                <table className="w-full">
+                                    <thead className="bg-gray-50 sticky top-0 z-10">
+                                        <tr className="border-b border-gray-200">
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">이름</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">연락처</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">상태</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">메시지</th>
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">응답 시간</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-100">
+                                        {filteredGuests.map((guest) => (
+                                            <motion.tr
+                                                key={guest.id}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="hover:bg-gray-50 transition-colors"
+                                            >
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                                            {guest.name[0]}
+                                                        </div>
+                                                        <span className="font-bold text-gray-900">{guest.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    {guest.contact || <span className="text-gray-400">-</span>}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {getStatusBadge(guest.status)}
+                                                </td>
+                                                <td className="px-6 py-4 max-w-md">
+                                                    {guest.message ? (
+                                                        <div className="flex items-start gap-2 text-sm text-gray-700">
+                                                            <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-gray-400" />
+                                                            <span className="italic">&quot;{guest.message}&quot;</span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-sm">-</span>
                                                     )}
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                {getStatusIcon(guest.status)}
-                                                <span className="text-xs font-bold">{getStatusLabel(guest.status)}</span>
-                                            </div>
-                                        </div>
-
-                                        {guest.message && (
-                                            <div className="mt-3 p-3 bg-white/50 rounded-xl flex items-start gap-2">
-                                                <MessageSquare size={14} className="mt-0.5 flex-shrink-0 opacity-40" />
-                                                <p className="text-sm italic opacity-80">&quot;{guest.message}&quot;</p>
-                                            </div>
-                                        )}
-
-                                        <p className="text-xs opacity-40 mt-2">{getTimeAgo(guest.updated_at)}</p>
-                                    </motion.div>
-                                ))
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {getTimeAgo(guest.updated_at)}
+                                                </td>
+                                            </motion.tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             )}
                         </div>
                     </motion.div>

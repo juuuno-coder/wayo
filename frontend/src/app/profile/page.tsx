@@ -14,10 +14,11 @@ import {
   Home
 } from "lucide-react";
 import Link from "next/link";
-import { Inter } from "next/font/google";
+import { Inter, Black_Han_Sans } from "next/font/google";
 import { useAuth } from "@/contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
+const blackHanSans = Black_Han_Sans({ weight: "400", subsets: ["latin"] });
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -45,6 +46,13 @@ export default function ProfilePage() {
             >
               <ChevronLeft size={24} />
             </button>
+            <button
+              onClick={() => router.push('/')}
+              className={`text-xl text-[#E74C3C] font-black tracking-tighter hover:opacity-80 transition-opacity ${blackHanSans.className}`}
+            >
+              WAYO
+            </button>
+            <div className="w-px h-6 bg-gray-200 mx-2" />
             <h1 className="text-xl font-bold text-gray-900">마이 페이지</h1>
           </div>
           <div className="flex items-center gap-2">

@@ -215,6 +215,13 @@ export default function ManageInvitationsPage() {
                         <button onClick={() => router.push('/profile')} className="p-2 -ml-2 hover:bg-gray-50 rounded-full text-gray-600 transition-colors">
                             <ChevronLeft size={24} />
                         </button>
+                        <button
+                            onClick={() => router.push('/')}
+                            className={`text-xl text-[#E74C3C] font-black tracking-tighter hover:opacity-80 transition-opacity ${blackHanSans.className}`}
+                        >
+                            WAYO
+                        </button>
+                        <div className="w-px h-6 bg-gray-200 mx-2" />
                         <h1 className="text-xl font-bold text-gray-900">내 초대장 관리</h1>
                     </div>
                     <div className="flex items-center gap-4">
