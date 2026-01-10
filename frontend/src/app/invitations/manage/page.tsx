@@ -24,6 +24,7 @@ import InvitationActionModal from "@/components/InvitationActionModal";
 import { Black_Han_Sans, Inter } from "next/font/google";
 import { motion } from "framer-motion";
 import { API_BASE_URL } from "@/config";
+import WayoHeader from "@/components/WayoHeader";
 
 const blackHanSans = Black_Han_Sans({
     weight: "400",
